@@ -1,0 +1,34 @@
+--------------------------------------------------------------------------------
+BIG PICTURE
+--------------------------------------------------------------------------------
+Retrieve acceleration in Gs
+Use Gui to log with WiFi
+Send Accelero data to AWS
+
+
+--------------------------------------------------------------------------------
+TO DO 
+--------------------------------------------------------------------------------
+Create connect to WiFi screen
+Create play with Accelero screen
+Create Connect to AWS screen
+Create send data to AWS screen
+Finish the accelero lib
+Store an image in Flash memory
+Display an image
+Draw a dot on a canva 
+receive a notif from AWS
+Display a notification
+
+
+--------------------------------------------------------------------------------
+IN PROGRESS
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+DONE
+
+Date        Tag     Description
+--------------------------------------------------------------------------------
+02/11/2020  ARCHI   Initialized project with components (IMU, LVGL, AWS, WiFi)

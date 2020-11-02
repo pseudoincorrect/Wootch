@@ -22,7 +22,8 @@
 // LVGL
 #include "lvgl/lvgl.h"
 #include "lvgl_helpers.h"
-#include "lv_examples/src/lv_demo_widgets/lv_demo_widgets.h"
+// #include "lv_examples/src/lv_demo_widgets/lv_demo_widgets.h"
+#include "screens.h"
 // MPU6050 IMU
 #include "mpu60x0.h"
 // AWS-IOT
@@ -30,6 +31,7 @@
 #include "aws_iot_log.h"
 #include "aws_iot_version.h"
 #include "aws_iot_mqtt_client_interface.h"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINES
@@ -207,7 +209,8 @@ static void guiTask(void *pvParameter)
 
 static void create_demo_application(void)
 {
-    lv_demo_widgets();
+    sensie_gui();
+    // lv_demo_widgets();
 }
 
 static void lv_tick_task(void *arg)
@@ -216,13 +219,13 @@ static void lv_tick_task(void *arg)
     lv_tick_inc(LV_TICK_PERIOD_MS);
 }
 
-//    ###    ##      ##  ######          ####  #######  ########
-//   ## ##   ##  ##  ## ##    ##          ##  ##     ##    ##
-//  ##   ##  ##  ##  ## ##                ##  ##     ##    ##
-// ##     ## ##  ##  ##  ######  #######  ##  ##     ##    ##
-// ######### ##  ##  ##       ##          ##  ##     ##    ##
-// ##     ## ##  ##  ## ##    ##          ##  ##     ##    ##
-// ##     ##  ###  ###   ######          ####  #######     ##
+//    ###     ##      ##   ######            ####   #######   ########
+//   ## ##    ##  ##  ##  ##    ##            ##   ##     ##     ##
+//  ##   ##   ##  ##  ##  ##                  ##   ##     ##     ##
+// ##     ##  ##  ##  ##   ######   #######   ##   ##     ##     ##
+// #########  ##  ##  ##        ##            ##   ##     ##     ##
+// ##     ##  ##  ##  ##  ##    ##            ##   ##     ##     ##
+// ##     ##   ###  ###    ######            ####   #######      ##
 
 static esp_err_t event_handler(void *ctx, system_event_t *event)
 {
@@ -415,7 +418,7 @@ void aws_iot_task(void *param)
 
 static void initialise_wifi(void)
 {
-    tcpip_adapter_init();
+    esp_netif_init();
     wifi_event_group = xEventGroupCreate();
     ESP_ERROR_CHECK(esp_event_loop_init(event_handler, NULL));
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
@@ -444,20 +447,20 @@ static void initialise_wifi(void)
 
 void app_main(void)
 {
-    // AWS-IOT
-    esp_err_t err = nvs_flash_init();
-    if(err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND)
-    {
-        ESP_ERROR_CHECK(nvs_flash_erase());
-        err = nvs_flash_init();
-    }
-    ESP_ERROR_CHECK(err);
-    initialise_wifi();
-    xTaskCreatePinnedToCore(&aws_iot_task, "aws_iot_task", 9216, NULL, 5, NULL, 1);
+    // // AWS-IOT
+    // esp_err_t err = nvs_flash_init();
+    // if(err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND)
+    // {
+    //     ESP_ERROR_CHECK(nvs_flash_erase());
+    //     err = nvs_flash_init();
+    // }
+    // ESP_ERROR_CHECK(err);
+    // initialise_wifi();
+    // xTaskCreatePinnedToCore(&aws_iot_task, "aws_iot_task", 9216, NULL, 5, NULL, 1);
 
-    // IMU
-    i2c_slave_init();
-    xTaskCreate(i2c_test_task, "i2c_test_task_1", 1024 * 2, (void *)1, 10, NULL);
+    // // IMU
+    // i2c_slave_init();
+    // xTaskCreate(i2c_test_task, "i2c_test_task_1", 1024 * 2, (void *)1, 10, NULL);
 
     // LVGL
     xTaskCreatePinnedToCore(guiTask, "gui", 4096 * 2, NULL, 0, NULL, 1);
