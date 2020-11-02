@@ -11,6 +11,7 @@ set(EXTRA_COMPONENT_DIRS
         components/lv_port_esp32/components/lvgl_esp32_drivers/lvgl_tft
         components/lv_port_esp32/components/lvgl_esp32_drivers/lvgl_touch
         components/lv_port_esp32/components/lv_examples
+        components/esp-aws-iot
 )
 
 project(Sensie)
