@@ -9,16 +9,16 @@ Send Accelero data to AWS
 --------------------------------------------------------------------------------
 TO DO 
 --------------------------------------------------------------------------------
-Create connect to WiFi screen
-Create play with Accelero screen
+Connect to wifi with GUI
 Create Connect to AWS screen
 Create send data to AWS screen
 Finish the accelero lib
 Store an image in Flash memory
 Display an image
-Draw a dot on a canva 
 receive a notif from AWS
 Display a notification
+Put everything to sleep 
+Use push button to wake up the system
 
 
 --------------------------------------------------------------------------------
@@ -31,4 +31,8 @@ DONE
 
 Date        Tag     Description
 --------------------------------------------------------------------------------
+08/11/2020  GUI     Create a playground with Accelero screen
+05/11/2020  ARCHI   Port on windows (codeblocks) for easier development of GUI
+04/11/2020  GUI     Draw a dot on a canva 
+03/11/2020  GUI     Create connect to WiFi screen
 02/11/2020  ARCHI   Initialized project with components (IMU, LVGL, AWS, WiFi)

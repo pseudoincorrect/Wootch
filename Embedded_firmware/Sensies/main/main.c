@@ -138,8 +138,11 @@ static void i2c_test_task(void *arg)
         ESP_ERROR_CHECK(err);
         err = mpu_rotation(&mpu, &gyro_raw);       // fetch raw data from the registers
         ESP_ERROR_CHECK(err);
-        printf("accel: %d\t %d\t %d\n", accel_raw.x, accel_raw.y, accel_raw.z);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        // printf("accel: %d\t %d\t %d\n", accel_raw.x, accel_raw.y, accel_raw.z);
+        screen_accelero.g_x = accel_raw.x;
+        screen_accelero.g_y = accel_raw.y;
+
+        vTaskDelay(50 / portTICK_PERIOD_MS);
     }
 }
 
@@ -459,8 +462,8 @@ void app_main(void)
     // xTaskCreatePinnedToCore(&aws_iot_task, "aws_iot_task", 9216, NULL, 5, NULL, 1);
 
     // // IMU
-    // i2c_slave_init();
-    // xTaskCreate(i2c_test_task, "i2c_test_task_1", 1024 * 2, (void *)1, 10, NULL);
+    i2c_slave_init();
+    xTaskCreate(i2c_test_task, "i2c_test_task_1", 1024 * 2, (void *)1, 10, NULL);
 
     // LVGL
     xTaskCreatePinnedToCore(guiTask, "gui", 4096 * 2, NULL, 0, NULL, 1);

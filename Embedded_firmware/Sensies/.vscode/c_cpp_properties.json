@@ -4,6 +4,7 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
+                "${workspaceFolder}/build/config",
                 "C:/Users/maxim/Programming/SDKs/Espressif/terminal/esp-idf/components/**"
             ],
             "browse": {
