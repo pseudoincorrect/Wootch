@@ -50,7 +50,6 @@ static void i2c_slave_init(void);
 static void i2c_test_task(void *arg);
 // LVGL
 static void guiTask(void *pvParameter);
-static void create_demo_application(void);
 static void lv_tick_task(void *arg);
 // AWS-IOT
 static esp_err_t event_handler(void *ctx, system_event_t *event);
@@ -59,7 +58,10 @@ void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName,
                                     IoT_Publish_Message_Params *params, void *pData);
 void disconnectCallbackHandler(AWS_IoT_Client *pClient, void *data);
 void aws_iot_task(void *param);
+// Wifi
 static void initialise_wifi(void);
+static void disconnect_wifi(void);
+static void connect_wifi(char* ssid, char* passw);
 
 ////////////////////////////////////////////////////////////////////////////////
 //  STATIC AND GLOBAL VARIABLES
@@ -151,7 +153,6 @@ static void i2c_test_task(void *arg)
 ////////////////////////////////////////////////////////////////////////////////
 static void guiTask(void *pvParameter)
 {
-
     (void) pvParameter;
     xGuiSemaphore = xSemaphoreCreateMutex();
     lv_init();
@@ -186,8 +187,11 @@ static void guiTask(void *pvParameter)
     ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer,
                     LV_TICK_PERIOD_MS * 1000));
 
-    /* Create the demo application */
-    create_demo_application();
+    // initialize GUI callbacks
+    gui_init_cb(connect_wifi, disconnect_wifi);
+
+    // start the GUI
+    start_gui();
 
     while (1)
     {
@@ -203,13 +207,6 @@ static void guiTask(void *pvParameter)
     }
     /* A task should NEVER return */
     vTaskDelete(NULL);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-static void create_demo_application(void)
-{
-    sensie_gui();
-    // lv_demo_widgets();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -441,19 +438,28 @@ static void initialise_wifi(void)
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
     ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
-    wifi_config_t wifi_config =
-    {
-        .sta = {
-            .ssid = CONFIG_WIFI_SSID,
-            .password = CONFIG_WIFI_PASSWORD,
-        },
-    };
+}
+
+////////////////////////////////////////////////////////////////////////////////
+static void connect_wifi(char* ssid, char* password)
+{
+    wifi_config_t wifi_config = {0};
+    strncpy((char*) wifi_config.sta.ssid, ssid, 32);
+    strncpy((char*) wifi_config.sta.password, password, 32);
+    ESP_LOGI(TAG, "SSID %s", wifi_config.sta.ssid);
+    ESP_LOGI(TAG, "PASS %s", wifi_config.sta.password);
+
     ESP_LOGI(TAG, "Setting WiFi configuration SSID %s...", wifi_config.sta.ssid);
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start());
 }
 
+////////////////////////////////////////////////////////////////////////////////
+static void disconnect_wifi(void)
+{
+    ESP_ERROR_CHECK(esp_wifi_stop());
+}
 
 // ##     ##    ###    #### ##    ##
 // ###   ###   ## ##    ##  ###   ##
@@ -479,12 +485,12 @@ void app_main(void)
     initialise_wifi();
 
     // AWS IOT
-    xTaskCreatePinnedToCore(&aws_iot_task, "aws_iot_task", 9216, NULL, 5, NULL, 1);
+    // xTaskCreatePinnedToCore(&aws_iot_task, "aws_iot_task", 9216, NULL, 5, NULL, 1);
 
     // IMU
-    // i2c_slave_init();
-    // xTaskCreate(i2c_test_task, "i2c_test_task_1", 1024 * 2, (void *)1, 10, NULL);
+    i2c_slave_init();
+    xTaskCreate(i2c_test_task, "i2c_test_task_1", 1024 * 2, (void *)1, 10, NULL);
 
     // LVGL
-    // xTaskCreatePinnedToCore(guiTask, "gui", 4096 * 2, NULL, 0, NULL, 1);
+    xTaskCreatePinnedToCore(guiTask, "gui", 4096 * 2, NULL, 0, NULL, 1);
 }

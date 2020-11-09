@@ -9,7 +9,6 @@ Send Accelero data to AWS
 --------------------------------------------------------------------------------
 TO DO 
 --------------------------------------------------------------------------------
-Connect to wifi with GUI
 Create Connect to AWS screen
 Create send data to AWS screen
 Finish the accelero lib
@@ -31,6 +30,7 @@ DONE
 
 Date        Tag     Description
 --------------------------------------------------------------------------------
+09/11/2020  GUI     Connect to wifi with GUI
 08/11/2020  GUI     Create a playground with Accelero screen
 05/11/2020  ARCHI   Port on windows (codeblocks) for easier development of GUI
 04/11/2020  GUI     Draw a dot on a canva 

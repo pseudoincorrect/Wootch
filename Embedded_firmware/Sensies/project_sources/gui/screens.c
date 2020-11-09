@@ -7,6 +7,8 @@
 #define CANVAS_HEIGHT 100
 
 ////////////////////////////////////////////////////////////////////////////////
+
+static void update_accelero(lv_task_t * task);
 static void wifi_connect_create(lv_obj_t* parent);
 static void create_accelero(lv_obj_t* parent);
 static void draw_square(lv_obj_t* canvas, square_data_t* square);
@@ -17,26 +19,29 @@ static void redraw_square(lv_obj_t* canvas, square_data_t* square_erase,
 static void refresh_accel_canvas(accelero_data_t* acc);
 static void ta_event_cb(lv_obj_t * ta, lv_event_t e);
 static void kb_event_cb(lv_obj_t * _kb, lv_event_t e);
-
-void update_accelero(lv_task_t * task);
+static void bt_connect_cb(lv_obj_t * bt, lv_event_t event);
+static void bt_disconnect_cb(lv_obj_t * bt, lv_event_t event);
 
 ////////////////////////////////////////////////////////////////////////////////
 static const char *TAG = "SCREENS";
-
+static screen_cb_t screen_cb;
 static lv_obj_t * tv;
 static lv_obj_t * t1;
 static lv_obj_t * t2;
 static lv_style_t style_box;
 static lv_obj_t * kb;
 static lv_obj_t *cv_accel;
-static square_data_t sqr_accel, sqr_accel_old;
-lv_task_t * update_accelero_task;
+static square_data_t sqr_accel;
+static square_data_t sqr_accel_old;
+static lv_task_t * update_accelero_task;
 
-void update_accelero(lv_task_t * task)
+////////////////////////////////////////////////////////////////////////////////
+static void update_accelero(lv_task_t * task)
 {
     refresh_accel_canvas(&screen_accelero);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 static void refresh_accel_canvas(accelero_data_t* acc)
 {
     // sqr_accel.x = 10 + rand() % 180;
@@ -54,7 +59,15 @@ static void refresh_accel_canvas(accelero_data_t* acc)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void sensie_gui(void)
+void gui_init_cb(gui_wifi_connect_cb_t wifi_connect_cb,
+                 gui_wifi_disconnect_cb_t wifi_disconnect_cb)
+{
+    screen_cb.wifi_connect = wifi_connect_cb;
+    screen_cb.wifi_disconnect = wifi_disconnect_cb;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void start_gui(void)
 {
     tv = lv_tabview_create(lv_scr_act(), NULL);
     t1 = lv_tabview_add_tab(tv, "IMU");
@@ -73,6 +86,7 @@ void sensie_gui(void)
 
     create_accelero(t1);
     wifi_connect_create(t2);
+    lv_tabview_set_tab_act(tv, 1, LV_ANIM_ON);
 
     accelero_data_t screen_accelero = {0};
     update_accelero_task = lv_task_create(update_accelero, 100,
@@ -131,6 +145,7 @@ static void wifi_connect_create(lv_obj_t* parent)
     lv_cont_set_fit2(cont_conn, LV_FIT_TIGHT, LV_FIT_TIGHT);
     // Connect Button
     lv_obj_t * btn_conn = lv_btn_create(cont_conn, NULL);
+    lv_obj_set_event_cb(btn_conn, bt_connect_cb);
     lv_btn_set_fit2(btn_conn, LV_FIT_NONE, LV_FIT_TIGHT);
     lv_obj_set_width(btn_conn, 100);
     lv_obj_t * lb_conn = lv_label_create(btn_conn, NULL);
@@ -138,11 +153,13 @@ static void wifi_connect_create(lv_obj_t* parent)
     lv_btn_toggle(btn_conn);
     // Disconnect Button
     lv_obj_t * btn_discn = lv_btn_create(cont_conn, NULL);
+    lv_obj_set_event_cb(btn_discn, bt_disconnect_cb);
     lv_btn_set_fit2(btn_discn, LV_FIT_NONE, LV_FIT_TIGHT);
     lv_obj_set_width(btn_discn, 100);
     lv_obj_t * lb_discn = lv_label_create(btn_discn, NULL);
     lv_label_set_text(lb_discn, "Disonnect");
-    lv_btn_set_state(btn_discn, LV_BTN_STATE_DISABLED);
+    // lv_btn_set_state(btn_discn, LV_BTN_STATE_DISABLED);
+    lv_btn_set_state(btn_discn, LV_BTN_STATE_RELEASED);
     lv_btn_toggle(btn_discn);
 }
 
@@ -175,12 +192,14 @@ static void create_accelero(lv_obj_t* parent)
     // draw_square(cv_accel, &sqr_accel);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 static void copy_square(square_data_t* square_dest,
                         square_data_t* square_to_copy)
 {
     memcpy(square_dest, square_to_copy, sizeof(square_data_t));
 }
 
+////////////////////////////////////////////////////////////////////////////////
 static void redraw_square(lv_obj_t* canvas, square_data_t* square_erase,
                           square_data_t* square_draw, lv_color_t color_erase)
 {
@@ -190,6 +209,7 @@ static void redraw_square(lv_obj_t* canvas, square_data_t* square_erase,
     copy_square(square_erase, square_draw);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 static void draw_square(lv_obj_t* canvas, square_data_t* square)
 {
     int x = square->x;
@@ -202,10 +222,38 @@ static void draw_square(lv_obj_t* canvas, square_data_t* square)
             lv_canvas_set_px(canvas, i, j, color);
 }
 
+//  ######     ###    ##       ##       ########     ###     ######  ##    ##
+// ##    ##   ## ##   ##       ##       ##     ##   ## ##   ##    ## ##   ##
+// ##        ##   ##  ##       ##       ##     ##  ##   ##  ##       ##  ##
+// ##       ##     ## ##       ##       ########  ##     ## ##       #####
+// ##       ######### ##       ##       ##     ## ######### ##       ##  ##
+// ##    ## ##     ## ##       ##       ##     ## ##     ## ##    ## ##   ##
+//  ######  ##     ## ######## ######## ########  ##     ##  ######  ##    ##
+
 ////////////////////////////////////////////////////////////////////////////////
-static void ta_event_cb(lv_obj_t * ta, lv_event_t e)
+static void bt_connect_cb(lv_obj_t * bt, lv_event_t event)
 {
-    if(e == LV_EVENT_RELEASED)
+    if(event == LV_EVENT_CLICKED)
+    {
+        printf("bt_connect_cb\n");
+        screen_cb.wifi_connect("Maxi", "cornimont");
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+static void bt_disconnect_cb(lv_obj_t * bt, lv_event_t event)
+{
+    if(event == LV_EVENT_CLICKED)
+    {
+        printf("bt_disconnect_cb\n");
+        screen_cb.wifi_disconnect();
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+static void ta_event_cb(lv_obj_t * ta, lv_event_t event)
+{
+    if(event == LV_EVENT_RELEASED)
     {
         if(kb == NULL)
         {
@@ -219,18 +267,18 @@ static void ta_event_cb(lv_obj_t * ta, lv_event_t e)
         lv_page_focus(t1, lv_textarea_get_label(ta), LV_ANIM_ON);
         lv_keyboard_set_textarea(kb, ta);
     }
-    else if(e == LV_EVENT_DEFOCUSED)
+    else if(event == LV_EVENT_DEFOCUSED)
     {
         lv_textarea_set_cursor_hidden(ta, true);
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void kb_event_cb(lv_obj_t * kb, lv_event_t e)
+static void kb_event_cb(lv_obj_t * kb, lv_event_t event)
 {
-    lv_keyboard_def_event_cb(kb, e);
+    lv_keyboard_def_event_cb(kb, event);
 
-    if(e == LV_EVENT_CANCEL)
+    if(event == LV_EVENT_CANCEL)
     {
         if(kb)
         {
