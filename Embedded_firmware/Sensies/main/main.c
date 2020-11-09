@@ -23,7 +23,7 @@
 #include "screens.h"
 // MPU6050 IMU
 #include "mpu60x0.h"
-// AWS-IOT
+// AWS-IOT (Amazon Web Services - Internet of Things)
 #include "aws_iot_config.h"
 #include "aws_iot_log.h"
 #include "aws_iot_version.h"
@@ -37,28 +37,33 @@
 #define _I2C_NUMBER(num) I2C_NUM_##num
 #define I2C_NUMBER(num) _I2C_NUMBER(num)
 
-// Wifi and AWS-IOT
+// Wi-Fi and AWS-IOT
 // #define CONFIG_WIFI_SSID         "ssid"
 // #define CONFIG_WIFI_PASSWORD     "passw"
 // #define AWS_THING_CLIENT_ID      "client_id"
 
 ////////////////////////////////////////////////////////////////////////////////
 //  STATIC PROTOTYPES
-//
-// IMU
+
+// IMU (Inertial Management Unit)
 static void i2c_slave_init(void);
 static void i2c_test_task(void *arg);
-// LVGL
-static void guiTask(void *pvParameter);
+
+// LVGL (Light and Versatile Graphical Library)
+static void gui_task(void *pvParameter);
 static void lv_tick_task(void *arg);
-// AWS-IOT
+
+// AWS-IOT (Amazon Web Services - Internet of Things)
 static esp_err_t event_handler(void *ctx, system_event_t *event);
-void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName,
+void iot_subscribe_callback_handler(AWS_IoT_Client *pClient,
+                                    char *topicName,
                                     uint16_t topicNameLen,
-                                    IoT_Publish_Message_Params *params, void *pData);
-void disconnectCallbackHandler(AWS_IoT_Client *pClient, void *data);
+                                    IoT_Publish_Message_Params *params,
+                                    void *pData);
+void disconnect_callback_handler(AWS_IoT_Client *pClient, void *data);
 void aws_iot_task(void *param);
-// Wifi
+
+// Wi-Fi
 static void initialise_wifi(void);
 static void disconnect_wifi(void);
 static void connect_wifi(char* ssid, char* passw);
@@ -68,13 +73,15 @@ static void connect_wifi(char* ssid, char* passw);
 //
 // LOG module
 static const char *TAG = "MAIN";
-// IMU
-mpu_handle_t mpu;
-// LVGL
+
+// IMU (Inertial Management Unit)
+mpu_handle_t mpu; // "mpu" is the model reference
+
+// LVGL (Light and Versatile Graphical Library)
 SemaphoreHandle_t xGuiSemaphore;
-// AWS-IOT
+
+// AWS-IOT (Amazon Web Services - Internet of Things)
 static EventGroupHandle_t wifi_event_group;
-const int CONNECTED_BIT = BIT0;
 extern const uint8_t aws_root_ca_pem_start[]
 asm("_binary_aws_root_ca_pem_start");
 extern const uint8_t aws_root_ca_pem_end[] asm("_binary_aws_root_ca_pem_end");
@@ -87,6 +94,9 @@ asm("_binary_private_pem_key_start");
 extern const uint8_t private_pem_key_end[] asm("_binary_private_pem_key_end");
 char HostAddress[255] = AWS_IOT_MQTT_HOST;
 uint32_t port = AWS_IOT_MQTT_PORT;
+
+// Wi-Fi
+const int CONNECTED_BIT = BIT0;
 
 // #### ##     ## ##     ##
 //  ##  ###   ### ##     ##
@@ -130,13 +140,13 @@ static void i2c_test_task(void *arg)
     raw_axes_t gyro_raw;    // x, y, z axes as int16
     while (true)
     {
-        err = mpu_acceleration(&mpu, &accel_raw);  // fetch raw data from the registers
+        err = mpu_acceleration(&mpu, &accel_raw);  // fetch raw data
         ESP_ERROR_CHECK(err);
-        err = mpu_rotation(&mpu, &gyro_raw);       // fetch raw data from the registers
+        err = mpu_rotation(&mpu, &gyro_raw);       // fetch raw data
         ESP_ERROR_CHECK(err);
         // printf("accel: %d\t %d\t %d\n", accel_raw.x, accel_raw.y, accel_raw.z);
-        screen_accelero.g_x = accel_raw.x;
-        screen_accelero.g_y = accel_raw.y;
+        screen_imu.g_x = accel_raw.x;
+        screen_imu.g_y = accel_raw.y;
 
         vTaskDelay(50 / portTICK_PERIOD_MS);
     }
@@ -151,7 +161,7 @@ static void i2c_test_task(void *arg)
 // ########    ###     ######   ########
 
 ////////////////////////////////////////////////////////////////////////////////
-static void guiTask(void *pvParameter)
+static void gui_task(void *pvParameter)
 {
     (void) pvParameter;
     xGuiSemaphore = xSemaphoreCreateMutex();
@@ -235,7 +245,7 @@ void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void disconnectCallbackHandler(AWS_IoT_Client *pClient, void *data)
+void disconnect_callback_handler(AWS_IoT_Client *pClient, void *data)
 {
     ESP_LOGW(TAG, "MQTT Disconnect");
     IoT_Error_t rc = FAILURE;
@@ -274,28 +284,29 @@ void aws_iot_task(void *param)
     IoT_Error_t rc = FAILURE;
 
     AWS_IoT_Client client;
-    IoT_Client_Init_Params mqttInitParams = iotClientInitParamsDefault;
-    IoT_Client_Connect_Params connectParams = iotClientConnectParamsDefault;
+    IoT_Client_Init_Params mqtt_init_params = iotClientInitParamsDefault;
+    IoT_Client_Connect_Params connect_params = iotClientConnectParamsDefault;
 
-    IoT_Publish_Message_Params paramsQOS0;
-    IoT_Publish_Message_Params paramsQOS1;
+    IoT_Publish_Message_Params params_qos0;
+    IoT_Publish_Message_Params params_qos1;
 
     ESP_LOGI(TAG, "AWS IoT SDK Version %d.%d.%d-%s", VERSION_MAJOR, VERSION_MINOR,
              VERSION_PATCH, VERSION_TAG);
 
-    mqttInitParams.enableAutoReconnect = false; // We enable this later below
-    mqttInitParams.pHostURL = HostAddress;
-    mqttInitParams.port = port;
-    mqttInitParams.pRootCALocation = (const char *)aws_root_ca_pem_start;
-    mqttInitParams.pDeviceCertLocation = (const char *)certificate_pem_crt_start;
-    mqttInitParams.pDevicePrivateKeyLocation = (const char *)private_pem_key_start;
-    mqttInitParams.mqttCommandTimeout_ms = 20000;
-    mqttInitParams.tlsHandshakeTimeout_ms = 5000;
-    mqttInitParams.isSSLHostnameVerify = true;
-    mqttInitParams.disconnectHandler = disconnectCallbackHandler;
-    mqttInitParams.disconnectHandlerData = NULL;
+    mqtt_init_params.enableAutoReconnect = false; // We enable this later below
+    mqtt_init_params.pHostURL = HostAddress;
+    mqtt_init_params.port = port;
+    mqtt_init_params.pRootCALocation = (const char *)aws_root_ca_pem_start;
+    mqtt_init_params.pDeviceCertLocation = (const char *)certificate_pem_crt_start;
+    mqtt_init_params.pDevicePrivateKeyLocation = (const char *)
+            private_pem_key_start;
+    mqtt_init_params.mqttCommandTimeout_ms = 20000;
+    mqtt_init_params.tlsHandshakeTimeout_ms = 5000;
+    mqtt_init_params.isSSLHostnameVerify = true;
+    mqtt_init_params.disconnectHandler = disconnect_callback_handler;
+    mqtt_init_params.disconnectHandlerData = NULL;
 
-    rc = aws_iot_mqtt_init(&client, &mqttInitParams);
+    rc = aws_iot_mqtt_init(&client, &mqtt_init_params);
     if(SUCCESS != rc)
     {
         ESP_LOGE(TAG, "aws_iot_mqtt_init returned error : %d ", rc);
@@ -310,29 +321,30 @@ void aws_iot_task(void *param)
 
     ESP_LOGI(TAG, "Connected to internet !");
 
-    connectParams.keepAliveIntervalInSec = 10;
-    connectParams.isCleanSession = true;
-    connectParams.MQTTVersion = MQTT_3_1_1;
+    connect_params.keepAliveIntervalInSec = 10;
+    connect_params.isCleanSession = true;
+    connect_params.MQTTVersion = MQTT_3_1_1;
     /* Client ID is set in the menuconfig of the example */
-    connectParams.pClientID = CONFIG_AWS_THING_CLIENT_ID;
-    connectParams.clientIDLen = (uint16_t) strlen(CONFIG_AWS_THING_CLIENT_ID);
-    connectParams.isWillMsgPresent = false;
+    connect_params.pClientID = CONFIG_AWS_THING_CLIENT_ID;
+    connect_params.clientIDLen = (uint16_t) strlen(CONFIG_AWS_THING_CLIENT_ID);
+    connect_params.isWillMsgPresent = false;
 
     ESP_LOGI(TAG, "Connecting to AWS...");
     do
     {
-        rc = aws_iot_mqtt_connect(&client, &connectParams);
+        rc = aws_iot_mqtt_connect(&client, &connect_params);
         if(SUCCESS != rc)
         {
-            ESP_LOGE(TAG, "Error(%d) connecting to %s:%d", rc, mqttInitParams.pHostURL,
-                     mqttInitParams.port);
+            ESP_LOGE(TAG, "Error(%d) connecting to %s:%d", rc, mqtt_init_params.pHostURL,
+                     mqtt_init_params.port);
             vTaskDelay(1000 / portTICK_RATE_MS);
         }
     }
     while(SUCCESS != rc);
 
     /*
-     * Enable Auto Reconnect functionality. Minimum and Maximum time of Exponential backoff are set in aws_iot_config.h
+     * Enable Auto Reconnect functionality. Minimum and Maximum time of
+     * Exponential backoff are set in aws_iot_config.h
      *  #AWS_IOT_MQTT_MIN_RECONNECT_WAIT_INTERVAL
      *  #AWS_IOT_MQTT_MAX_RECONNECT_WAIT_INTERVAL
      */
@@ -357,13 +369,13 @@ void aws_iot_task(void *param)
 
     sprintf(cPayload, "%s : %d ", "hello from SDK", i);
 
-    paramsQOS0.qos = QOS0;
-    paramsQOS0.payload = (void *) cPayload;
-    paramsQOS0.isRetained = 0;
+    params_qos0.qos = QOS0;
+    params_qos0.payload = (void *) cPayload;
+    params_qos0.isRetained = 0;
 
-    paramsQOS1.qos = QOS1;
-    paramsQOS1.payload = (void *) cPayload;
-    paramsQOS1.isRetained = 0;
+    params_qos1.qos = QOS1;
+    params_qos1.payload = (void *) cPayload;
+    params_qos1.isRetained = 0;
 
     while((NETWORK_ATTEMPTING_RECONNECT == rc || NETWORK_RECONNECTED == rc
             || SUCCESS == rc))
@@ -381,12 +393,12 @@ void aws_iot_task(void *param)
                  pcTaskGetTaskName(NULL), uxTaskGetStackHighWaterMark(NULL));
         vTaskDelay(1000 / portTICK_RATE_MS);
         sprintf(cPayload, "%s : %d ", "hello from ESP32 (QOS0)", i++);
-        paramsQOS0.payloadLen = strlen(cPayload);
-        rc = aws_iot_mqtt_publish(&client, TOPIC, TOPIC_LEN, &paramsQOS0);
+        params_qos0.payloadLen = strlen(cPayload);
+        rc = aws_iot_mqtt_publish(&client, TOPIC, TOPIC_LEN, &params_qos0);
 
         sprintf(cPayload, "%s : %d ", "hello from ESP32 (QOS1)", i++);
-        paramsQOS1.payloadLen = strlen(cPayload);
-        rc = aws_iot_mqtt_publish(&client, TOPIC, TOPIC_LEN, &paramsQOS1);
+        params_qos1.payloadLen = strlen(cPayload);
+        rc = aws_iot_mqtt_publish(&client, TOPIC, TOPIC_LEN, &params_qos1);
         if(rc == MQTT_REQUEST_TIMEOUT_ERROR)
         {
             ESP_LOGW(TAG, "QOS1 publish ack not received.");
@@ -481,7 +493,7 @@ void app_main(void)
     }
     ESP_ERROR_CHECK(err);
 
-    // WiFi
+    // Wi-Fi
     initialise_wifi();
 
     // AWS IOT
@@ -491,6 +503,6 @@ void app_main(void)
     i2c_slave_init();
     xTaskCreate(i2c_test_task, "i2c_test_task_1", 1024 * 2, (void *)1, 10, NULL);
 
-    // LVGL
-    xTaskCreatePinnedToCore(guiTask, "gui", 4096 * 2, NULL, 0, NULL, 1);
+    // LVGL (Light and Versatile Graphical Library)
+    xTaskCreatePinnedToCore(gui_task, "gui", 4096 * 2, NULL, 0, NULL, 1);
 }

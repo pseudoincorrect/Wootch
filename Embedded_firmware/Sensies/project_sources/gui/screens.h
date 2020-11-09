@@ -20,7 +20,7 @@ typedef struct square_data_struct
     lv_color_t color;
 } square_data_t;
 
-typedef struct accelero_data_struct
+typedef struct imu_data_struct
 {
     int g_x;
     int g_y;
@@ -28,9 +28,9 @@ typedef struct accelero_data_struct
     int r_x;
     int r_y;
     int r_z;
-} accelero_data_t;
+} imu_data_t;
 
-accelero_data_t screen_accelero;
+imu_data_t screen_imu;
 
 void gui_init_cb(gui_wifi_connect_cb_t wifi_connect_cb,
                  gui_wifi_disconnect_cb_t wifi_disconnect_cb);

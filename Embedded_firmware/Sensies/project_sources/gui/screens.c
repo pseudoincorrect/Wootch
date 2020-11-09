@@ -7,56 +7,59 @@
 #define CANVAS_HEIGHT 100
 
 ////////////////////////////////////////////////////////////////////////////////
+// Function prototypes
 
-static void update_accelero(lv_task_t * task);
-static void wifi_connect_create(lv_obj_t* parent);
-static void create_accelero(lv_obj_t* parent);
+// IMU (Inertial Management Unit)
+static void imu_update(lv_task_t * task);
+static void imu_create(lv_obj_t* parent);
 static void draw_square(lv_obj_t* canvas, square_data_t* square);
 static void copy_square(square_data_t* square_dest,
                         square_data_t* square_to_copy);
 static void redraw_square(lv_obj_t* canvas, square_data_t* square_erase,
                           square_data_t* square_draw, lv_color_t color_erase);
-static void refresh_accel_canvas(accelero_data_t* acc);
+static void refresh_imu_canvas(imu_data_t* acc);
+
+// Wifi
+static void wifi_connect_create(lv_obj_t* parent);
 static void ta_event_cb(lv_obj_t * ta, lv_event_t e);
 static void kb_event_cb(lv_obj_t * _kb, lv_event_t e);
 static void bt_connect_cb(lv_obj_t * bt, lv_event_t event);
 static void bt_disconnect_cb(lv_obj_t * bt, lv_event_t event);
 
+// AWS-IOT (Amazon Web Services - Internet of Things)
+static void aws_iot_create(lv_obj_t* parent);
+
 ////////////////////////////////////////////////////////////////////////////////
+// Static and global variables
+
+// Top level Gui
 static const char *TAG = "SCREENS";
 static screen_cb_t screen_cb;
 static lv_obj_t * tv;
-static lv_obj_t * t1;
+
+// IMU (Inertial Management Unit)
 static lv_obj_t * t2;
+static lv_obj_t *cv_imu;
+static square_data_t sqr_imu;
+static square_data_t sqr_imu_old;
+static lv_task_t * imu_update_task;
+
+// Wi-Fi
+static lv_obj_t * t1;
 static lv_style_t style_box;
 static lv_obj_t * kb;
-static lv_obj_t *cv_accel;
-static square_data_t sqr_accel;
-static square_data_t sqr_accel_old;
-static lv_task_t * update_accelero_task;
 
-////////////////////////////////////////////////////////////////////////////////
-static void update_accelero(lv_task_t * task)
-{
-    refresh_accel_canvas(&screen_accelero);
-}
+// AWS-IOT (Amazon Web Services - Internet of Things)
+static lv_obj_t * t3;
 
-////////////////////////////////////////////////////////////////////////////////
-static void refresh_accel_canvas(accelero_data_t* acc)
-{
-    // sqr_accel.x = 10 + rand() % 180;
-    // sqr_accel.y = 10 + rand() % 180;
-    sqr_accel.x = - (screen_accelero.g_x * 100 / 9000 + 100);
-    sqr_accel.y = screen_accelero.g_y * 100 / 9000 + 100;
-    // put some limits
-    sqr_accel.x = sqr_accel.x > 190 ? 190 : sqr_accel.x;
-    sqr_accel.x = sqr_accel.x < -190 ? -190 : sqr_accel.x;
-    sqr_accel.y = sqr_accel.y > 190 ? 190 : sqr_accel.y;
-    sqr_accel.y = sqr_accel.y < -190 ? -190 : sqr_accel.y;
 
-    sqr_accel.color = LV_COLOR_WHITE;
-    redraw_square(cv_accel, &sqr_accel_old, &sqr_accel, LV_COLOR_BLACK);
-}
+// #### ##    ## #### ########
+//  ##  ###   ##  ##     ##
+//  ##  ####  ##  ##     ##
+//  ##  ## ## ##  ##     ##
+//  ##  ##  ####  ##     ##
+//  ##  ##   ###  ##     ##
+// #### ##    ## ####    ##
 
 ////////////////////////////////////////////////////////////////////////////////
 void gui_init_cb(gui_wifi_connect_cb_t wifi_connect_cb,
@@ -71,7 +74,8 @@ void start_gui(void)
 {
     tv = lv_tabview_create(lv_scr_act(), NULL);
     t1 = lv_tabview_add_tab(tv, "IMU");
-    t2 = lv_tabview_add_tab(tv, "WiFi");
+    t2 = lv_tabview_add_tab(tv, "WIFI");
+    t3 = lv_tabview_add_tab(tv, "AWS-IOT");
 
     LV_THEME_DEFAULT_INIT(lv_theme_get_color_primary(),
                           lv_theme_get_color_secondary(),
@@ -81,17 +85,25 @@ void start_gui(void)
 
     lv_style_init(&style_box);
     lv_style_set_value_align(&style_box, LV_STATE_DEFAULT, LV_ALIGN_OUT_TOP_LEFT);
-    // lv_style_set_value_ofs_y(&style_box, LV_STATE_DEFAULT, - LV_DPX(10));
     lv_style_set_margin_top(&style_box, LV_STATE_DEFAULT, LV_DPX(5));
 
-    create_accelero(t1);
+    imu_create(t1);
     wifi_connect_create(t2);
-    lv_tabview_set_tab_act(tv, 1, LV_ANIM_ON);
+    aws_iot_create(t3);
+    lv_tabview_set_tab_act(tv, 2, LV_ANIM_ON);
 
-    accelero_data_t screen_accelero = {0};
-    update_accelero_task = lv_task_create(update_accelero, 100,
-                                          LV_TASK_PRIO_MID, NULL);
+    imu_data_t screen_imu = {0};
+    imu_update_task = lv_task_create(imu_update, 100,
+                                     LV_TASK_PRIO_MID, NULL);
 }
+
+// ##      ## #### ######## ####
+// ##  ##  ##  ##  ##        ##
+// ##  ##  ##  ##  ##        ##
+// ##  ##  ##  ##  ######    ##
+// ##  ##  ##  ##  ##        ##
+// ##  ##  ##  ##  ##        ##
+//  ###  ###  #### ##       ####
 
 ////////////////////////////////////////////////////////////////////////////////
 static void wifi_connect_create(lv_obj_t* parent)
@@ -163,8 +175,16 @@ static void wifi_connect_create(lv_obj_t* parent)
     lv_btn_toggle(btn_discn);
 }
 
+// #### ##     ## ##     ##
+//  ##  ###   ### ##     ##
+//  ##  #### #### ##     ##
+//  ##  ## ### ## ##     ##
+//  ##  ##     ## ##     ##
+//  ##  ##     ## ##     ##
+// #### ##     ##  #######
+
 ////////////////////////////////////////////////////////////////////////////////
-static void create_accelero(lv_obj_t* parent)
+static void imu_create(lv_obj_t* parent)
 {
     lv_page_set_scrl_layout(parent, LV_LAYOUT_CENTER);
 
@@ -179,17 +199,40 @@ static void create_accelero(lv_obj_t* parent)
     // lv_theme_t *th = lv_theme_mono_init(0, NULL);
     // lv_theme_set_current(th);
     static lv_color_t cbuf[LV_CANVAS_BUF_SIZE_INDEXED_1BIT(200, 200)];
-    cv_accel = lv_canvas_create(ct_canvas, NULL);
-    lv_canvas_set_buffer(cv_accel, cbuf, 200, 200, LV_IMG_CF_INDEXED_1BIT);
-    lv_obj_align(cv_accel, NULL, LV_ALIGN_CENTER, 0, 0);
-    lv_canvas_set_palette(cv_accel, 0, LV_COLOR_BLACK);
-    lv_canvas_set_palette(cv_accel, 1, LV_COLOR_WHITE);
+    cv_imu = lv_canvas_create(ct_canvas, NULL);
+    lv_canvas_set_buffer(cv_imu, cbuf, 200, 200, LV_IMG_CF_INDEXED_1BIT);
+    lv_obj_align(cv_imu, NULL, LV_ALIGN_CENTER, 0, 0);
+    lv_canvas_set_palette(cv_imu, 0, LV_COLOR_BLACK);
+    lv_canvas_set_palette(cv_imu, 1, LV_COLOR_WHITE);
 
-    sqr_accel.x = 10;
-    sqr_accel.y = 10;
-    sqr_accel.len = 10;
-    sqr_accel.color = LV_COLOR_WHITE;
-    // draw_square(cv_accel, &sqr_accel);
+    sqr_imu.x = 10;
+    sqr_imu.y = 10;
+    sqr_imu.len = 10;
+    sqr_imu.color = LV_COLOR_WHITE;
+    // draw_square(cv_imu, &sqr_imu);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+static void imu_update(lv_task_t * task)
+{
+    refresh_imu_canvas(&screen_imu);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+static void refresh_imu_canvas(imu_data_t* acc)
+{
+    // sqr_imu.x = 10 + rand() % 180;
+    // sqr_imu.y = 10 + rand() % 180;
+    sqr_imu.x = - (screen_imu.g_x * 100 / 9000 + 100);
+    sqr_imu.y = screen_imu.g_y * 100 / 9000 + 100;
+    // put some limits
+    sqr_imu.x = sqr_imu.x > 190 ? 190 : sqr_imu.x;
+    sqr_imu.x = sqr_imu.x < -190 ? -190 : sqr_imu.x;
+    sqr_imu.y = sqr_imu.y > 190 ? 190 : sqr_imu.y;
+    sqr_imu.y = sqr_imu.y < -190 ? -190 : sqr_imu.y;
+
+    sqr_imu.color = LV_COLOR_WHITE;
+    redraw_square(cv_imu, &sqr_imu_old, &sqr_imu, LV_COLOR_BLACK);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -220,6 +263,35 @@ static void draw_square(lv_obj_t* canvas, square_data_t* square)
     for(int i = x; i < x + len; i++)
         for (int j = y; j < y + len; j++)
             lv_canvas_set_px(canvas, i, j, color);
+}
+
+//    ###    ##      ##  ######
+//   ## ##   ##  ##  ## ##    ##
+//  ##   ##  ##  ##  ## ##
+// ##     ## ##  ##  ##  ######
+// ######### ##  ##  ##       ##
+// ##     ## ##  ##  ## ##    ##
+// ##     ##  ###  ###   ######
+
+////////////////////////////////////////////////////////////////////////////////
+static void aws_iot_create(lv_obj_t* parent)
+{
+    lv_page_set_scrl_layout(parent, LV_LAYOUT_COLUMN_LEFT);
+
+    // Image
+    // Container Image
+    lv_obj_t * cont_img = lv_cont_create(parent, NULL);
+    lv_cont_set_layout(cont_img, LV_LAYOUT_CENTER);
+    lv_obj_add_style(cont_img, LV_CONT_PART_MAIN, &style_box);
+    lv_obj_set_drag_parent(cont_img, true);
+    lv_cont_set_fit2(cont_img, LV_FIT_TIGHT, LV_FIT_TIGHT);
+
+    LV_IMG_DECLARE(img_watchdog);
+    lv_obj_t * icon = lv_img_create(cont_img, NULL);
+    lv_img_set_src(icon, &img_watchdog);
+    lv_obj_set_width(icon, img_watchdog.header.w);
+    lv_obj_set_height(icon, img_watchdog.header.h);
+    lv_img_set_auto_size(icon, true);
 }
 
 //  ######     ###    ##       ##       ########     ###     ######  ##    ##

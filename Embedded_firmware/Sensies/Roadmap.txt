@@ -13,7 +13,6 @@ Create Connect to AWS screen
 Create send data to AWS screen
 Finish the accelero lib
 Store an image in Flash memory
-Display an image
 receive a notif from AWS
 Display a notification
 Put everything to sleep 
@@ -23,6 +22,7 @@ Use push button to wake up the system
 --------------------------------------------------------------------------------
 IN PROGRESS
 --------------------------------------------------------------------------------
+Display an image
 
 
 --------------------------------------------------------------------------------

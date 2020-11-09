@@ -1,8 +1,10 @@
 set(PROJ_SRC_DIR "../project_sources")
+set(IMG_DIR "../images")
 
 set(PROJ_SOURCES 
         main.c
         "${PROJ_SRC_DIR}/gui/screens.c"
+        "${IMG_DIR}/img_watchdog.c"
 )
 
 set(PROJ_INCLUDES 
