@@ -43,6 +43,12 @@ static void refresh_accel_canvas(accelero_data_t* acc)
     // sqr_accel.y = 10 + rand() % 180;
     sqr_accel.x = - (screen_accelero.g_x * 100 / 9000 + 100);
     sqr_accel.y = screen_accelero.g_y * 100 / 9000 + 100;
+    // put some limits
+    sqr_accel.x = sqr_accel.x > 190 ? 190 : sqr_accel.x;
+    sqr_accel.x = sqr_accel.x < -190 ? -190 : sqr_accel.x;
+    sqr_accel.y = sqr_accel.y > 190 ? 190 : sqr_accel.y;
+    sqr_accel.y = sqr_accel.y < -190 ? -190 : sqr_accel.y;
+
     sqr_accel.color = LV_COLOR_WHITE;
     redraw_square(cv_accel, &sqr_accel_old, &sqr_accel, LV_COLOR_BLACK);
 }
@@ -139,61 +145,13 @@ static void wifi_connect_create(lv_obj_t* parent)
     lv_btn_set_state(btn_discn, LV_BTN_STATE_DISABLED);
     lv_btn_toggle(btn_discn);
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 static void create_accelero(lv_obj_t* parent)
 {
-    lv_page_set_scrl_layout(parent, LV_LAYOUT_ROW_MID);
+    lv_page_set_scrl_layout(parent, LV_LAYOUT_CENTER);
 
-
-    lv_obj_t * ct_input;
     lv_obj_t * ct_canvas;
-
-    // ACCELERO CONTROLS
-    ct_input = lv_cont_create(parent, NULL);
-    lv_obj_set_auto_realign(ct_input, true);
-    lv_cont_set_layout(ct_input, LV_LAYOUT_PRETTY_MID);
-    lv_obj_set_width(ct_input, 220);
-    lv_obj_set_height(ct_input, 220);
-    int grid_width = lv_obj_get_width_grid(ct_input, 3, 1);
-    int grid_height = lv_obj_get_height_grid(ct_input, 3, 1);
-    printf("Grid width %d height %d \n", grid_width, grid_height);
-
-    // Add a button
-    lv_obj_t *obj;
-    obj = lv_obj_create(ct_input, NULL);
-    lv_obj_set_size(obj, grid_width, grid_height);
-    lv_obj_set_style_local_border_width(obj, 0, LV_STATE_DEFAULT, 0);
-
-    obj = lv_btn_create(ct_input, NULL);
-    lv_obj_set_size(obj, grid_width, grid_height);
-    obj = lv_label_create(obj, NULL);
-    lv_label_set_text(obj, "UP");
-
-    obj = lv_obj_create(ct_input, NULL);
-    lv_obj_set_size(obj, grid_width, grid_height);
-    lv_obj_set_style_local_border_width(obj, 0, LV_STATE_DEFAULT, 0);
-
-    // Add a button
-    obj = lv_btn_create(ct_input, NULL);
-    lv_obj_set_size(obj, grid_width, grid_height);
-    obj = lv_label_create(obj, NULL);
-    lv_label_set_text(obj, "LEFT");
-    // Add a button
-    obj = lv_btn_create(ct_input, NULL);
-    lv_obj_set_size(obj, grid_width, grid_height);
-    obj = lv_label_create(obj, NULL);
-    lv_label_set_text(obj, "DOWN");
-    // Add a button
-    obj = lv_btn_create(ct_input, NULL);
-    lv_obj_set_size(obj, grid_width, grid_height);
-    obj = lv_label_create(obj, NULL);
-    lv_label_set_text(obj, "RIGHT");
-    // Add a button
-    obj = lv_btn_create(ct_input, NULL);
-    lv_obj_set_size(obj, grid_width * 3, grid_height);
-    lv_btn_toggle(obj);
-    obj = lv_label_create(obj, NULL);
-    lv_label_set_text(obj, "RANDOM");
 
     // CANVAS
     ct_canvas = lv_cont_create(parent, NULL);

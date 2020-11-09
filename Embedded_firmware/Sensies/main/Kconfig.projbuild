@@ -1,0 +1,49 @@
+menu "Sensie Configuration"
+
+    menu "I2C Master"
+        config I2C_MASTER_SCL
+            int "SCL GPIO Num"
+            default 19
+            help
+                GPIO number for I2C Master clock line.
+
+        config I2C_MASTER_SDA
+            int "SDA GPIO Num"
+            default 18
+            help
+                GPIO number for I2C Master data line.
+
+        config I2C_MASTER_PORT_NUM
+            int "Port Number"
+            default 1
+            help
+                Port number for I2C Master device.
+
+        config I2C_MASTER_FREQUENCY
+            int "Master Frequency"
+            default 100000
+            help
+                I2C Speed of Master device.
+    endmenu
+
+    config WIFI_SSID
+        string "WiFi SSID"
+        default "Maxi"
+        help
+            SSID (network name) for the example to connect to.
+
+    config WIFI_PASSWORD
+        string "WiFi Password"
+        default "cornimont"
+        help
+            WiFi password (WPA or WPA2) for the example to use.
+
+            Can be left blank if the network has no security set.
+
+    config AWS_THING_CLIENT_ID
+        string "AWS IoT Client ID"
+        default "esp32_esp_aws_iot_1"
+        help
+            AWS IoT Client ID for the example. Should be unique for every device.
+
+endmenu

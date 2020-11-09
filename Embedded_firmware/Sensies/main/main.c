@@ -1,28 +1,25 @@
 // STD
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <unistd.h>
 #include <limits.h>
 #include <string.h>
+#include <stdbool.h>
 // ESP-IDF
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
-#include "freertos/semphr.h"
-#include "esp_freertos_hooks.h"
 #include "esp_system.h"
-#include "driver/gpio.h"
 #include "esp_wifi.h"
 #include "esp_log.h"
 #include "esp_vfs_fat.h"
 #include "nvs.h"
 #include "nvs_flash.h"
+#include "driver/gpio.h"
 // LVGL
 #include "lvgl/lvgl.h"
 #include "lvgl_helpers.h"
-// #include "lv_examples/src/lv_demo_widgets/lv_demo_widgets.h"
 #include "screens.h"
 // MPU6050 IMU
 #include "mpu60x0.h"
@@ -32,7 +29,6 @@
 #include "aws_iot_version.h"
 #include "aws_iot_mqtt_client_interface.h"
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINES
 //
@@ -40,14 +36,11 @@
 #define LV_TICK_PERIOD_MS 1
 #define _I2C_NUMBER(num) I2C_NUM_##num
 #define I2C_NUMBER(num) _I2C_NUMBER(num)
-// AWS-IOT
-// #define EXAMPLE_WIFI_SSID CONFIG_WIFI_SSID
-// #define EXAMPLE_WIFI_PASS CONFIG_WIFI_PASSWORD
 
-#define EXAMPLE_WIFI_SSID "maxi"
-#define EXAMPLE_WIFI_PASS "cornimont"
-#define CONFIG_AWS_EXAMPLE_CLIENT_ID "myesp32"
-
+// Wifi and AWS-IOT
+// #define CONFIG_WIFI_SSID         "ssid"
+// #define CONFIG_WIFI_PASSWORD     "passw"
+// #define AWS_THING_CLIENT_ID      "client_id"
 
 ////////////////////////////////////////////////////////////////////////////////
 //  STATIC PROTOTYPES
@@ -93,7 +86,6 @@ extern const uint8_t private_pem_key_end[] asm("_binary_private_pem_key_end");
 char HostAddress[255] = AWS_IOT_MQTT_HOST;
 uint32_t port = AWS_IOT_MQTT_PORT;
 
-
 // #### ##     ## ##     ##
 //  ##  ###   ### ##     ##
 //  ##  #### #### ##     ##
@@ -102,6 +94,7 @@ uint32_t port = AWS_IOT_MQTT_PORT;
 //  ##  ##     ## ##     ##
 // #### ##     ##  #######
 
+////////////////////////////////////////////////////////////////////////////////
 static void i2c_slave_init(void)
 {
     esp_err_t err;
@@ -126,6 +119,7 @@ static void i2c_slave_init(void)
     ESP_LOGI(TAG, "i2c_slave_init");
 }
 
+////////////////////////////////////////////////////////////////////////////////
 static void i2c_test_task(void *arg)
 {
     esp_err_t err;
@@ -154,6 +148,7 @@ static void i2c_test_task(void *arg)
 // ##         ## ##   ##    ##  ##
 // ########    ###     ######   ########
 
+////////////////////////////////////////////////////////////////////////////////
 static void guiTask(void *pvParameter)
 {
 
@@ -210,12 +205,14 @@ static void guiTask(void *pvParameter)
     vTaskDelete(NULL);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 static void create_demo_application(void)
 {
     sensie_gui();
     // lv_demo_widgets();
 }
 
+////////////////////////////////////////////////////////////////////////////////
 static void lv_tick_task(void *arg)
 {
     (void) arg;
@@ -230,28 +227,7 @@ static void lv_tick_task(void *arg)
 // ##     ##  ##  ##  ##  ##    ##            ##   ##     ##     ##
 // ##     ##   ###  ###    ######            ####   #######      ##
 
-static esp_err_t event_handler(void *ctx, system_event_t *event)
-{
-    switch(event->event_id)
-    {
-        case SYSTEM_EVENT_STA_START:
-            esp_wifi_connect();
-            break;
-        case SYSTEM_EVENT_STA_GOT_IP:
-            xEventGroupSetBits(wifi_event_group, CONNECTED_BIT);
-            break;
-        case SYSTEM_EVENT_STA_DISCONNECTED:
-            /* This is a workaround as ESP32 WiFi libs don't currently
-               auto-reassociate. */
-            esp_wifi_connect();
-            xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
-            break;
-        default:
-            break;
-    }
-    return ESP_OK;
-}
-
+////////////////////////////////////////////////////////////////////////////////
 void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName,
                                     uint16_t topicNameLen,
                                     IoT_Publish_Message_Params *params, void *pData)
@@ -261,6 +237,7 @@ void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName,
              (char *)params->payload);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void disconnectCallbackHandler(AWS_IoT_Client *pClient, void *data)
 {
     ESP_LOGW(TAG, "MQTT Disconnect");
@@ -290,6 +267,7 @@ void disconnectCallbackHandler(AWS_IoT_Client *pClient, void *data)
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void aws_iot_task(void *param)
 {
     char cPayload[100];
@@ -327,16 +305,20 @@ void aws_iot_task(void *param)
         abort();
     }
 
+    ESP_LOGI(TAG, "Waiting for internet connection...");
+
     /* Wait for WiFI to show as connected */
     xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT,
                         false, true, portMAX_DELAY);
+
+    ESP_LOGI(TAG, "Connected to internet !");
 
     connectParams.keepAliveIntervalInSec = 10;
     connectParams.isCleanSession = true;
     connectParams.MQTTVersion = MQTT_3_1_1;
     /* Client ID is set in the menuconfig of the example */
-    connectParams.pClientID = CONFIG_AWS_EXAMPLE_CLIENT_ID;
-    connectParams.clientIDLen = (uint16_t) strlen(CONFIG_AWS_EXAMPLE_CLIENT_ID);
+    connectParams.pClientID = CONFIG_AWS_THING_CLIENT_ID;
+    connectParams.clientIDLen = (uint16_t) strlen(CONFIG_AWS_THING_CLIENT_ID);
     connectParams.isWillMsgPresent = false;
 
     ESP_LOGI(TAG, "Connecting to AWS...");
@@ -419,9 +401,41 @@ void aws_iot_task(void *param)
     abort();
 }
 
+// ##      ## #### ######## ####
+// ##  ##  ##  ##  ##        ##
+// ##  ##  ##  ##  ##        ##
+// ##  ##  ##  ##  ######    ##
+// ##  ##  ##  ##  ##        ##
+// ##  ##  ##  ##  ##        ##
+//  ###  ###  #### ##       ####
+
+////////////////////////////////////////////////////////////////////////////////
+static esp_err_t event_handler(void *ctx, system_event_t *event)
+{
+    switch(event->event_id)
+    {
+        case SYSTEM_EVENT_STA_START:
+            esp_wifi_connect();
+            break;
+        case SYSTEM_EVENT_STA_GOT_IP:
+            xEventGroupSetBits(wifi_event_group, CONNECTED_BIT);
+            break;
+        case SYSTEM_EVENT_STA_DISCONNECTED:
+            /* This is a workaround as ESP32 WiFi libs don't currently
+               auto-reassociate. */
+            esp_wifi_connect();
+            xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
+            break;
+        default:
+            break;
+    }
+    return ESP_OK;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 static void initialise_wifi(void)
 {
-    esp_netif_init();
+    tcpip_adapter_init();
     wifi_event_group = xEventGroupCreate();
     ESP_ERROR_CHECK(esp_event_loop_init(event_handler, NULL));
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
@@ -430,8 +444,8 @@ static void initialise_wifi(void)
     wifi_config_t wifi_config =
     {
         .sta = {
-            .ssid = EXAMPLE_WIFI_SSID,
-            .password = EXAMPLE_WIFI_PASS,
+            .ssid = CONFIG_WIFI_SSID,
+            .password = CONFIG_WIFI_PASSWORD,
         },
     };
     ESP_LOGI(TAG, "Setting WiFi configuration SSID %s...", wifi_config.sta.ssid);
@@ -439,6 +453,7 @@ static void initialise_wifi(void)
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start());
 }
+
 
 // ##     ##    ###    #### ##    ##
 // ###   ###   ## ##    ##  ###   ##
@@ -448,23 +463,28 @@ static void initialise_wifi(void)
 // ##     ## ##     ##  ##  ##   ###
 // ##     ## ##     ## #### ##    ##
 
+////////////////////////////////////////////////////////////////////////////////
 void app_main(void)
 {
-    // // AWS-IOT
-    // esp_err_t err = nvs_flash_init();
-    // if(err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND)
-    // {
-    //     ESP_ERROR_CHECK(nvs_flash_erase());
-    //     err = nvs_flash_init();
-    // }
-    // ESP_ERROR_CHECK(err);
-    // initialise_wifi();
-    // xTaskCreatePinnedToCore(&aws_iot_task, "aws_iot_task", 9216, NULL, 5, NULL, 1);
+    // Flash storage
+    esp_err_t err = nvs_flash_init();
+    if(err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND)
+    {
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        err = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK(err);
 
-    // // IMU
-    i2c_slave_init();
-    xTaskCreate(i2c_test_task, "i2c_test_task_1", 1024 * 2, (void *)1, 10, NULL);
+    // WiFi
+    initialise_wifi();
+
+    // AWS IOT
+    xTaskCreatePinnedToCore(&aws_iot_task, "aws_iot_task", 9216, NULL, 5, NULL, 1);
+
+    // IMU
+    // i2c_slave_init();
+    // xTaskCreate(i2c_test_task, "i2c_test_task_1", 1024 * 2, (void *)1, 10, NULL);
 
     // LVGL
-    xTaskCreatePinnedToCore(guiTask, "gui", 4096 * 2, NULL, 0, NULL, 1);
+    // xTaskCreatePinnedToCore(guiTask, "gui", 4096 * 2, NULL, 0, NULL, 1);
 }
