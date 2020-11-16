@@ -29,7 +29,10 @@
 #include "aws_iot_version.h"
 #include "aws_iot_mqtt_client_interface.h"
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 // DEFINES
 //
 // LVGL
@@ -38,16 +41,19 @@
 #define I2C_NUMBER(num) _I2C_NUMBER(num)
 
 // Wi-Fi and AWS-IOT
-// #define CONFIG_WIFI_SSID         "ssid"
-// #define CONFIG_WIFI_PASSWORD     "passw"
-// #define AWS_THING_CLIENT_ID      "client_id"
+// #define CONFIG_WIFI_SSID         ""
+// #define CONFIG_WIFI_PASSWORD     ""
+// #define AWS_THING_CLIENT_ID      ""
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 //  STATIC PROTOTYPES
 
 // IMU (Inertial Management Unit)
 static void i2c_slave_init(void);
-static void i2c_test_task(void *arg);
+static void imu_task(void *arg);
 
 // LVGL (Light and Versatile Graphical Library)
 static void gui_task(void *pvParameter);
@@ -68,7 +74,10 @@ static void initialise_wifi(void);
 static void disconnect_wifi(void);
 static void connect_wifi(char* ssid, char* passw);
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 //  STATIC AND GLOBAL VARIABLES
 //
 // LOG module
@@ -106,7 +115,10 @@ const int CONNECTED_BIT = BIT0;
 //  ##  ##     ## ##     ##
 // #### ##     ##  #######
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 static void i2c_slave_init(void)
 {
     esp_err_t err;
@@ -131,11 +143,13 @@ static void i2c_slave_init(void)
     ESP_LOGI(TAG, "i2c_slave_init");
 }
 
-////////////////////////////////////////////////////////////////////////////////
-static void i2c_test_task(void *arg)
+/*******************************************************************************
+ * @brief
+ * @param
+ */
+static void imu_task(void *arg)
 {
     esp_err_t err;
-    printf("Reading sensor data:\n");
     raw_axes_t accel_raw;   // x, y, z axes as int16
     raw_axes_t gyro_raw;    // x, y, z axes as int16
     while (true)
@@ -160,7 +174,10 @@ static void i2c_test_task(void *arg)
 // ##         ## ##   ##    ##  ##
 // ########    ###     ######   ########
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 static void gui_task(void *pvParameter)
 {
     (void) pvParameter;
@@ -219,7 +236,10 @@ static void gui_task(void *pvParameter)
     vTaskDelete(NULL);
 }
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 static void lv_tick_task(void *arg)
 {
     (void) arg;
@@ -234,7 +254,10 @@ static void lv_tick_task(void *arg)
 // ##     ##  ##  ##  ##  ##    ##            ##   ##     ##     ##
 // ##     ##   ###  ###    ######            ####   #######      ##
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName,
                                     uint16_t topicNameLen,
                                     IoT_Publish_Message_Params *params, void *pData)
@@ -244,7 +267,10 @@ void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName,
              (char *)params->payload);
 }
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 void disconnect_callback_handler(AWS_IoT_Client *pClient, void *data)
 {
     ESP_LOGW(TAG, "MQTT Disconnect");
@@ -274,7 +300,10 @@ void disconnect_callback_handler(AWS_IoT_Client *pClient, void *data)
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 void aws_iot_task(void *param)
 {
     char cPayload[100];
@@ -418,7 +447,10 @@ void aws_iot_task(void *param)
 // ##  ##  ##  ##  ##        ##
 //  ###  ###  #### ##       ####
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 static esp_err_t event_handler(void *ctx, system_event_t *event)
 {
     switch(event->event_id)
@@ -441,7 +473,10 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
     return ESP_OK;
 }
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 static void initialise_wifi(void)
 {
     tcpip_adapter_init();
@@ -452,7 +487,10 @@ static void initialise_wifi(void)
     ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
 }
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 static void connect_wifi(char* ssid, char* password)
 {
     wifi_config_t wifi_config = {0};
@@ -467,7 +505,10 @@ static void connect_wifi(char* ssid, char* password)
     ESP_ERROR_CHECK(esp_wifi_start());
 }
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 static void disconnect_wifi(void)
 {
     ESP_ERROR_CHECK(esp_wifi_stop());
@@ -481,7 +522,10 @@ static void disconnect_wifi(void)
 // ##     ## ##     ##  ##  ##   ###
 // ##     ## ##     ## #### ##    ##
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 void app_main(void)
 {
     // Flash storage
@@ -501,7 +545,7 @@ void app_main(void)
 
     // IMU
     i2c_slave_init();
-    xTaskCreate(i2c_test_task, "i2c_test_task_1", 1024 * 2, (void *)1, 10, NULL);
+    xTaskCreate(imu_task, "imu_task_1", 1024 * 2, (void *)1, 10, NULL);
 
     // LVGL (Light and Versatile Graphical Library)
     xTaskCreatePinnedToCore(gui_task, "gui", 4096 * 2, NULL, 0, NULL, 1);

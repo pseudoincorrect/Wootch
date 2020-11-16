@@ -2,11 +2,15 @@
 #include <stdlib.h>
 #include "lvgl.h"
 #include "screens.h"
+// #include "esp_log.h"
 
 #define CANVAS_WIDTH  100
 #define CANVAS_HEIGHT 100
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 // Function prototypes
 
 // IMU (Inertial Management Unit)
@@ -23,14 +27,21 @@ static void refresh_imu_canvas(imu_data_t* acc);
 static void wifi_connect_create(lv_obj_t* parent);
 static void ta_event_cb(lv_obj_t * ta, lv_event_t e);
 static void kb_event_cb(lv_obj_t * _kb, lv_event_t e);
-static void bt_connect_cb(lv_obj_t * bt, lv_event_t event);
-static void bt_disconnect_cb(lv_obj_t * bt, lv_event_t event);
+static void btn_connect_cb(lv_obj_t * bt, lv_event_t event);
+static void btn_disconnect_cb(lv_obj_t * bt, lv_event_t event);
 
 // AWS-IOT (Amazon Web Services - Internet of Things)
 static void aws_iot_create(lv_obj_t* parent);
+static void toggle_img(watch_state_t state);
+static void btn_toggle_img_cb(lv_obj_t * bt, lv_event_t event);
 
-////////////////////////////////////////////////////////////////////////////////
-// Static and global variables
+/*******************************************************************************
+ * Global variables */
+char wifi_ssid[32] = {0};
+char wifi_pass[32] = {0};
+
+/*******************************************************************************
+ * Static variables */
 
 // Top level Gui
 static const char *TAG = "SCREENS";
@@ -48,10 +59,14 @@ static lv_task_t * imu_update_task;
 static lv_obj_t * t1;
 static lv_style_t style_box;
 static lv_obj_t * kb;
+static lv_obj_t * ta_ssid;
+static lv_obj_t * ta_passw;
 
 // AWS-IOT (Amazon Web Services - Internet of Things)
 static lv_obj_t * t3;
-
+static lv_obj_t * cont_dog;
+static lv_obj_t * img_dog;
+static bool on_watch;
 
 // #### ##    ## #### ########
 //  ##  ###   ##  ##     ##
@@ -61,7 +76,10 @@ static lv_obj_t * t3;
 //  ##  ##   ###  ##     ##
 // #### ##    ## ####    ##
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 void gui_init_cb(gui_wifi_connect_cb_t wifi_connect_cb,
                  gui_wifi_disconnect_cb_t wifi_disconnect_cb)
 {
@@ -69,7 +87,10 @@ void gui_init_cb(gui_wifi_connect_cb_t wifi_connect_cb,
     screen_cb.wifi_disconnect = wifi_disconnect_cb;
 }
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 void start_gui(void)
 {
     tv = lv_tabview_create(lv_scr_act(), NULL);
@@ -90,7 +111,7 @@ void start_gui(void)
     imu_create(t1);
     wifi_connect_create(t2);
     aws_iot_create(t3);
-    lv_tabview_set_tab_act(tv, 2, LV_ANIM_ON);
+    lv_tabview_set_tab_act(tv, 1, LV_ANIM_ON);
 
     imu_data_t screen_imu = {0};
     imu_update_task = lv_task_create(imu_update, 100,
@@ -105,7 +126,10 @@ void start_gui(void)
 // ##  ##  ##  ##  ##        ##
 //  ###  ###  #### ##       ####
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 static void wifi_connect_create(lv_obj_t* parent)
 {
     lv_page_set_scrl_layout(parent, LV_LAYOUT_COLUMN_LEFT);
@@ -121,13 +145,14 @@ static void wifi_connect_create(lv_obj_t* parent)
     lv_obj_t * label_ssid = lv_label_create(cont_ssid, NULL);
     lv_label_set_text(label_ssid, "SSID");
     // Text area SSID
-    lv_obj_t * ta_ssid = lv_textarea_create(cont_ssid, NULL);
+    ta_ssid = lv_textarea_create(cont_ssid, NULL);
     lv_obj_set_width(ta_ssid, 200);
     lv_textarea_set_text(ta_ssid, "");
     lv_textarea_set_placeholder_text(ta_ssid, "SSID (wifi name)");
     lv_textarea_set_one_line(ta_ssid, true);
     lv_textarea_set_cursor_hidden(ta_ssid, true);
     lv_obj_set_event_cb(ta_ssid, ta_event_cb);
+    lv_textarea_set_text(ta_ssid, "Maxi"); // please hack me (^_^')
 
     // PASSW
     // Container PASSW
@@ -140,13 +165,14 @@ static void wifi_connect_create(lv_obj_t* parent)
     lv_obj_t * label_passw = lv_label_create(cont_passw, NULL);
     lv_label_set_text(label_passw, "PASSWORD");
     // Text area PASSW
-    lv_obj_t * ta_passw = lv_textarea_create(cont_passw, NULL);
+    ta_passw = lv_textarea_create(cont_passw, NULL);
     lv_obj_set_width(ta_passw, 200);
     lv_textarea_set_text(ta_passw, "");
     lv_textarea_set_placeholder_text(ta_passw, "Wifi password");
     lv_textarea_set_one_line(ta_passw, true);
     lv_textarea_set_cursor_hidden(ta_passw, true);
     lv_obj_set_event_cb(ta_passw, ta_event_cb);
+    lv_textarea_set_text(ta_passw, "notmyrealpassword"); // please hack me (^_^')
 
     // Connect / Disconnect Buttons
     // Container Buttons
@@ -157,7 +183,7 @@ static void wifi_connect_create(lv_obj_t* parent)
     lv_cont_set_fit2(cont_conn, LV_FIT_TIGHT, LV_FIT_TIGHT);
     // Connect Button
     lv_obj_t * btn_conn = lv_btn_create(cont_conn, NULL);
-    lv_obj_set_event_cb(btn_conn, bt_connect_cb);
+    lv_obj_set_event_cb(btn_conn, btn_connect_cb);
     lv_btn_set_fit2(btn_conn, LV_FIT_NONE, LV_FIT_TIGHT);
     lv_obj_set_width(btn_conn, 100);
     lv_obj_t * lb_conn = lv_label_create(btn_conn, NULL);
@@ -165,14 +191,87 @@ static void wifi_connect_create(lv_obj_t* parent)
     lv_btn_toggle(btn_conn);
     // Disconnect Button
     lv_obj_t * btn_discn = lv_btn_create(cont_conn, NULL);
-    lv_obj_set_event_cb(btn_discn, bt_disconnect_cb);
+    lv_obj_set_event_cb(btn_discn, btn_disconnect_cb);
     lv_btn_set_fit2(btn_discn, LV_FIT_NONE, LV_FIT_TIGHT);
     lv_obj_set_width(btn_discn, 100);
     lv_obj_t * lb_discn = lv_label_create(btn_discn, NULL);
-    lv_label_set_text(lb_discn, "Disonnect");
+    lv_label_set_text(lb_discn, "Disconnect");
     // lv_btn_set_state(btn_discn, LV_BTN_STATE_DISABLED);
     lv_btn_set_state(btn_discn, LV_BTN_STATE_RELEASED);
     lv_btn_toggle(btn_discn);
+}
+
+/*******************************************************************************
+ * @brief
+ * @param
+ */
+static void btn_connect_cb(lv_obj_t * bt, lv_event_t event)
+{
+    if(event == LV_EVENT_CLICKED)
+    {
+        // ESP_LOGI(TAG, "btn_connect_cb\n");
+        const char* ssid = lv_textarea_get_text(ta_ssid);
+        const char* pass = lv_textarea_get_text(ta_passw);
+        screen_cb.wifi_connect((char*) ssid, (char*) pass);
+    }
+}
+
+/*******************************************************************************
+ * @brief
+ * @param
+ */
+static void btn_disconnect_cb(lv_obj_t * bt, lv_event_t event)
+{
+    if(event == LV_EVENT_CLICKED)
+    {
+        // ESP_LOGI(TAG, "btn_disconnect_cb\n");
+        screen_cb.wifi_disconnect();
+    }
+}
+
+/*******************************************************************************
+ * @brief
+ * @param
+ */
+static void ta_event_cb(lv_obj_t * ta, lv_event_t event)
+{
+    if(event == LV_EVENT_RELEASED)
+    {
+        if(kb == NULL)
+        {
+            lv_obj_set_height(tv, LV_VER_RES / 2);
+            kb = lv_keyboard_create(lv_scr_act(), NULL);
+            lv_obj_set_event_cb(kb, kb_event_cb);
+
+            lv_indev_wait_release(lv_indev_get_act());
+        }
+        lv_textarea_set_cursor_hidden(ta, false);
+        lv_page_focus(t1, lv_textarea_get_label(ta), LV_ANIM_ON);
+        lv_keyboard_set_textarea(kb, ta);
+    }
+    else if(event == LV_EVENT_DEFOCUSED)
+    {
+        lv_textarea_set_cursor_hidden(ta, true);
+    }
+}
+
+/*******************************************************************************
+ * @brief
+ * @param
+ */
+static void kb_event_cb(lv_obj_t * _, lv_event_t event)
+{
+    lv_keyboard_def_event_cb(kb, event);
+
+    if(event == LV_EVENT_CANCEL)
+    {
+        if(kb)
+        {
+            lv_obj_set_height(tv, LV_VER_RES);
+            lv_obj_del(kb);
+            kb = NULL;
+        }
+    }
 }
 
 // #### ##     ## ##     ##
@@ -183,7 +282,10 @@ static void wifi_connect_create(lv_obj_t* parent)
 //  ##  ##     ## ##     ##
 // #### ##     ##  #######
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 static void imu_create(lv_obj_t* parent)
 {
     lv_page_set_scrl_layout(parent, LV_LAYOUT_CENTER);
@@ -212,13 +314,19 @@ static void imu_create(lv_obj_t* parent)
     // draw_square(cv_imu, &sqr_imu);
 }
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 static void imu_update(lv_task_t * task)
 {
     refresh_imu_canvas(&screen_imu);
 }
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 static void refresh_imu_canvas(imu_data_t* acc)
 {
     // sqr_imu.x = 10 + rand() % 180;
@@ -235,14 +343,20 @@ static void refresh_imu_canvas(imu_data_t* acc)
     redraw_square(cv_imu, &sqr_imu_old, &sqr_imu, LV_COLOR_BLACK);
 }
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 static void copy_square(square_data_t* square_dest,
                         square_data_t* square_to_copy)
 {
     memcpy(square_dest, square_to_copy, sizeof(square_data_t));
 }
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 static void redraw_square(lv_obj_t* canvas, square_data_t* square_erase,
                           square_data_t* square_draw, lv_color_t color_erase)
 {
@@ -252,7 +366,10 @@ static void redraw_square(lv_obj_t* canvas, square_data_t* square_erase,
     copy_square(square_erase, square_draw);
 }
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 static void draw_square(lv_obj_t* canvas, square_data_t* square)
 {
     int x = square->x;
@@ -273,90 +390,70 @@ static void draw_square(lv_obj_t* canvas, square_data_t* square)
 // ##     ## ##  ##  ## ##    ##
 // ##     ##  ###  ###   ######
 
-////////////////////////////////////////////////////////////////////////////////
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 static void aws_iot_create(lv_obj_t* parent)
 {
-    lv_page_set_scrl_layout(parent, LV_LAYOUT_COLUMN_LEFT);
+    lv_page_set_scrl_layout(parent, LV_LAYOUT_ROW_MID);
 
-    // Image
-    // Container Image
-    lv_obj_t * cont_img = lv_cont_create(parent, NULL);
-    lv_cont_set_layout(cont_img, LV_LAYOUT_CENTER);
-    lv_obj_add_style(cont_img, LV_CONT_PART_MAIN, &style_box);
-    lv_obj_set_drag_parent(cont_img, true);
-    lv_cont_set_fit2(cont_img, LV_FIT_TIGHT, LV_FIT_TIGHT);
+    // Image watch dog
+    // Container image watch dog
+    cont_dog = lv_cont_create(parent, NULL);
+    lv_cont_set_layout(cont_dog, LV_LAYOUT_CENTER);
+    lv_obj_add_style(cont_dog, LV_CONT_PART_MAIN, &style_box);
+    lv_obj_set_drag_parent(cont_dog, true);
+    lv_cont_set_fit2(cont_dog, LV_FIT_TIGHT, LV_FIT_TIGHT);
+    // Image watch dog
+    on_watch = OFF_WATCH;
+    toggle_img(on_watch);
 
-    LV_IMG_DECLARE(img_watchdog);
-    lv_obj_t * icon = lv_img_create(cont_img, NULL);
-    lv_img_set_src(icon, &img_watchdog);
-    lv_obj_set_width(icon, img_watchdog.header.w);
-    lv_obj_set_height(icon, img_watchdog.header.h);
-    lv_img_set_auto_size(icon, true);
+    // // Button toggle
+    lv_obj_t * btn_toggle_img = lv_btn_create(parent, NULL);
+    lv_obj_set_event_cb(btn_toggle_img, btn_toggle_img_cb);
+    lv_btn_set_fit2(btn_toggle_img, LV_FIT_NONE, LV_FIT_TIGHT);
+    lv_obj_set_width(btn_toggle_img, 100);
+    lv_obj_t * lb_toggle_img = lv_label_create(btn_toggle_img, NULL);
+    lv_label_set_text(lb_toggle_img, "toggle img");
+    lv_btn_toggle(btn_toggle_img);
 }
 
-//  ######     ###    ##       ##       ########     ###     ######  ##    ##
-// ##    ##   ## ##   ##       ##       ##     ##   ## ##   ##    ## ##   ##
-// ##        ##   ##  ##       ##       ##     ##  ##   ##  ##       ##  ##
-// ##       ##     ## ##       ##       ########  ##     ## ##       #####
-// ##       ######### ##       ##       ##     ## ######### ##       ##  ##
-// ##    ## ##     ## ##       ##       ##     ## ##     ## ##    ## ##   ##
-//  ######  ##     ## ######## ######## ########  ##     ##  ######  ##    ##
+static void toggle_img(watch_state_t state)
+{
+    if (img_dog != NULL)
+        lv_obj_del(img_dog);
 
-////////////////////////////////////////////////////////////////////////////////
-static void bt_connect_cb(lv_obj_t * bt, lv_event_t event)
+    if (state == ON_WATCH)
+    {
+        LV_IMG_DECLARE(img_watch_dog);
+        img_dog = lv_img_create(cont_dog, NULL);
+        lv_img_set_src(img_dog, &img_watch_dog);
+        lv_obj_set_width(img_dog, img_watch_dog.header.w);
+        lv_obj_set_height(img_dog, img_watch_dog.header.h);
+        lv_img_set_auto_size(img_dog, true);
+    }
+    else
+    {
+        LV_IMG_DECLARE(img_sleepy_dog);
+        img_dog = lv_img_create(cont_dog, NULL);
+        lv_img_set_src(img_dog, &img_sleepy_dog);
+        lv_obj_set_width(img_dog, img_sleepy_dog.header.w);
+        lv_obj_set_height(img_dog, img_sleepy_dog.header.h);
+        lv_img_set_auto_size(img_dog, true);
+    }
+}
+
+/*******************************************************************************
+ * @brief
+ * @param
+ */
+static void btn_toggle_img_cb(lv_obj_t * bt, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED)
     {
-        printf("bt_connect_cb\n");
-        screen_cb.wifi_connect("Maxi", "cornimont");
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-static void bt_disconnect_cb(lv_obj_t * bt, lv_event_t event)
-{
-    if(event == LV_EVENT_CLICKED)
-    {
-        printf("bt_disconnect_cb\n");
-        screen_cb.wifi_disconnect();
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-static void ta_event_cb(lv_obj_t * ta, lv_event_t event)
-{
-    if(event == LV_EVENT_RELEASED)
-    {
-        if(kb == NULL)
-        {
-            lv_obj_set_height(tv, LV_VER_RES / 2);
-            kb = lv_keyboard_create(lv_scr_act(), NULL);
-            lv_obj_set_event_cb(kb, kb_event_cb);
-
-            lv_indev_wait_release(lv_indev_get_act());
-        }
-        lv_textarea_set_cursor_hidden(ta, false);
-        lv_page_focus(t1, lv_textarea_get_label(ta), LV_ANIM_ON);
-        lv_keyboard_set_textarea(kb, ta);
-    }
-    else if(event == LV_EVENT_DEFOCUSED)
-    {
-        lv_textarea_set_cursor_hidden(ta, true);
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-static void kb_event_cb(lv_obj_t * kb, lv_event_t event)
-{
-    lv_keyboard_def_event_cb(kb, event);
-
-    if(event == LV_EVENT_CANCEL)
-    {
-        if(kb)
-        {
-            lv_obj_set_height(tv, LV_VER_RES);
-            lv_obj_del(kb);
-            kb = NULL;
-        }
+        // ESP_LOGI(TAG, "btn_toggle_img_cb\n");
+        toggle_img(on_watch);
+        on_watch = on_watch == ON_WATCH ? OFF_WATCH : ON_WATCH;
     }
 }

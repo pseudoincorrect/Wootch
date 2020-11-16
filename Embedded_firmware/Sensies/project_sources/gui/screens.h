@@ -32,6 +32,12 @@ typedef struct imu_data_struct
 
 imu_data_t screen_imu;
 
+typedef enum watch_state_enum
+{
+    ON_WATCH,
+    OFF_WATCH
+} watch_state_t;
+
 void gui_init_cb(gui_wifi_connect_cb_t wifi_connect_cb,
                  gui_wifi_disconnect_cb_t wifi_disconnect_cb);
 

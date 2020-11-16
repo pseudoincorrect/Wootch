@@ -4,7 +4,8 @@ set(IMG_DIR "../images")
 set(PROJ_SOURCES 
         main.c
         "${PROJ_SRC_DIR}/gui/screens.c"
-        "${IMG_DIR}/img_watchdog.c"
+        "${IMG_DIR}/img_watch_dog.c"
+        "${IMG_DIR}/img_sleepy_dog.c"
 )
 
 set(PROJ_INCLUDES 
