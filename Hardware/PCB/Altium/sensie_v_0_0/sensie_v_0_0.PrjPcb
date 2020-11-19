@@ -71,6 +71,22 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=KNLFENVT
 
+[Parameter1]
+Name=page_size
+Value=A3
+
+[Parameter2]
+Name=project
+Value=Sensie
+
+[Parameter3]
+Name=company
+Value=HBKU
+
+[Parameter4]
+Name=version_revision
+Value=0.0
+
 [Configuration1]
 Name=Sources
 ParameterCount=0
@@ -190,7 +206,7 @@ OutputDefault20=0
 [OutputGroup2]
 Name=Simulator Outputs
 Description=
-TargetPrinter=Send To OneNote 2016
+TargetPrinter=\\vpssf02.hbku.edu.qa\HBKUPrint
 PrinterOptions=Record=PrinterOptions|Copies=1|Duplex=1|TrueTypeOptions=3|Collate=1|PrintJobKind=1|PrintWhat=1
 
 [OutputGroup3]
