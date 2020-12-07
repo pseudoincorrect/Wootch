@@ -3,7 +3,12 @@ set(IMG_DIR "../images")
 
 set(PROJ_SOURCES 
         main.c
-        "${PROJ_SRC_DIR}/gui/screens.c"
+        "${PROJ_SRC_DIR}/gui/gui_screens.c"
+        "${PROJ_SRC_DIR}/wifi/wifi_connect.c"
+        "${PROJ_SRC_DIR}/gui/gui.c"
+        "${PROJ_SRC_DIR}/imu/imu_sample.c"
+        "${PROJ_SRC_DIR}/aws/aws_connect.c"
+        "${PROJ_SRC_DIR}/aws/aws_imu.c"
         "${IMG_DIR}/img_watch_dog.c"
         "${IMG_DIR}/img_sleepy_dog.c"
 )
@@ -11,6 +16,10 @@ set(PROJ_SOURCES
 set(PROJ_INCLUDES 
         .
         "${PROJ_SRC_DIR}/gui"
+        "${PROJ_SRC_DIR}/misc"
+        "${PROJ_SRC_DIR}/imu"
+        "${PROJ_SRC_DIR}/aws"
+        "${PROJ_SRC_DIR}/wifi"
 )
 
 set(PROJ_REQUIRES

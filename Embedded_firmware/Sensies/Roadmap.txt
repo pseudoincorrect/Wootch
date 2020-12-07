@@ -1,24 +1,26 @@
 --------------------------------------------------------------------------------
 MILESTONES                  (Big Picture Tasks)
 --------------------------------------------------------------------------------
-
+Analyse data on AWS and send notification that will change the image of the dog
 
 
 --------------------------------------------------------------------------------
 TO DO                       (Smaller Tasks)
 --------------------------------------------------------------------------------
-Send Accelero data to AWS
 Receive a notif from AWS
 Display a notification in a popup
 Put everything to sleep 
 Use push button to wake up the system
 Create a task to detect movement
 Create a python AWS-IOT simulator (for development without hardware)
+Create a mqtt request to get the current time
+create a queue for IMU message to send
 
 
 --------------------------------------------------------------------------------
 IN PROGRESS                 (Smaller Tasks)
 --------------------------------------------------------------------------------
+Send Accelero data to AWS
 
 
 --------------------------------------------------------------------------------
@@ -26,6 +28,7 @@ DONE                        (Smaller Tasks & Milestones)
 
 Date        Tag     Description
 --------------------------------------------------------------------------------
+06/12/2020  ARCHI   Create a queue for IMU message to send
 12/11/2020  GUI     Correct the keyboard bug when switching textarea
 12/11/2020  SIMUL   Share sources with LVGL simulator (for development without hardware)
 11/11/2020  GUI     Switch image with a push button
