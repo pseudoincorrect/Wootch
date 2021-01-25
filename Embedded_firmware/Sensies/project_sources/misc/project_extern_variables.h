@@ -14,5 +14,7 @@ extern const int CONNECTED_BIT;
 extern QueueHandle_t imu_queue;
 extern imu_raw_data_t last_imu_raw_data;
 
+// AWS
+
 #endif // __project_extern_variables_h__
 

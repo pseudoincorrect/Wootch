@@ -1,0 +1,51 @@
+////////////////////////////////////////////////////////////////////////////////
+
+Designation/Reference
+    Waveshare 3.5inch RPi LCD (A)  (no clear product number)
+    or 
+    MPI3501 (we find this one on a few websites)
+
+wiki:
+https://www.waveshare.com/wiki/3.5inch_RPi_LCD_(A)
+
+pin assignements:
+https://cdn.awsli.com.br/945/945993/arquivos/MPI3501-3.5inch-RPi-Display-User-Manual-V1.0.pdf
+
+////////////////////////////////////////////////////////////////////////////////
+
+TFT screen
+TFT driver: ILI9486
+
+CONFIG_LV_DISPLAY_WIDTH      = 480
+CONFIG_LV_DISPLAY_HEIGHT     = 320
+
+CONFIG_LV_DISP_SPI_MOSI      = 13
+CONFIG_LV_DISP_SPI_CLK       = 14
+CONFIG_LV_DISPLAY_USE_SPI_CS = y
+CONFIG_LV_DISP_SPI_CS        = 15
+CONFIG_LV_DISPLAY_USE_DC     = y
+CONFIG_LV_DISP_PIN_DC        = 2
+CONFIG_LV_DISP_PIN_RST       = 4
+CONFIG_LV_DISP_PIN_BUSY      = 35
+# CONFIG_LV_DISPLAY_USE_SPI_MISO is not set
+
+////////////////////////////////////////////////////////////////////////////////
+
+Touch
+Touch driver : XPT2046
+
+SPI_MISO = pin 12
+SPI_MOSI = pin 13
+SPI_CLK  = pin 14
+SPI_CS   = pin 5
+PIN_IRQ  = pin 25
+
+CONFIG_LV_TOUCH_X_MIN    = 20
+CONFIG_LV_TOUCH_Y_MIN    = 20
+CONFIG_LV_TOUCH_X_MAX    = 2000
+CONFIG_LV_TOUCH_Y_MAX    = 2000
+CONFIG_LV_TOUCH_INVERT_X = y
+# CONFIG_LV_TOUCH_XY_SWAP is not set
+# CONFIG_LV_TOUCH_INVERT_Y is not set
+
+////////////////////////////////////////////////////////////////////////////////

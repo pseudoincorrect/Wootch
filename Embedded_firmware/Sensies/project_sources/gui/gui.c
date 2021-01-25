@@ -8,6 +8,7 @@
 #include "lvgl/lvgl.h"
 #include "lvgl_helpers.h"
 #include "gui_screens.h"
+#include "screens.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // DEFINES
@@ -64,7 +65,8 @@ void gui_task(void *arg)
                     LV_TICK_PERIOD_MS * 1000));
 
     // start the GUI
-    start_gui();
+    // start_gui();
+    init_screens();
 
     while (1)
     {

@@ -1,17 +1,30 @@
+cmake_minimum_required(VERSION 3.5)
+
 set(PROJ_SRC_DIR "../project_sources")
 set(IMG_DIR "../images")
 
 set(PROJ_SOURCES 
         main.c
-        "${PROJ_SRC_DIR}/gui/gui_screens.c"
         "${PROJ_SRC_DIR}/wifi/wifi_connect.c"
-        "${PROJ_SRC_DIR}/gui/gui.c"
         "${PROJ_SRC_DIR}/imu/imu_sample.c"
         "${PROJ_SRC_DIR}/aws/aws_connect.c"
         "${PROJ_SRC_DIR}/aws/aws_imu.c"
+        "${PROJ_SRC_DIR}/gui/gui.c"
+        "${PROJ_SRC_DIR}/gui/gui_theme.c"
+        "${PROJ_SRC_DIR}/gui/gui_animation.c"
+        # "${PROJ_SRC_DIR}/gui/gui_screens.c"
+        "${PROJ_SRC_DIR}/gui/screens.c"
+        "${PROJ_SRC_DIR}/gui/account_screen.c"
+        "${PROJ_SRC_DIR}/gui/play_screen.c"
+        "${PROJ_SRC_DIR}/gui/start_screen.c"
+        "${PROJ_SRC_DIR}/gui/wifi_screen.c"
+        "${PROJ_SRC_DIR}/gui/watch_screen.c"
         "${IMG_DIR}/img_watch_dog.c"
         "${IMG_DIR}/img_sleepy_dog.c"
-)
+        "${IMG_DIR}/img_play_dog.c"
+        "${IMG_DIR}/img_normal_dog.c"
+        "${IMG_DIR}/icon_wifi.c"
+        )
 
 set(PROJ_INCLUDES 
         .
@@ -45,7 +58,7 @@ target_add_binary_data(${COMPONENT_TARGET} "../certificates/private.pem.key" TEX
 
 target_compile_definitions(${COMPONENT_LIB}  PRIVATE LV_CONF_INCLUDE_SIMPLE=1)
 
-target_compile_options(${COMPONENT_LIB} PRIVATE -Wno-unused-function -Wno-deprecated-declarations)
+target_compile_options(${COMPONENT_LIB} PRIVATE -Wno-unused-function -Wno-unused-variable -Wno-deprecated-declarations)
 
 
 

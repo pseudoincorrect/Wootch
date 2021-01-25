@@ -13,7 +13,7 @@
 static const char *TAG = "IMU_TASK";
 
 // IMU (Inertial Management Unit)
-mpu_handle_t mpu; // "mpu" is the model reference
+mpu_handle_t mpu;
 
 
 QueueHandle_t imu_queue = NULL;

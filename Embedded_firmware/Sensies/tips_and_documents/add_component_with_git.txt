@@ -1,0 +1,9 @@
+How to add a component in the component directory with git submodules
+
+navigate to the componenent directory
+
+$ git submodule add <https:your-git-repository> components/<your-git-repository-name>
+    example:
+        git submodule add https://github.com/pseudoincorrect/esp_mpu60x0_C components/esp_mpu60x0_C
+
+$ git submodule update --init --recursive

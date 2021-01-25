@@ -34,4 +34,6 @@ void gui_init_cb(gui_wifi_connect_cb_t wifi_connect_cb,
 
 void start_gui(void);
 
+void display_alert(void);
+
 #endif

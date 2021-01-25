@@ -16,6 +16,8 @@
 #include "esp_wifi.h"
 // MISC
 #include "project_extern_variables.h"
+//
+#include "gui_screens.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // GLOBAL, EXTERN AND STATIC VARIABLES
@@ -61,6 +63,22 @@ void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName,
  * @brief
  * @param
  */
+void iot_subscribe_notif_alert_callback_handler(AWS_IoT_Client *pClient,
+        char *topicName, uint16_t topicNameLen,
+        IoT_Publish_Message_Params *params, void *pData)
+{
+    ESP_LOGI(TAG, "Subscribe alert callback");
+    ESP_LOGI(TAG, "%.*s\t%.*s", topicNameLen, topicName, (int) params->payloadLen,
+             (char *)params->payload);
+
+    // display_alert();
+}
+
+
+/*******************************************************************************
+ * @brief
+ * @param
+ */
 void disconnect_callback_handler(AWS_IoT_Client *pClient, void *data)
 {
     ESP_LOGW(TAG, "MQTT Disconnect");
@@ -82,27 +100,21 @@ void disconnect_callback_handler(AWS_IoT_Client *pClient, void *data)
     }
 }
 
+/******************************************************************************/
+/******************************************************************************/
+/******************************************************************************/
+
+AWS_IoT_Client client;
+IoT_Client_Init_Params mqtt_init_params;
+
 /*******************************************************************************
  * @brief
  * @param
  */
-void aws_iot_task(void *param)
+void mqtt_init(void)
 {
-    char cPayload[100];
-
-    int32_t i = 0;
-
     IoT_Error_t rc = FAILURE;
-
-    AWS_IoT_Client client;
-    IoT_Client_Init_Params mqtt_init_params = iotClientInitParamsDefault;
-    IoT_Client_Connect_Params connect_params = iotClientConnectParamsDefault;
-
-    IoT_Publish_Message_Params params_qos0;
-    IoT_Publish_Message_Params params_qos1;
-
-    ESP_LOGI(TAG, "AWS IoT SDK Version %d.%d.%d-%s", VERSION_MAJOR, VERSION_MINOR,
-             VERSION_PATCH, VERSION_TAG);
+    mqtt_init_params = iotClientInitParamsDefault;
 
     mqtt_init_params.enableAutoReconnect = false; // We enable this later below
     mqtt_init_params.pHostURL = HostAddress;
@@ -124,13 +136,16 @@ void aws_iot_task(void *param)
         abort();
     }
 
-    ESP_LOGI(TAG, "Waiting for internet connection...");
+}
 
-    /* Wait for WiFI to show as connected */
-    xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT,
-                        false, true, portMAX_DELAY);
-
-    ESP_LOGI(TAG, "Connected to internet !");
+/*******************************************************************************
+ * @brief
+ * @param
+ */
+void mqtt_connect(void)
+{
+    IoT_Error_t rc = FAILURE;
+    IoT_Client_Connect_Params connect_params = iotClientConnectParamsDefault;
 
     connect_params.keepAliveIntervalInSec = 10;
     connect_params.isCleanSession = true;
@@ -153,19 +168,21 @@ void aws_iot_task(void *param)
     }
     while(SUCCESS != rc);
 
-    /*
-     * Enable Auto Reconnect functionality. Minimum and Maximum time of
-     * Exponential backoff are set in aws_iot_config.h
-     *  #AWS_IOT_MQTT_MIN_RECONNECT_WAIT_INTERVAL
-     *  #AWS_IOT_MQTT_MAX_RECONNECT_WAIT_INTERVAL
-     */
     rc = aws_iot_mqtt_autoreconnect_set_status(&client, true);
     if(SUCCESS != rc)
     {
         ESP_LOGE(TAG, "Unable to set Auto Reconnect to true - %d", rc);
         abort();
     }
+}
 
+/*******************************************************************************
+ * @brief
+ * @param
+ */
+void mqtt_subscribe(void)
+{
+    IoT_Error_t rc = FAILURE;
     const char *TOPIC = "test_topic/esp32";
     const int TOPIC_LEN = strlen(TOPIC);
 
@@ -177,6 +194,44 @@ void aws_iot_task(void *param)
         ESP_LOGE(TAG, "Error subscribing : %d ", rc);
         abort();
     }
+}
+
+/*******************************************************************************
+ * @brief
+ * @param
+ */
+void mqtt_subscribe_notification(void)
+{
+    IoT_Error_t rc = FAILURE;
+    const char *TOPIC = "notification/alert";
+    const int TOPIC_LEN = strlen(TOPIC);
+    ESP_LOGI(TAG, "Subscribing to alert notifs...");
+
+    rc = aws_iot_mqtt_subscribe(&client, TOPIC, TOPIC_LEN, QOS0,
+                                iot_subscribe_notif_alert_callback_handler,
+                                NULL);
+    if(SUCCESS != rc)
+    {
+        ESP_LOGE(TAG, "error subscribing alert : %d", rc);
+        abort();
+    }
+}
+
+
+/*******************************************************************************
+ * @brief
+ * @param
+ */
+void mqtt_publish(void)
+{
+    IoT_Error_t rc = SUCCESS;
+    char cPayload[100];
+    IoT_Publish_Message_Params params_qos0;
+    IoT_Publish_Message_Params params_qos1;
+    int32_t i = 0;
+
+    const char *TOPIC = "test_topic/esp32";
+    const int TOPIC_LEN = strlen(TOPIC);
 
     sprintf(cPayload, "%s : %d ", "hello from SDK", i);
 
@@ -200,7 +255,7 @@ void aws_iot_task(void *param)
 
         ESP_LOGI(TAG, "Stack remaining for task '%s' is %d bytes",
                  pcTaskGetTaskName(NULL), uxTaskGetStackHighWaterMark(NULL));
-        vTaskDelay(1000 / portTICK_RATE_MS);
+        vTaskDelay(8000 / portTICK_RATE_MS);
         sprintf(cPayload, "%s : %d ", "hello from ESP32 (QOS0)", i++);
         params_qos0.payloadLen = strlen(cPayload);
         rc = aws_iot_mqtt_publish(&client, TOPIC, TOPIC_LEN, &params_qos0);
@@ -214,7 +269,44 @@ void aws_iot_task(void *param)
             rc = SUCCESS;
         }
     }
+}
 
-    ESP_LOGE(TAG, "An error occurred in the main loop.");
-    abort();
+/*******************************************************************************
+ * @brief
+ * @param
+ */
+void aws_iot_mqtt_manage_task(void *param)
+{
+    mqtt_init();
+
+    ESP_LOGI(TAG, "Waiting for internet connection...");
+    xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT,
+                        false, true, portMAX_DELAY);
+    ESP_LOGI(TAG, "Connected to internet !");
+
+    mqtt_connect();
+
+    // mqtt_subscribe();
+
+    mqtt_subscribe_notification();
+
+    mqtt_publish();
+}
+
+/*******************************************************************************
+ * @brief
+ * @param
+ */
+void aws_iot_publish_1_task(void *param)
+{
+
+}
+
+/*******************************************************************************
+ * @brief
+ * @param
+ */
+void aws_iot_publish_2_task(void *param)
+{
+
 }

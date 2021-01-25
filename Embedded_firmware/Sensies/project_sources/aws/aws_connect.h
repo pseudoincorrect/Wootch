@@ -9,6 +9,10 @@ void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName,
 
 void disconnect_callback_handler(AWS_IoT_Client *pClient, void *data);
 
-void aws_iot_task(void *param); 
+// void aws_iot_task(void *param); 
+void aws_iot_mqtt_manage_task(void *param);
+void aws_iot_publish_1_task(void *param);
+void aws_iot_publish_2_task(void *param);
+
 
 #endif

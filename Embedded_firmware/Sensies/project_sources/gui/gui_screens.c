@@ -34,6 +34,7 @@ static void btn_disconnect_cb(lv_obj_t * bt, lv_event_t event);
 static void aws_iot_create(lv_obj_t* parent);
 static void toggle_img(watch_state_t state);
 static void btn_toggle_img_cb(lv_obj_t * bt, lv_event_t event);
+static void btn_alert_cb(lv_obj_t *btn, lv_event_t evt);
 
 ////////////////////////////////////////////////////////////////////////////////
 // GLOBAL AND STATIC VARIABLES
@@ -60,6 +61,7 @@ static lv_obj_t * t3;
 static lv_obj_t * cont_dog;
 static lv_obj_t * img_dog;
 static bool on_watch;
+static lv_obj_t *mbox, hey;
 
 // #### ##    ## #### ########
 //  ##  ###   ##  ##     ##
@@ -104,7 +106,7 @@ void start_gui(void)
     imu_create(t1);
     wifi_connect_create(t2);
     aws_iot_create(t3);
-    lv_tabview_set_tab_act(tv, 0, LV_ANIM_ON);
+    lv_tabview_set_tab_act(tv, 2, LV_ANIM_ON);
 
     imu_raw_data_t screen_imu = {0};
     imu_update_task = lv_task_create(imu_update, 100,
@@ -317,18 +319,7 @@ static void imu_update(lv_task_t * task)
  */
 static void refresh_imu_canvas(imu_raw_data_t* acc)
 {
-    // sqr_imu.x = 10 + rand() % 180;
-    // sqr_imu.y = 10 + rand() % 180;
-    // sqr_imu.x = - (screen_imu.g_x * 100 / 9000 + 100);
-    // sqr_imu.y = screen_imu.g_y * 100 / 9000 + 100;
-
-
     imu_raw_data_t imu_raw_data = {0};
-
-    // BaseType_t status =  xQueueReceive( imu_queue, &imu_raw_data,
-    //                                     0);
-    // if (status != pdPASS)
-    //     return;
 
     memcpy(&imu_raw_data, &last_imu_raw_data, sizeof(imu_raw_data_t));
 
@@ -392,6 +383,7 @@ static void draw_square(lv_obj_t* canvas, square_data_t* square)
 // ##     ## ##  ##  ## ##    ##
 // ##     ##  ###  ###   ######
 
+
 /*******************************************************************************
  * @brief
  * @param
@@ -419,6 +411,15 @@ static void aws_iot_create(lv_obj_t* parent)
     lv_obj_t * lb_toggle_img = lv_label_create(btn_toggle_img, NULL);
     lv_label_set_text(lb_toggle_img, "toggle img");
     lv_btn_toggle(btn_toggle_img);
+
+    // Button toggle
+    lv_obj_t * btn_alert = lv_btn_create(parent, NULL);
+    lv_obj_set_event_cb(btn_alert, btn_alert_cb);
+    lv_btn_set_fit2(btn_alert, LV_FIT_NONE, LV_FIT_TIGHT);
+    lv_obj_set_width(btn_alert, 100);
+    lv_obj_t * lb_alert = lv_label_create(btn_alert, NULL);
+    lv_label_set_text(lb_alert, "Alert !");
+    lv_btn_toggle(btn_alert);
 }
 
 static void toggle_img(watch_state_t state)
@@ -454,8 +455,58 @@ static void btn_toggle_img_cb(lv_obj_t * bt, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED)
     {
-        // ESP_LOGI(TAG, "btn_toggle_img_cb\n");
         toggle_img(on_watch);
         on_watch = on_watch == ON_WATCH ? OFF_WATCH : ON_WATCH;
+    }
+}
+
+
+static void opa_anim(void * bg, lv_anim_value_t v)
+{
+    lv_obj_set_style_local_bg_opa(bg, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, v);
+}
+
+static void mbox_event_cb(lv_obj_t *obj, lv_event_t evt)
+{
+    if(evt == LV_EVENT_DELETE && obj == mbox)
+    {
+        /* Delete the parent modal background */
+        lv_obj_del_async(lv_obj_get_parent(mbox));
+        mbox = NULL; /* happens before object is actually deleted! */
+    }
+    else if(evt == LV_EVENT_VALUE_CHANGED)
+    {
+        /* A button was clicked */
+        lv_msgbox_start_auto_close(mbox, 0);
+    }
+}
+
+static void btn_alert_cb(lv_obj_t *btn, lv_event_t evt)
+{
+    if(evt == LV_EVENT_CLICKED)
+    {
+        display_alert();
+    }
+}
+
+void display_alert(void)
+{
+    if (mbox == NULL)
+    {
+        /* Create a base object for the modal background */
+        lv_obj_t *obj = lv_obj_create(lv_scr_act(), NULL);
+        lv_obj_reset_style_list(obj, LV_OBJ_PART_MAIN);
+        lv_obj_add_style(obj, LV_OBJ_PART_MAIN, &style_box);
+        lv_obj_set_pos(obj, 0, 0);
+        lv_obj_set_size(obj, LV_HOR_RES, LV_VER_RES);
+
+        static const char * btns2[] = {"Ok", "Cancel", ""};
+
+        /* Create the message box as a child of the modal background */
+        mbox = lv_msgbox_create(obj, NULL);
+        lv_msgbox_add_btns(mbox, btns2);
+        lv_msgbox_set_text(mbox, "Hello world!");
+        lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
+        lv_obj_set_event_cb(mbox, mbox_event_cb);
     }
 }
