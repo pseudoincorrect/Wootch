@@ -3,6 +3,6 @@
 
 #include "stdint.h"
 
-void create_watch_screen(uint32_t delay);
+void create_watch_screen(void);
 
 #endif

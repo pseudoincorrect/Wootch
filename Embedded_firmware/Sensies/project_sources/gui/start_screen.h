@@ -3,6 +3,6 @@
 
 #include "stdint.h"
 
-void create_start_screen(uint32_t delay);
+void create_start_screen(void);
 
 #endif

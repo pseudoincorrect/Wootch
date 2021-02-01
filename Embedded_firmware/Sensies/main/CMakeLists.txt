@@ -12,7 +12,7 @@ set(PROJ_SOURCES
         "${PROJ_SRC_DIR}/gui/gui.c"
         "${PROJ_SRC_DIR}/gui/gui_theme.c"
         "${PROJ_SRC_DIR}/gui/gui_animation.c"
-        # "${PROJ_SRC_DIR}/gui/gui_screens.c"
+        "${PROJ_SRC_DIR}/gui/gui_screens.c"
         "${PROJ_SRC_DIR}/gui/screens.c"
         "${PROJ_SRC_DIR}/gui/account_screen.c"
         "${PROJ_SRC_DIR}/gui/play_screen.c"

@@ -20,11 +20,11 @@ LV_EVENT_CB_DECLARE(watch_button_cb);
  * @brief
  * @param
  */
-void create_watch_screen(uint32_t delay)
+void create_watch_screen(void)
 {
-    gui_anim_out_all(lv_scr_act(), 0);
+    gui_anim_out_all(lv_scr_act(), GUI_ANIM_FAST);
 
-    gui_anim_bg(0, GUI_GREEN, GUI_BG_FULL);
+    gui_anim_bg(GUI_ANIM_FAST, GUI_GREEN, GUI_BG_FULL);
 
     LV_IMG_DECLARE(imp_normal_dog);
 
@@ -36,9 +36,7 @@ void create_watch_screen(uint32_t delay)
                                      "CONNECT");
     lv_obj_set_event_cb(btn, watch_button_cb);
 
-    gui_anim_in(btn, delay);
-    delay += GUI_ANIM_DELAY;
-    gui_anim_in(btn, delay);
+    gui_anim_in(btn, GUI_ANIM_SLOW);
 }
 
 /*******************************************************************************
@@ -47,5 +45,5 @@ void create_watch_screen(uint32_t delay)
  */
 LV_EVENT_CB_DECLARE(watch_button_cb)
 {
-    create_start_screen(200);
+    create_start_screen();
 }

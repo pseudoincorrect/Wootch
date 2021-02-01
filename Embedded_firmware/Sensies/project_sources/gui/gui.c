@@ -65,8 +65,8 @@ void gui_task(void *arg)
                     LV_TICK_PERIOD_MS * 1000));
 
     // start the GUI
-    // start_gui();
-    init_screens();
+    start_gui();
+    // init_screens();
 
     while (1)
     {

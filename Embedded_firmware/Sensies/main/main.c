@@ -42,11 +42,11 @@ void app_main(void)
     ESP_ERROR_CHECK(err);
 
     // Wi-Fi
-    initialise_wifi();
+    // initialise_wifi();
 
     // AWS IOT
-    xTaskCreatePinnedToCore(&aws_iot_mqtt_manage_task, "aws_iot_mqtt_manage_task",
-                            9216, NULL, 5, NULL, 1);
+    // xTaskCreatePinnedToCore(&aws_iot_mqtt_manage_task, "aws_iot_mqtt_manage_task",
+    // 9216, NULL, 5, NULL, 1);
 
     // xTaskCreatePinnedToCore(&aws_iot_publish_1_task, "aws_iot_publish_1_task",
     //                         9216, NULL, 5, NULL, 1);
@@ -55,10 +55,10 @@ void app_main(void)
     //                         9216, NULL, 5, NULL, 1);
 
     // IMU
-    imu_init();
-    xTaskCreate(imu_task, "imu_task", 1024 * 2, (void *)1, 10, NULL);
+    // imu_init();
+    // xTaskCreate(imu_task, "imu_task", 1024 * 2, (void *)1, 10, NULL);
 
-    connect_wifi("Maxi", "notmyrealpassword");
+    // connect_wifi("Maxi", "notmyrealpassword");
     // LVGL (Light and Versatile Graphical Library)
     // initialize GUI callbacks
     // gui_init_cb(connect_wifi, disconnect_wifi);

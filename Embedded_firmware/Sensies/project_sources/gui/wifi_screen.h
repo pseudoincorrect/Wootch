@@ -3,6 +3,6 @@
 
 #include "stdint.h"
 
-void create_wifi_screen(uint32_t delay);
+void create_wifi_screen(void);
 
 #endif

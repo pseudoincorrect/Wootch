@@ -30,13 +30,28 @@
 #define GUI_TITLE_PAD 35
 
 /*Colors*/
-#define GUI_WHITE           lv_color_hex(0xffffff)
-#define GUI_LIGHT           lv_color_hex(0xf3f8fe)
-#define GUI_GRAY            lv_color_hex(0x8a8a8a)
-#define GUI_LIGHT_GRAY      lv_color_hex(0xc4c4c4)
-#define GUI_BLUE            lv_color_hex(0x2f3243) //006fb6
-#define GUI_GREEN           lv_color_hex(0x4cb242)
-#define GUI_RED             lv_color_hex(0xd51732)
+// #define GUI_WHITE           lv_color_hex(0xffffff)
+// #define GUI_LIGHT           lv_color_hex(0xf3f8fe)
+// #define GUI_GRAY            lv_color_hex(0x8a8a8a)
+// #define GUI_LIGHT_GRAY      lv_color_hex(0xc4c4c4)
+// #define GUI_BLUE            lv_color_hex(0x2f3243)
+// #define GUI_GREEN           lv_color_hex(0x4cb242)
+// #define GUI_RED             lv_color_hex(0xd51732)
+
+// https://paletton.com/#uid=32D170kmW5utiCirabdALnsCVq-
+#define GUI_BG_0            lv_color_hex(0x333333)
+#define GUI_BG_1            lv_color_hex(0x000000)
+#define GUI_BG_1_BORDER     lv_color_hex(0x09408B)
+#define GUI_BG_2            lv_color_hex(0x1f1f1f)
+#define GUI_FG_1            lv_color_hex(0xffffff)
+#define GUI_FG_1_2          lv_color_hex(0x838383)
+#define GUI_ACCENT_BG_1     lv_color_hex(0x12D812)
+#define GUI_ACCENT_FG_1     lv_color_hex(0x000000)
+#define GUI_RED             lv_color_hex(0xB90005)
+#define GUI_GREEN           lv_color_hex(0x09AB00)
+#define GUI_BLUE            lv_color_hex(0x09408B)
+#define GUI_YELLOW          lv_color_hex(0xD4C900)
+
 
 /**********************
  *      TYPEDEFS

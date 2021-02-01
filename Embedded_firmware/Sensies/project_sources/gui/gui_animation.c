@@ -5,6 +5,7 @@ extern lv_style_t style_box;
 extern lv_obj_t * scan_img;
 extern lv_obj_t * bg_top;
 extern lv_obj_t * bg_bottom;
+extern lv_obj_t * bg_full;
 extern lv_color_t bg_color_prev;
 extern lv_color_t bg_color_act;
 
