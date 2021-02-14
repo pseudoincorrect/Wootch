@@ -4,18 +4,16 @@
 #include "wifi_screen.h"
 #include "esp_log.h"
 
-/**********************
- *  STATIC PROTOTYPES
- **********************/
+
+// STATIC PROTOTYPES
 LV_EVENT_CB_DECLARE(start_button_cb);
 
-/**********************
- *  GLOBAL VARIABLES
- **********************/
+// EXTERN VARIABLES
+LV_IMG_DECLARE(img_normal_dog);
 
-/**********************
- *  STATIC VARIABLES
- **********************/
+// GLOBAL VARIABLES
+
+// STATIC VARIABLES
 static const char* TAG = "START";
 
 /*******************************************************************************
@@ -29,35 +27,32 @@ void create_start_screen(void)
 
     lv_obj_t * title = lv_label_create(lv_scr_act(), NULL);
     lv_label_set_text(title, "START YOUR WOOTCH !");
-    lv_obj_set_style_local_text_color(title, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,
-                                      GUI_ACCENT_FG_1);
-    lv_obj_set_style_local_text_font(title, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,
-                                     lv_theme_get_font_title());
+    lv_obj_set_style_local_text_color(
+        title, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, GUI_ACCENT_FG_1);
+    lv_obj_set_style_local_text_font(
+        title, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, lv_theme_get_font_title());
     lv_obj_align(title, NULL, LV_ALIGN_IN_TOP_MID, 0, 15);
-    gui_anim_in(title, GUI_ANIM_FAST);
+    gui_anim_in(title, GUI_ANIM_SLOW);
 
     lv_obj_t * cont_start = lv_cont_create(lv_scr_act(), NULL);
-    lv_obj_set_style_local_bg_color(cont_start, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,
-                                    GUI_BG_2);
+    lv_obj_set_style_local_bg_color(
+        cont_start, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, GUI_BG_2);
     lv_obj_set_width(cont_start, 300);
     lv_obj_set_height(cont_start, 180);
     lv_cont_set_layout(cont_start, LV_LAYOUT_ROW_MID);
-    lv_obj_set_style_local_pad_all(cont_start, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,
-                                   25);
-    lv_obj_set_style_local_pad_inner(cont_start, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,
-                                     10);
-
+    lv_obj_set_style_local_pad_all(
+        cont_start, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 25);
+    lv_obj_set_style_local_pad_inner(
+        cont_start, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 10);
     lv_obj_align(cont_start, lv_scr_act(), LV_ALIGN_CENTER, 0, 10);
-
-    LV_IMG_DECLARE(img_normal_dog);
 
     lv_obj_t * img = lv_img_create(cont_start, NULL);
     lv_img_set_src(img, &img_normal_dog);
     lv_img_set_antialias(img, false);
     lv_obj_align(img, NULL, LV_ALIGN_CENTER, 0, 0);
     lv_obj_set_style_local_radius(img, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 10);
-    lv_obj_set_style_local_clip_corner(img, LV_OBJ_PART_MAIN,
-                                       LV_STATE_DEFAULT, true);
+    lv_obj_set_style_local_clip_corner(
+        img, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, true);
 
     lv_obj_t* start_button = lv_btn_create(cont_start, NULL);
     lv_obj_align(start_button, NULL, LV_ALIGN_CENTER, 0, 0);

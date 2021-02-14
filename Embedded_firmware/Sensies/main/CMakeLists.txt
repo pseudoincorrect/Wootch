@@ -24,6 +24,7 @@ set(PROJ_SOURCES
         "${IMG_DIR}/img_play_dog.c"
         "${IMG_DIR}/img_normal_dog.c"
         "${IMG_DIR}/icon_wifi.c"
+        "${IMG_DIR}/icon_left_arrow.c"
         )
 
 set(PROJ_INCLUDES 

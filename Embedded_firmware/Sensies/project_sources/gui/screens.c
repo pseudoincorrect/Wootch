@@ -10,7 +10,8 @@
 #include "gui_theme.h"
 #include "gui_animation.h"
 #include "start_screen.h"
-#include "wifi_screen.h"
+#include "watch_screen.h"
+// #include "wifi_screen.h"
 
 /**********************
  *  STATIC PROTOTYPES
@@ -38,8 +39,7 @@ lv_color_t bg_color_act;
  **********************/
 static const char * TAG = "SCREEN";
 
-/*******************************************************************************
- * @brief
+/****************************************************************************** * @brief
  * @param
  */
 void init_screens(void)
@@ -78,6 +78,6 @@ void init_screens(void)
     lv_obj_set_y(bg_top, GUI_BG_NORMAL);
 
     // create_start_screen();
-    create_wifi_screen();
+    create_watch_screen();
 }
 

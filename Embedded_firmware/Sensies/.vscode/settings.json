@@ -2,6 +2,9 @@
     "C_Cpp.errorSquiggles": "Disabled",
     "files.associations": {
         "*.ipp": "c",
-        "random": "c"
+        "random": "c",
+        "string.h": "c",
+        "start_screen.h": "c",
+        "gui_animation.h": "c"
     }
 }
