@@ -38,57 +38,6 @@ PrefsVaultGUID=
 PrefsRevisionGUID=
 
 [Document1]
-DocumentPath=sensie_v_0_0.SchDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=0
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=0
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=WWPSLUFV
-
-[Document2]
-DocumentPath=sensie_v_0_0.PcbDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=-1
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=1
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=KNLFENVT
-
-[Document3]
-DocumentPath=sensie_Job.OutJob
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=-1
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=1
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=
-
-[Document4]
 DocumentPath=sensie_v_0_0.OutJob
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -105,108 +54,146 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
+[Document2]
+DocumentPath=sensie_v_0_0.SchDoc
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=0
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=0
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=WWPSLUFV
+
+[Document3]
+DocumentPath=sensie_v_0_0.PcbDoc
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=KNLFENVT
+
 [GeneratedDocument1]
-DocumentPath=Project Outputs for sensie_v_0_0\NC Drill\sensie_v_0_0-RoundHoles.TXT
+DocumentPath=Output\Design Rule Check - sensie_v_0_0.html
 DItemRevisionGUID=
 
 [GeneratedDocument2]
-DocumentPath=Project Outputs for sensie_v_0_0\NC Drill\sensie_v_0_0-SlotHoles.TXT
+DocumentPath=Output\NC Drill\sensie_v_0_0-RoundHoles.TXT
 DItemRevisionGUID=
 
 [GeneratedDocument3]
-DocumentPath=Project Outputs for sensie_v_0_0\NC Drill\sensie_v_0_0.DRR
+DocumentPath=Output\NC Drill\sensie_v_0_0-SlotHoles.TXT
 DItemRevisionGUID=
 
 [GeneratedDocument4]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.EXTREP
+DocumentPath=Output\NC Drill\sensie_v_0_0.DRR
 DItemRevisionGUID=
 
 [GeneratedDocument5]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.G1
+DocumentPath=Output\Gerber\sensie_v_0_0.EXTREP
 DItemRevisionGUID=
 
 [GeneratedDocument6]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.G2
+DocumentPath=Output\Gerber\sensie_v_0_0.G1
 DItemRevisionGUID=
 
 [GeneratedDocument7]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.GBL
+DocumentPath=Output\Gerber\sensie_v_0_0.G2
 DItemRevisionGUID=
 
 [GeneratedDocument8]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.GBO
+DocumentPath=Output\Gerber\sensie_v_0_0.GBL
 DItemRevisionGUID=
 
 [GeneratedDocument9]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.GBP
+DocumentPath=Output\Gerber\sensie_v_0_0.GBO
 DItemRevisionGUID=
 
 [GeneratedDocument10]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.GBS
+DocumentPath=Output\Gerber\sensie_v_0_0.GBP
 DItemRevisionGUID=
 
 [GeneratedDocument11]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.GKO
+DocumentPath=Output\Gerber\sensie_v_0_0.GBS
 DItemRevisionGUID=
 
 [GeneratedDocument12]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.GM1
+DocumentPath=Output\Gerber\sensie_v_0_0.GKO
 DItemRevisionGUID=
 
 [GeneratedDocument13]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.GM2
+DocumentPath=Output\Gerber\sensie_v_0_0.GM1
 DItemRevisionGUID=
 
 [GeneratedDocument14]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.GM13
+DocumentPath=Output\Gerber\sensie_v_0_0.GM2
 DItemRevisionGUID=
 
 [GeneratedDocument15]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.GM14
+DocumentPath=Output\Gerber\sensie_v_0_0.GM13
 DItemRevisionGUID=
 
 [GeneratedDocument16]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.GM15
+DocumentPath=Output\Gerber\sensie_v_0_0.GM14
 DItemRevisionGUID=
 
 [GeneratedDocument17]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.GM16
+DocumentPath=Output\Gerber\sensie_v_0_0.GM15
 DItemRevisionGUID=
 
 [GeneratedDocument18]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.GPB
+DocumentPath=Output\Gerber\sensie_v_0_0.GM16
 DItemRevisionGUID=
 
 [GeneratedDocument19]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.GPT
+DocumentPath=Output\Gerber\sensie_v_0_0.GPB
 DItemRevisionGUID=
 
 [GeneratedDocument20]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.GTL
+DocumentPath=Output\Gerber\sensie_v_0_0.GPT
 DItemRevisionGUID=
 
 [GeneratedDocument21]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.GTO
+DocumentPath=Output\Gerber\sensie_v_0_0.GTL
 DItemRevisionGUID=
 
 [GeneratedDocument22]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.GTP
+DocumentPath=Output\Gerber\sensie_v_0_0.GTO
 DItemRevisionGUID=
 
 [GeneratedDocument23]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.GTS
+DocumentPath=Output\Gerber\sensie_v_0_0.GTP
 DItemRevisionGUID=
 
 [GeneratedDocument24]
-DocumentPath=Project Outputs for sensie_v_0_0\NC Drill\sensie_v_0_0.LDP
+DocumentPath=Output\Gerber\sensie_v_0_0.GTS
 DItemRevisionGUID=
 
 [GeneratedDocument25]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.REP
+DocumentPath=Output\NC Drill\sensie_v_0_0.LDP
 DItemRevisionGUID=
 
 [GeneratedDocument26]
-DocumentPath=Project Outputs for sensie_v_0_0\Gerber\sensie_v_0_0.RUL
+DocumentPath=Output\Gerber\sensie_v_0_0.REP
+DItemRevisionGUID=
+
+[GeneratedDocument27]
+DocumentPath=Output\Gerber\sensie_v_0_0.RUL
 DItemRevisionGUID=
 
 [Parameter1]
