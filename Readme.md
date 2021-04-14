@@ -31,12 +31,12 @@ Wootch's PCB has been made on Altium Designer. it features:
 - Push buttons and RGB LED
 - Programer/debugger
 
-<p align="center"><img align="center" width=30% src="Support/readme_assets/wootch_open_all.jpg"></p>
+<p align="center"><img align="center" width=40% src="Support/readme_assets/wootch_open_all.jpg"></p>
 <br>
 <p align="center">
-<img align="center" width=15% src="Support/readme_assets/wootch_hardware.jpg">
+<img align="center" width=20% src="Support/readme_assets/wootch_hardware.jpg">
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img align="center"  width=23% src="Support/readme_assets/altium.png">
+<img align="center"  width=30% src="Support/readme_assets/altium.png">
 </p>
 <br>
 
@@ -50,11 +50,11 @@ its main component are the following:
 
 <br>
 <p align="center">
-<img align="center" width=16% src="Support/readme_assets/start.jpg">
+<img align="center" width=27% src="Support/readme_assets/start.jpg">
 &nbsp;&nbsp;&nbsp;=>&nbsp;&nbsp;&nbsp;
-<img align="center" width=17% src="Support/readme_assets/wifi.jpg">
+<img align="center" width=29% src="Support/readme_assets/wifi.jpg">
 &nbsp;&nbsp;&nbsp;=>&nbsp;&nbsp;&nbsp;
-<img align="center"  width=17% src="Support/readme_assets/on_wootch.jpg">
+<img align="center"  width=26% src="Support/readme_assets/on_wootch.jpg">
 </p>
 <br>
 
