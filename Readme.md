@@ -8,12 +8,12 @@
 It wootches your door while your kids or/and cats sleep !
 
 # Wait what ?
-Wootch is an IoT device to monitor a door or any object activity and detect whether it get is moved. It then sends notifications to your registered device (phone or other) in case any activity is happening. Its intuitive Embedded UI helps you to set your level of guard ! (It can vibrate as soon as its door/object get touched, send you a message or let you live your life). It is connected to a cloud application to make sense of the sensors' data.
+Wootch is an IoT device to monitor a door or any object activity and detect whether it is being moved. It then sends notifications to your registered device (phone or other) in case any activity is happening. Its intuitive Embedded UI helps you to set your level of guard ! (It can vibrate as soon as its door/object get touched, send you a message or let you live your life). It is connected to a cloud application to make sense of the sensors' data.
 
 # What's the motives
 Well ! Mainly, I like side projects and it was the occasion to experiment with technologies new to me. 
 <br>
-Namely, Embedded UI (LVGL), Wifi enable MCU (ESP32) and Serverless Application (Serverless Framework). 
+Namely, Embedded UI (LVGL), Wifi enabled MCU (ESP32) and Serverless Application (AWS-CDK Framework). 
 <br>
 Plus it's fun !
 
@@ -60,17 +60,26 @@ its main component are the following:
 
 # Serverless Application (Backend)
 
-It will use the serverless framework:
+It will use the AWS-CDK (Cloud Development Kit) framework:
 - Receive MQTT messages, 
 - Extract data and store them in a dynamoDB Database
 - Run analytics on the stored data
 - Manage users
 - Manage IoT "things" and secure their data link
 
+<br>
+<p align="center">
+<img align="center" width=90% src="Support/readme_assets/aws_cdk_architecture.png">
+<br>
+(Simplified Architecture)
+</p>
+<br>
 (Work in progress)
 
+<br>
 <br>
 
 # Mobile Application
 
 (Work in progress)
+

@@ -32,7 +32,7 @@
  **********************/
 static void connect_wifi(char* ssid, char* password);
 static void disconnect_wifi(void);
-static void init_sensie_gui(void);
+static void init_wootch_gui(void);
 void init_rand(void);
 static void hal_init(void);
 static int tick_thread(void *data);
@@ -68,7 +68,7 @@ int main(int argc, char** argv)
     /*Run the v7 demo*/
     // lv_demo_widgets();
     // lv_ex_get_started_3();
-    init_sensie_gui();
+    init_wootch_gui();
     start_gui();
 
 #if WIN32
@@ -103,7 +103,7 @@ static void disconnect_wifi(void)
 }
 
 /******************************************************************************/
-static void init_sensie_gui(void)
+static void init_wootch_gui(void)
 {
     // gui_init_cb(connect_wifi, disconnect_wifi);
 }

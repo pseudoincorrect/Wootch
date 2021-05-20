@@ -1,4 +1,4 @@
-How to setup a LVGL simulator on windows machine to develop sensie GUI without specific hardware.
+How to setup a LVGL simulator on windows machine to develop Wootch GUI without specific hardware.
 
 Main page for LVGL simulators:
 Https://docs.lvgl.io/v7/en/html/get-started/pc-simulator.html
@@ -9,7 +9,7 @@ Clone lv_sim_codeblocks_win (LVGL Simulator Codeblocks Windows)
 Https://github.com/lvgl/lv_sim_codeblocks_win
 
 Now we got two projects (git repo):
-    (1) Sensie with path ${sensie_path} 
+    (1) Wootch with path ${Wootch_path} 
     (2) lv_sim_codeblocks_win with path ${lv_sim_codeblocks_win} 
 
 On project (2) folder, open "LittlevGL.cbp" with Codeblocks
@@ -31,15 +31,15 @@ Navigate to project (1) -> project_sources -> select "gui" -> click "select fold
 Repeat but this time select project (1) -> select "images" -> click "select folder"
 
 We should now, in the project tree, have two folders : 
-    one for  Sensie 
+    one for  Wootch 
     one for lv_sim_codeblocks_win (the one we had initialy)
 
 Click project -> build options -> search directories -> add -> click the "folder icon"
-Navigate to project (1) Sensie the project_sources -> add the folder "gui"
+Navigate to project (1) Wootch the project_sources -> add the folder "gui"
 
 Repeat and add the folder "images"
 
-We now need to modify the main.c file of project (2) to use sensie gui
+We now need to modify the main.c file of project (2) to use Wootch gui
 In project (2), open "main.c" and replace its content by the content of the file 
 "simul_main.c" of this directory.
 

@@ -14,4 +14,4 @@ set(EXTRA_COMPONENT_DIRS
         components/esp-aws-iot
 )
 
-project(Sensie)
+project(Wootch)
