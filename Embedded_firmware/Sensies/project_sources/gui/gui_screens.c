@@ -106,7 +106,7 @@ void start_gui(void)
     imu_create(t1);
     wifi_connect_create(t2);
     aws_iot_create(t3);
-    lv_tabview_set_tab_act(tv, 2, LV_ANIM_ON);
+    lv_tabview_set_tab_act(tv, 1, LV_ANIM_ON);
 
     imu_raw_data_t screen_imu = {0};
     imu_update_task = lv_task_create(imu_update, 100,

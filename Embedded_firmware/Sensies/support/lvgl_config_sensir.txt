@@ -1,0 +1,40 @@
+////////////////////////////////////////////////////////////////////////////////
+
+2.8" Capacitive TFT 
+
+https://learn.adafruit.com/adafruit-2-8-and-3-2-color-tft-touchscreen-breakout-v2/downloads
+
+
+MENUCONFIG CONFIG
+
+////////////////////////////////////////////////////////////////////////////////
+
+TFT screen
+TFT driver: ILI9341
+
+Orientation = Landscape
+
+CONFIG_LV_DISPLAY_WIDTH  = 320
+CONFIG_LV_DISPLAY_HEIGHT = 240
+
+DISP SPI MOSI      = 16
+DISP SPI CLK       = 19
+DISP SPI CS        = 21
+DISP SPI MISO      = disabled
+PIN DC (data/inst) = 18
+DISP PIN RST       = 4
+Display control    = disabled
+
+////////////////////////////////////////////////////////////////////////////////
+
+Touch
+Touch driver : FT6X06
+
+TOUCH I2C SDA = 26
+TOUCH I2C SCL = 27
+
+Swap X   = enabled
+Invert X = enabled
+Invert Y = disabled
+
+////////////////////////////////////////////////////////////////////////////////

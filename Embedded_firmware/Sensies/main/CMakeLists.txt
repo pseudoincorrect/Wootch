@@ -9,6 +9,7 @@ set(PROJ_SOURCES
         "${PROJ_SRC_DIR}/imu/imu_sample.c"
         "${PROJ_SRC_DIR}/aws/aws_connect.c"
         "${PROJ_SRC_DIR}/aws/aws_imu.c"
+        "${PROJ_SRC_DIR}/misc/app_nvs.c"
         "${PROJ_SRC_DIR}/gui/gui.c"
         "${PROJ_SRC_DIR}/gui/gui_theme.c"
         "${PROJ_SRC_DIR}/gui/gui_animation.c"

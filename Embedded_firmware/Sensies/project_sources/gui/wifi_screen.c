@@ -4,6 +4,9 @@
 #include "start_screen.h"
 #include "account_screen.h"
 #include "esp_log.h"
+#include "esp_err.h"
+
+#include "app_nvs.h"
 
 #define TITLE_BG_OVERFLOW (LV_VER_RES + GUI_BG_SMALL)
 
@@ -20,26 +23,43 @@ LV_IMG_DECLARE(icon_left_arrow);
 
 // STATIC VARIABLES
 static const char *TAG = "WIFI";
-static char wifi_ssid[32] = {0};
-static char wifi_pass[32] = {0};
+static char wifi_ssid[64] = {0};
+static char wifi_pass[64] = {0};
 static lv_obj_t * kb;
 static lv_obj_t * ta_ssid;
 static lv_obj_t * ta_passw;
 static lv_obj_t * page_wifi;
 
+void set_wifi_creds(void)
+{
+    esp_err_t err; 
+    wifi_creds_t creds = {};
+    err = app_nvs_get_wifi_creds(&creds);
+    if (err != ESP_OK)
+    {
+        strcpy(wifi_ssid, "Enter Wifi Name");
+        strcpy(wifi_pass, "Enter Wifi Pass");
+    }
+    else
+    {
+        strcpy(wifi_ssid, creds.ssid);
+        strcpy(wifi_pass, creds.pass);
+    }
+}
+
 /*******************************************************************************
  * @brief
- * @param
  */
 void create_wifi_screen(void)
 {
+    set_wifi_creds();
     // Background
     gui_anim_out_all(lv_scr_act(), GUI_ANIM_FAST);
     gui_anim_bg(GUI_ANIM_FAST, GUI_ACCENT_BG_1, GUI_BG_SMALL);
 
     // Title
     lv_obj_t * title = lv_label_create(lv_scr_act(), NULL);
-    lv_label_set_text(title, "Connect to your Wi-Fi");
+    lv_label_set_text(title, "Wi-Fi");
     lv_obj_set_style_local_text_color(
         title, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, GUI_ACCENT_FG_1);
     lv_obj_set_style_local_text_font(
@@ -83,7 +103,7 @@ void create_wifi_screen(void)
     ta_ssid = lv_textarea_create(cont_ssid, NULL);
     lv_obj_set_width(ta_ssid, 180);
     lv_textarea_set_text(ta_ssid, "");
-    lv_textarea_set_placeholder_text(ta_ssid, "WiFi SSID (name)");
+    lv_textarea_set_placeholder_text(ta_ssid, wifi_ssid);
     lv_textarea_set_one_line(ta_ssid, true);
     lv_textarea_set_cursor_hidden(ta_ssid, true);
     lv_theme_apply(ta_ssid, (lv_theme_style_t)LV_THEME_CONT);
@@ -104,7 +124,7 @@ void create_wifi_screen(void)
     ta_passw = lv_textarea_create(cont_passwd, NULL);
     lv_obj_set_width(ta_passw, 180);
     lv_textarea_set_text(ta_passw, "");
-    lv_textarea_set_placeholder_text(ta_passw, "WiFi Password");
+    lv_textarea_set_placeholder_text(ta_passw, wifi_pass);
     lv_textarea_set_one_line(ta_passw, true);
     lv_textarea_set_cursor_hidden(ta_passw, true);
     lv_theme_apply(ta_passw, (lv_theme_style_t)LV_THEME_CONT);
@@ -126,22 +146,30 @@ void create_wifi_screen(void)
 
 /*******************************************************************************
  * @brief
- * @param
  */
 LV_EVENT_CB_DECLARE(btn_connect_cb)
 {
     if(e == LV_EVENT_CLICKED)
     {
+        esp_err_t err;
+        wifi_creds_t creds = {};
         const char* ssid = lv_textarea_get_text(ta_ssid);
         const char* pass = lv_textarea_get_text(ta_passw);
         // screen_cb.wifi_connect((char*) ssid, (char*) pass);
-        create_account_screen();
+        strcpy(creds.ssid, ssid);
+        strcpy(creds.pass, pass);
+        creds.valid = true;
+        err = app_nvs_set_wifi_creds(&creds);
+        if (err != ESP_OK)
+        {
+            ESP_LOGI(TAG, "could not set credentials !");
+        }
+        // create_account_screen();
     }
 }
 
 /*******************************************************************************
  * @brief
- * @param
  */
 LV_EVENT_CB_DECLARE(ta_event_cb)
 {
@@ -165,7 +193,6 @@ LV_EVENT_CB_DECLARE(ta_event_cb)
 
 /*******************************************************************************
  * @brief
- * @param
  */
 LV_EVENT_CB_DECLARE(kb_event_cb)
 {
@@ -185,7 +212,6 @@ LV_EVENT_CB_DECLARE(kb_event_cb)
 
 /*******************************************************************************
  * @brief
- * @param
  */
 LV_EVENT_CB_DECLARE(return_icon_event_cb)
 {

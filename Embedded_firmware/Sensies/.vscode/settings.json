@@ -5,6 +5,12 @@
         "random": "c",
         "string.h": "c",
         "start_screen.h": "c",
-        "gui_animation.h": "c"
+        "gui_animation.h": "c",
+        "app_nvs.h": "c",
+        "nvs.h": "c",
+        "ctype.h": "c",
+        "future": "c",
+        "esp_log.h": "c",
+        "ft6x36.h": "c"
     }
 }

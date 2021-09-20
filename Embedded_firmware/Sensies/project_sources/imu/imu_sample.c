@@ -31,13 +31,13 @@ void imu_init(void)
 {
     esp_err_t err;
     mpu.addr = 104;
-    mpu.bus.num = 1;
-    mpu.bus.timeout = 50;
-    mpu.init.clk_speed = 400000;
-    mpu.init.sda_io_num = GPIO_NUM_32;
-    mpu.init.scl_io_num = GPIO_NUM_33;
-    mpu.init.sda_pullup_en = false;
-    mpu.init.scl_pullup_en = false;
+    mpu.bus.num = 0;
+    mpu.bus.timeout = 500;
+    mpu.init.clk_speed = 100000;
+    mpu.init.sda_io_num = GPIO_NUM_26;
+    mpu.init.scl_io_num = GPIO_NUM_27;
+    mpu.init.sda_pullup_en = true;
+    mpu.init.scl_pullup_en = true;
     err = mpu_initialize_peripheral(&mpu);
     err = mpu_test_connection(&mpu);
     while (err)
@@ -78,16 +78,29 @@ void imu_task(void *arg)
     esp_err_t err;
     raw_axes_t accel_raw;   // x, y, z axes as int16
     raw_axes_t gyro_raw;    // x, y, z axes as int16
+    
     while (true)
     {
-        err = mpu_acceleration(&mpu, &accel_raw);  // fetch raw data
-        ESP_ERROR_CHECK(err);
-        err = mpu_rotation(&mpu, &gyro_raw);       // fetch raw data
-        ESP_ERROR_CHECK(err);
+        err = mpu_acceleration(&mpu, &accel_raw);
+        if (err)
+        {
+            ESP_LOGI(TAG, "mpu_acceleration err %X", err);
+        }
+        else
+        {
+            ESP_LOGI(TAG, "accel: %d\t %d\t %d\n",
+                     accel_raw.x, accel_raw.y, accel_raw.z);
+        }
+        // ESP_ERROR_CHECK(err);
+        // err = mpu_rotation(&mpu, &gyro_raw);
+        // if (err)
+        // {
+        //     ESP_LOGI(TAG, "mpu_rotation err %X", err);
+        // }
+        // ESP_ERROR_CHECK(err);
         // printf("accel: %d\t %d\t %d\n", accel_raw.x, accel_raw.y, accel_raw.z);
+        // update_imu_data(&accel_raw);
 
-        update_imu_data(&accel_raw);
-
-        vTaskDelay(250 / portTICK_PERIOD_MS);
+        vTaskDelay(5000 / portTICK_PERIOD_MS);
     }
 }
