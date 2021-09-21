@@ -4,8 +4,8 @@
 #include"esp_event.h"
 
 esp_err_t event_handler(void *ctx, system_event_t *event);
-void initialise_wifi(void);
-void connect_wifi(char* ssid, char* password);
-void disconnect_wifi(void);
+void wifi_init(void);
+void wifi_connect(char* ssid, char* password);
+void wifi_disconnect(void);
 
 #endif

@@ -15,7 +15,7 @@
 // WIFI
 #include "esp_wifi.h"
 // MISC
-#include "project_extern_variables.h"
+#include "app_state.h"
 //
 #include "gui_screens.h"
 

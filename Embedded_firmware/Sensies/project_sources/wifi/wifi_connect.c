@@ -8,7 +8,8 @@
 #include "esp_system.h"
 #include "esp_wifi.h"
 #include "esp_log.h"
-#include "project_extern_variables.h"
+#include "app_state.h"
+#include "app_state.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // STATIC AND GLOBAL VARIABLES
@@ -31,6 +32,7 @@ esp_err_t event_handler(void *ctx, system_event_t *event)
             break;
         case SYSTEM_EVENT_STA_GOT_IP:
             xEventGroupSetBits(wifi_event_group, CONNECTED_BIT);
+            app_state_set_wifi_connected(true);
             break;
         case SYSTEM_EVENT_STA_DISCONNECTED:
             /* This is a workaround as ESP32 WiFi libs don't currently
@@ -48,7 +50,7 @@ esp_err_t event_handler(void *ctx, system_event_t *event)
  * @brief
  * @param
  */
-void initialise_wifi(void)
+void wifi_init(void)
 {
     tcpip_adapter_init();
     wifi_event_group = xEventGroupCreate();
@@ -62,7 +64,7 @@ void initialise_wifi(void)
  * @brief
  * @param
  */
-void connect_wifi(char* ssid, char* password)
+void wifi_connect(char* ssid, char* password)
 {
     wifi_config_t wifi_config = {0};
     strncpy((char*) wifi_config.sta.ssid, ssid, 32);
@@ -80,7 +82,7 @@ void connect_wifi(char* ssid, char* password)
  * @brief
  * @param
  */
-void disconnect_wifi(void)
+void wifi_disconnect(void)
 {
     ESP_ERROR_CHECK(esp_wifi_stop());
 }

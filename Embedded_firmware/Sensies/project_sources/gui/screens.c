@@ -77,8 +77,8 @@ void init_screens(void)
     lv_obj_set_size(bg_top, LV_HOR_RES, LV_VER_RES);
     lv_obj_set_y(bg_top, GUI_BG_NORMAL);
 
-    // create_start_screen();
+    create_start_screen();
     // create_watch_screen();
-    create_wifi_screen();
+    // create_wifi_screen();
 }
 

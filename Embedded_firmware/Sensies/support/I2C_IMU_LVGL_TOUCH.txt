@@ -1,0 +1,10 @@
+
+*******************************************************************************
+
+Both IMU and LCD Touch controller are on the same I2C bus. When starting a new 
+project a problem linked to I2C initialization may appear. It is because
+the IMU and LVGL try to install the I2C driver twice. A quick fix is to go to 
+"lvgl_helpers.c" and comment out the "i2c_param_config" and "i2c_driver_install"
+parts. 
+
+*******************************************************************************

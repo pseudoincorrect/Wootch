@@ -8,7 +8,7 @@
 // MPU6050 IMU
 #include "mpu60x0.h"
 // MISC
-#include "project_extern_variables.h"
+#include "app_state.h"
 
 static const char *TAG = "IMU_TASK";
 
@@ -60,13 +60,15 @@ void imu_init(void)
 static void update_imu_data(raw_axes_t* accel_raw)
 {
     imu_raw_data_t imu_raw_data = {0};
-    imu_raw_data.g_x = accel_raw->x;
-    imu_raw_data.g_y = accel_raw->y;
+    // Depending on how the chip is oriented to the screen we switch the 
+    // the x / y and change the sign (+/-)
+    imu_raw_data.g_y = accel_raw->x;
+    imu_raw_data.g_x = - accel_raw->y;
 
     xQueueSend( imu_queue, &imu_raw_data, pdMS_TO_TICKS(50));
 
-    last_imu_raw_data.g_x = accel_raw->x;
-    last_imu_raw_data.g_y = accel_raw->y;
+    last_imu_raw_data.g_y = accel_raw->x;
+    last_imu_raw_data.g_x = -accel_raw->y;
 }
 
 /*******************************************************************************
@@ -82,25 +84,11 @@ void imu_task(void *arg)
     while (true)
     {
         err = mpu_acceleration(&mpu, &accel_raw);
-        if (err)
-        {
-            ESP_LOGI(TAG, "mpu_acceleration err %X", err);
-        }
-        else
-        {
-            ESP_LOGI(TAG, "accel: %d\t %d\t %d\n",
-                     accel_raw.x, accel_raw.y, accel_raw.z);
-        }
-        // ESP_ERROR_CHECK(err);
-        // err = mpu_rotation(&mpu, &gyro_raw);
-        // if (err)
-        // {
-        //     ESP_LOGI(TAG, "mpu_rotation err %X", err);
-        // }
-        // ESP_ERROR_CHECK(err);
-        // printf("accel: %d\t %d\t %d\n", accel_raw.x, accel_raw.y, accel_raw.z);
-        // update_imu_data(&accel_raw);
-
-        vTaskDelay(5000 / portTICK_PERIOD_MS);
+        ESP_ERROR_CHECK(err);
+        err = mpu_rotation(&mpu, &gyro_raw);
+        ESP_ERROR_CHECK(err);
+        // ESP_LOGI(TAG,"accel: %d\t %d\t %d\n", accel_raw.x, accel_raw.y, accel_raw.z);
+        update_imu_data(&accel_raw);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }

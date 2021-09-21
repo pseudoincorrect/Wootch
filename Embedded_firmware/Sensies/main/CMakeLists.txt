@@ -20,6 +20,7 @@ set(PROJ_SOURCES
         "${PROJ_SRC_DIR}/gui/start_screen.c"
         "${PROJ_SRC_DIR}/gui/wifi_screen.c"
         "${PROJ_SRC_DIR}/gui/watch_screen.c"
+        "${PROJ_SRC_DIR}/state/app_state.c"
         "${IMG_DIR}/img_watch_dog.c"
         "${IMG_DIR}/img_sleepy_dog.c"
         "${IMG_DIR}/img_play_dog.c"
@@ -35,6 +36,7 @@ set(PROJ_INCLUDES
         "${PROJ_SRC_DIR}/imu"
         "${PROJ_SRC_DIR}/aws"
         "${PROJ_SRC_DIR}/wifi"
+        "${PROJ_SRC_DIR}/state"
 )
 
 set(PROJ_REQUIRES

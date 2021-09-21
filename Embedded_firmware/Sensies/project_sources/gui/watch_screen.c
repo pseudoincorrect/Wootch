@@ -48,16 +48,23 @@ void create_watch_screen(void)
     lv_obj_align(title, NULL, LV_ALIGN_IN_TOP_MID, 0, 8);
     gui_anim_in(title, GUI_ANIM_SLOW);
 
-    // Return Icon
-    lv_obj_t * img_left = lv_img_create(lv_scr_act(), NULL);
+    // Return Button/Icon
+    lv_obj_t * btn_ret = lv_btn_create(lv_scr_act(), NULL);
+    lv_obj_set_event_cb(btn_ret, return_icon_event_cb);
+    // lv_btn_set_fit2(btn_ret, LV_FIT_NONE, LV_FIT_TIGHT);
+    lv_obj_set_width(btn_ret, 40);
+    lv_obj_set_height(btn_ret, 40);
+    lv_obj_set_click(btn_ret, true);
+    gui_anim_in(btn_ret, GUI_ANIM_SLOW);
+    lv_obj_align(btn_ret, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+    lv_obj_set_style_local_bg_color(
+        btn_ret, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, GUI_ACCENT_BG_1);
+    lv_obj_t * img_left = lv_img_create(btn_ret, NULL);
     lv_img_set_src(img_left, &icon_left_arrow);
     lv_img_set_antialias(img_left, false);
     lv_obj_set_width(img_left, icon_left_arrow.header.w);
     lv_obj_set_height(img_left, icon_left_arrow.header.h);
-    lv_obj_align(img_left, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 5);
-    lv_obj_set_event_cb(img_left, return_icon_event_cb);
-    lv_obj_set_click(img_left, true);
-    gui_anim_in(img_left, GUI_ANIM_SLOW);
+    lv_obj_align(img_left, NULL, LV_ALIGN_CENTER, 0, 0);
 
     // Main container
     lv_obj_t * cont_watch = lv_cont_create(lv_scr_act(), NULL);

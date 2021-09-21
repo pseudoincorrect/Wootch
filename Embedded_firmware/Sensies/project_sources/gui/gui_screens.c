@@ -5,7 +5,7 @@
 #include "lvgl.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
-#include "project_extern_variables.h"
+#include "app_state.h"
 // #include "esp_log.h"
 
 ////////////////////////////////////////////////////////////////////////////////

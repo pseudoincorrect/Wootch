@@ -1,4 +1,5 @@
 #include "start_screen.h"
+#include "play_screen.h"
 #include "gui_animation.h"
 #include "gui_theme.h"
 #include "wifi_screen.h"
@@ -7,6 +8,7 @@
 
 // STATIC PROTOTYPES
 LV_EVENT_CB_DECLARE(start_button_cb);
+LV_EVENT_CB_DECLARE(play_button_cb);
 
 // EXTERN VARIABLES
 LV_IMG_DECLARE(img_normal_dog);
@@ -54,16 +56,35 @@ void create_start_screen(void)
     lv_obj_set_style_local_clip_corner(
         img, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, true);
 
-    lv_obj_t* start_button = lv_btn_create(cont_start, NULL);
+    lv_obj_t * cont_buttons = lv_cont_create(cont_start, NULL);
+    lv_obj_set_style_local_bg_color(
+        cont_buttons, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, GUI_BG_2);
+    lv_obj_set_width(cont_buttons, 100);
+    lv_obj_set_height(cont_buttons, 180);
+    lv_cont_set_layout(cont_buttons, LV_LAYOUT_COLUMN_MID);
+    lv_obj_set_style_local_pad_all(
+        cont_buttons, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 25);
+    lv_obj_set_style_local_pad_inner(
+        cont_buttons, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 10);
+    lv_obj_align(cont_buttons, cont_buttons, LV_ALIGN_CENTER, 0, 10);
+
+    lv_obj_t* start_button = lv_btn_create(cont_buttons, NULL);
     lv_obj_align(start_button, NULL, LV_ALIGN_CENTER, 0, 0);
     lv_obj_set_width(start_button, 100);
     lv_obj_set_height(start_button, 50);
-
     lv_obj_t* start_label = lv_label_create(start_button, NULL);
     lv_label_set_text(start_label, "START");
-
     lv_obj_set_event_cb(start_button, start_button_cb);
-    gui_anim_in(cont_start, GUI_ANIM_SLOW);
+    gui_anim_in(cont_buttons, GUI_ANIM_SLOW);
+
+    lv_obj_t* play_button = lv_btn_create(cont_buttons, NULL);
+    lv_obj_align(play_button, NULL, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_set_width(play_button, 100);
+    lv_obj_set_height(play_button, 50);
+    lv_obj_t* play_label = lv_label_create(play_button, NULL);
+    lv_label_set_text(play_label, "PLAY");
+    lv_obj_set_event_cb(play_button, play_button_cb);
+    gui_anim_in(cont_buttons, GUI_ANIM_SLOW);
 }
 
 /*******************************************************************************
@@ -76,7 +97,16 @@ LV_EVENT_CB_DECLARE(start_button_cb)
     {
         create_wifi_screen();
     }
-    else if(e == LV_EVENT_VALUE_CHANGED)
+}
+
+/*******************************************************************************
+ * @brief
+ * @param
+ */
+LV_EVENT_CB_DECLARE(play_button_cb)
+{
+    if(e == LV_EVENT_CLICKED)
     {
+        create_play_screen();
     }
 }
