@@ -5,7 +5,7 @@
 #include "nvs_flash.h"
 // APP
 #include "gui.h"
-#include "gui_screens.h"
+#include "old_gui.h"
 #include "imu_sample.h"
 #include "aws_connect.h"
 #include "wifi_connect.h"

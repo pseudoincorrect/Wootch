@@ -23,11 +23,14 @@ DefaultPcbPcad=0
 ReorderDocumentsOnCompile=1
 NameNetsHierarchically=0
 PowerPortNamesTakePriority=0
+AutoSheetNumbering=0
+AutoCrossReferences=0
 PushECOToAnnotationFile=1
 DItemRevisionGUID=
 ReportSuppressedErrorsInMessages=0
 FSMCodingStyle=eFMSDropDownList_OneProcess
 FSMEncodingStyle=eFMSDropDownList_OneHot
+IsProjectConflictPreventionWarningsEnabled=1
 OutputPath=Output
 LogFolderPath=Log
 ManagedProjectGUID=
@@ -38,7 +41,7 @@ PrefsVaultGUID=
 PrefsRevisionGUID=
 
 [Document1]
-DocumentPath=sensie_v_0_0.OutJob
+DocumentPath=wootch_v_0_0.OutJob
 AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
@@ -55,24 +58,24 @@ GenerateClassCluster=0
 DocumentUniqueId=
 
 [Document2]
-DocumentPath=sensie_v_0_0.SchDoc
+DocumentPath=wootch_v_0_0.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
 AnnotateScope=All
-AnnotateOrder=0
+AnnotateOrder=-1
 DoLibraryUpdate=1
 DoDatabaseUpdate=1
 ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=0
+ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=WWPSLUFV
 
 [Document3]
-DocumentPath=sensie_v_0_0.PcbDoc
+DocumentPath=wootch_v_0_0.PcbDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
@@ -88,129 +91,21 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=KNLFENVT
 
-[GeneratedDocument1]
-DocumentPath=Output\Design Rule Check - sensie_v_0_0.html
-DItemRevisionGUID=
-
-[GeneratedDocument2]
-DocumentPath=Output\NC Drill\sensie_v_0_0-RoundHoles.TXT
-DItemRevisionGUID=
-
-[GeneratedDocument3]
-DocumentPath=Output\NC Drill\sensie_v_0_0-SlotHoles.TXT
-DItemRevisionGUID=
-
-[GeneratedDocument4]
-DocumentPath=Output\NC Drill\sensie_v_0_0.DRR
-DItemRevisionGUID=
-
-[GeneratedDocument5]
-DocumentPath=Output\Gerber\sensie_v_0_0.EXTREP
-DItemRevisionGUID=
-
-[GeneratedDocument6]
-DocumentPath=Output\Gerber\sensie_v_0_0.G1
-DItemRevisionGUID=
-
-[GeneratedDocument7]
-DocumentPath=Output\Gerber\sensie_v_0_0.G2
-DItemRevisionGUID=
-
-[GeneratedDocument8]
-DocumentPath=Output\Gerber\sensie_v_0_0.GBL
-DItemRevisionGUID=
-
-[GeneratedDocument9]
-DocumentPath=Output\Gerber\sensie_v_0_0.GBO
-DItemRevisionGUID=
-
-[GeneratedDocument10]
-DocumentPath=Output\Gerber\sensie_v_0_0.GBP
-DItemRevisionGUID=
-
-[GeneratedDocument11]
-DocumentPath=Output\Gerber\sensie_v_0_0.GBS
-DItemRevisionGUID=
-
-[GeneratedDocument12]
-DocumentPath=Output\Gerber\sensie_v_0_0.GKO
-DItemRevisionGUID=
-
-[GeneratedDocument13]
-DocumentPath=Output\Gerber\sensie_v_0_0.GM1
-DItemRevisionGUID=
-
-[GeneratedDocument14]
-DocumentPath=Output\Gerber\sensie_v_0_0.GM2
-DItemRevisionGUID=
-
-[GeneratedDocument15]
-DocumentPath=Output\Gerber\sensie_v_0_0.GM13
-DItemRevisionGUID=
-
-[GeneratedDocument16]
-DocumentPath=Output\Gerber\sensie_v_0_0.GM14
-DItemRevisionGUID=
-
-[GeneratedDocument17]
-DocumentPath=Output\Gerber\sensie_v_0_0.GM15
-DItemRevisionGUID=
-
-[GeneratedDocument18]
-DocumentPath=Output\Gerber\sensie_v_0_0.GM16
-DItemRevisionGUID=
-
-[GeneratedDocument19]
-DocumentPath=Output\Gerber\sensie_v_0_0.GPB
-DItemRevisionGUID=
-
-[GeneratedDocument20]
-DocumentPath=Output\Gerber\sensie_v_0_0.GPT
-DItemRevisionGUID=
-
-[GeneratedDocument21]
-DocumentPath=Output\Gerber\sensie_v_0_0.GTL
-DItemRevisionGUID=
-
-[GeneratedDocument22]
-DocumentPath=Output\Gerber\sensie_v_0_0.GTO
-DItemRevisionGUID=
-
-[GeneratedDocument23]
-DocumentPath=Output\Gerber\sensie_v_0_0.GTP
-DItemRevisionGUID=
-
-[GeneratedDocument24]
-DocumentPath=Output\Gerber\sensie_v_0_0.GTS
-DItemRevisionGUID=
-
-[GeneratedDocument25]
-DocumentPath=Output\NC Drill\sensie_v_0_0.LDP
-DItemRevisionGUID=
-
-[GeneratedDocument26]
-DocumentPath=Output\Gerber\sensie_v_0_0.REP
-DItemRevisionGUID=
-
-[GeneratedDocument27]
-DocumentPath=Output\Gerber\sensie_v_0_0.RUL
-DItemRevisionGUID=
-
 [Parameter1]
-Name=version_revision
-Value=0.0
+Name=company
+Value=HBKU
 
 [Parameter2]
-Name=project
-Value=Sensie
-
-[Parameter3]
 Name=page_size
 Value=A3
 
+[Parameter3]
+Name=project
+Value=Sensie
+
 [Parameter4]
-Name=company
-Value=HBKU
+Name=version_revision
+Value=0.0
 
 [Configuration1]
 Name=Sources
@@ -370,7 +265,7 @@ OutputDefault20=0
 [OutputGroup2]
 Name=Simulator Outputs
 Description=
-TargetPrinter=\\vpssf02.hbku.edu.qa\HBKUPrint
+TargetPrinter=Microsoft Print to PDF
 PrinterOptions=Record=PrinterOptions|Copies=1|Duplex=1|TrueTypeOptions=3|Collate=1|PrintJobKind=1|PrintWhat=1
 
 [OutputGroup3]
@@ -1123,6 +1018,8 @@ MultiChannelAlternate=2
 AlternateItemFail=3
 Type122=2
 Type123=1
+Type124=1
+Type125=1
 
 [ERC Connection Matrix]
 L1=NNNNNNNNNNNWNNNWW
@@ -1238,12 +1135,12 @@ Net4=NetName=+VPMIC|NetColor=$006E6EFF
 Net5=NetName=BAT+|NetColor=$006E6EFF
 
 [Comparison Options]
-ComparisonOptions0=Kind=Net|MinPercent=75|MinMatch=3|ShowMatch=-1|Confirm=-1|UseName=-1|InclAllRules=0
-ComparisonOptions1=Kind=Net Class|MinPercent=75|MinMatch=3|ShowMatch=-1|Confirm=-1|UseName=-1|InclAllRules=0
-ComparisonOptions2=Kind=Component Class|MinPercent=75|MinMatch=3|ShowMatch=-1|Confirm=-1|UseName=-1|InclAllRules=0
-ComparisonOptions3=Kind=Rule|MinPercent=75|MinMatch=3|ShowMatch=-1|Confirm=-1|UseName=-1|InclAllRules=0
-ComparisonOptions4=Kind=Differential Pair|MinPercent=50|MinMatch=1|ShowMatch=0|Confirm=0|UseName=0|InclAllRules=0
-ComparisonOptions5=Kind=Structure Class|MinPercent=75|MinMatch=3|ShowMatch=-1|Confirm=-1|UseName=-1|InclAllRules=0
+ComparisonOptions0=Kind=Net|MinPercent=75|MinMatch=3|ShowMatch=-1|UseName=-1|InclAllRules=0
+ComparisonOptions1=Kind=Net Class|MinPercent=75|MinMatch=3|ShowMatch=-1|UseName=-1|InclAllRules=0
+ComparisonOptions2=Kind=Component Class|MinPercent=75|MinMatch=3|ShowMatch=-1|UseName=-1|InclAllRules=0
+ComparisonOptions3=Kind=Rule|MinPercent=75|MinMatch=3|ShowMatch=-1|UseName=-1|InclAllRules=0
+ComparisonOptions4=Kind=Differential Pair|MinPercent=50|MinMatch=1|ShowMatch=0|UseName=0|InclAllRules=0
+ComparisonOptions5=Kind=Structure Class|MinPercent=75|MinMatch=3|ShowMatch=-1|UseName=-1|InclAllRules=0
 
 [SmartPDF]
 PageOptions=Record=PageOptions|CenterHorizontal=True|CenterVertical=True|PrintScale=1.00|XCorrection=1.00|YCorrection=1.00|PrintKind=1|BorderSize=5000000|LeftOffset=0|BottomOffset=0|Orientation=2|PaperLength=1000|PaperWidth=1000|Scale=100|PaperSource=7|PrintQuality=-3|MediaType=1|DitherType=10|PrintScaleMode=1|PaperKind=A4|PaperIndex=9

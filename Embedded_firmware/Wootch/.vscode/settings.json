@@ -11,6 +11,7 @@
         "ctype.h": "c",
         "future": "c",
         "esp_log.h": "c",
-        "ft6x36.h": "c"
+        "ft6x36.h": "c",
+        "watch_screen.h": "c"
     }
 }

@@ -12,12 +12,14 @@ MENUCONFIG CONFIG
 TFT screen
 TFT driver: ILI9341
 
+SPI custom clock speed : 
+
 Orientation = Landscape
 
 CONFIG_LV_DISPLAY_WIDTH  = 320
 CONFIG_LV_DISPLAY_HEIGHT = 240
 
-DISP SPI MOSI      = 16
+DISP SPI MOSI      = 17
 DISP SPI CLK       = 19
 DISP SPI CS        = 21
 DISP SPI MISO      = disabled
