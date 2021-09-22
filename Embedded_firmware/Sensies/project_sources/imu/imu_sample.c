@@ -62,13 +62,12 @@ static void update_imu_data(raw_axes_t* accel_raw)
     imu_raw_data_t imu_raw_data = {0};
     // Depending on how the chip is oriented to the screen we switch the 
     // the x / y and change the sign (+/-)
-    imu_raw_data.g_y = accel_raw->x;
-    imu_raw_data.g_x = - accel_raw->y;
-
-    xQueueSend( imu_queue, &imu_raw_data, pdMS_TO_TICKS(50));
-
     last_imu_raw_data.g_y = accel_raw->x;
     last_imu_raw_data.g_x = -accel_raw->y;
+    imu_raw_data.g_y = last_imu_raw_data.g_y;
+    imu_raw_data.g_x = last_imu_raw_data.g_x;
+    xQueueSend( imu_queue, &imu_raw_data, pdMS_TO_TICKS(50));
+
 }
 
 /*******************************************************************************

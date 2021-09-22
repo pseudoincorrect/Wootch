@@ -4,7 +4,6 @@
 
 static const char *TAG = "STATE";
 
-
 static bool wifi_connected;
 
 void app_state_init(void)
@@ -24,7 +23,12 @@ void app_state_set_wifi_connected(bool state)
     wifi_connected = state;
 }
 
-void app_state_connect_wifi(char* ssid, char* pass)
+void app_state_connect_wifi(char *ssid, char *pass)
 {
     wifi_connect(ssid, pass);
+}
+
+void app_state_disconnect_wifi()
+{
+    wifi_disconnect();
 }

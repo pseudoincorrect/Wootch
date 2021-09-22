@@ -35,7 +35,7 @@ void app_main(void)
     app_nvs_init();
 
     // Wi-Fi
-    // wifi_init();
+    wifi_init();
 
     // AWS IOT
     // xTaskCreatePinnedToCore(&aws_iot_mqtt_manage_task, "aws_iot_mqtt_manage_task",

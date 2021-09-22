@@ -9,9 +9,10 @@
 void app_state_init(void);
 bool app_state_get_wifi_connected(void);
 void app_state_set_wifi_connected(bool state);
-void app_state_connect_wifi(char* ssid, char* pass);
+void app_state_connect_wifi(char *ssid, char *pass);
+void app_state_disconnect_wifi();
 
-// WIFI 
+// WIFI
 extern EventGroupHandle_t wifi_event_group;
 extern const int CONNECTED_BIT;
 

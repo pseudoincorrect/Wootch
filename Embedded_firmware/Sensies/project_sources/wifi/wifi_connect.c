@@ -39,6 +39,7 @@ esp_err_t event_handler(void *ctx, system_event_t *event)
                auto-reassociate. */
             esp_wifi_connect();
             xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
+            app_state_set_wifi_connected(false);
             break;
         default:
             break;

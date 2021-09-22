@@ -5,7 +5,7 @@
 #include "account_screen.h"
 #include "esp_log.h"
 #include "esp_err.h"
-
+#include "app_state.h"
 #include "app_nvs.h"
 
 #define TITLE_BG_OVERFLOW (LV_VER_RES + GUI_BG_SMALL)
@@ -25,14 +25,16 @@ LV_IMG_DECLARE(icon_left_arrow);
 static const char *TAG = "WIFI";
 static char wifi_ssid[64] = {0};
 static char wifi_pass[64] = {0};
-static lv_obj_t * kb;
-static lv_obj_t * ta_ssid;
-static lv_obj_t * ta_passw;
-static lv_obj_t * page_wifi;
+static lv_obj_t *kb;
+static lv_obj_t *ta_ssid;
+static lv_obj_t *ta_passw;
+static lv_obj_t *page_wifi;
+static lv_obj_t *btn_conn;
+static lv_obj_t *lb_conn;
 
 void set_wifi_creds(void)
 {
-    esp_err_t err; 
+    esp_err_t err;
     wifi_creds_t creds = {};
     err = app_nvs_get_wifi_creds(&creds);
     if (err != ESP_OK)
@@ -52,13 +54,14 @@ void set_wifi_creds(void)
  */
 void create_wifi_screen(void)
 {
+    esp_err_t err;
     set_wifi_creds();
     // Background
     gui_anim_out_all(lv_scr_act(), GUI_ANIM_FAST);
     gui_anim_bg(GUI_ANIM_FAST, GUI_ACCENT_BG_1, GUI_BG_SMALL);
 
     // Title
-    lv_obj_t * title = lv_label_create(lv_scr_act(), NULL);
+    lv_obj_t *title = lv_label_create(lv_scr_act(), NULL);
     lv_label_set_text(title, "Wi-Fi");
     lv_obj_set_style_local_text_color(
         title, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, GUI_ACCENT_FG_1);
@@ -68,7 +71,7 @@ void create_wifi_screen(void)
     gui_anim_in(title, GUI_ANIM_SLOW);
 
     // Return Button/Icon
-    lv_obj_t * btn_ret = lv_btn_create(lv_scr_act(), NULL);
+    lv_obj_t *btn_ret = lv_btn_create(lv_scr_act(), NULL);
     lv_obj_set_event_cb(btn_ret, return_icon_event_cb);
     // lv_btn_set_fit2(btn_ret, LV_FIT_NONE, LV_FIT_TIGHT);
     lv_obj_set_width(btn_ret, 40);
@@ -78,7 +81,7 @@ void create_wifi_screen(void)
     lv_obj_align(btn_ret, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
     lv_obj_set_style_local_bg_color(
         btn_ret, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, GUI_ACCENT_BG_1);
-    lv_obj_t * img_left = lv_img_create(btn_ret, NULL);
+    lv_obj_t *img_left = lv_img_create(btn_ret, NULL);
     lv_img_set_src(img_left, &icon_left_arrow);
     lv_img_set_antialias(img_left, false);
     lv_obj_set_width(img_left, icon_left_arrow.header.w);
@@ -99,7 +102,7 @@ void create_wifi_screen(void)
 
     // SSID
     // Container SSID
-    lv_obj_t * cont_ssid = lv_cont_create(page_wifi, NULL);
+    lv_obj_t *cont_ssid = lv_cont_create(page_wifi, NULL);
     lv_cont_set_layout(cont_ssid, LV_LAYOUT_CENTER);
     lv_obj_set_drag_parent(cont_ssid, true);
     // lv_cont_set_fit(cont_ssid, LV_FIT_NONE);
@@ -109,7 +112,6 @@ void create_wifi_screen(void)
     // Text area SSID
     ta_ssid = lv_textarea_create(cont_ssid, NULL);
     lv_obj_set_width(ta_ssid, 180);
-    lv_textarea_set_text(ta_ssid, "");
     lv_textarea_set_placeholder_text(ta_ssid, wifi_ssid);
     lv_textarea_set_one_line(ta_ssid, true);
     lv_textarea_set_cursor_hidden(ta_ssid, true);
@@ -120,7 +122,7 @@ void create_wifi_screen(void)
 
     // PASSWORD
     // Container PASSWORD
-    lv_obj_t * cont_passwd = lv_cont_create(page_wifi, NULL);
+    lv_obj_t *cont_passwd = lv_cont_create(page_wifi, NULL);
     lv_cont_set_layout(cont_passwd, LV_LAYOUT_CENTER);
     lv_obj_set_drag_parent(cont_passwd, true);
     // lv_cont_set_fit(cont_passwd, LV_FIT_NONE);
@@ -130,7 +132,6 @@ void create_wifi_screen(void)
     // Text area SSID PASSWORD
     ta_passw = lv_textarea_create(cont_passwd, NULL);
     lv_obj_set_width(ta_passw, 180);
-    lv_textarea_set_text(ta_passw, "");
     lv_textarea_set_placeholder_text(ta_passw, wifi_pass);
     lv_textarea_set_one_line(ta_passw, true);
     lv_textarea_set_cursor_hidden(ta_passw, true);
@@ -139,14 +140,34 @@ void create_wifi_screen(void)
     lv_obj_set_event_cb(ta_passw, ta_event_cb);
     // lv_textarea_set_text(ta_passw, "notmyrealpassword"); // please hack me (^_^')
 
+    // Wifi credential
+    wifi_creds_t creds = {};
+    err = app_nvs_get_wifi_creds(&creds);
+    if (err || !creds.valid)
+    {
+        lv_textarea_set_text(ta_ssid, "");
+        lv_textarea_set_text(ta_passw, "");
+    } 
+    else {
+        lv_textarea_set_text(ta_ssid, creds.ssid);
+        lv_textarea_set_text(ta_passw, creds.pass);
+    }
+
     // Connect Button
-    lv_obj_t * btn_conn = lv_btn_create(page_wifi, NULL);
+    btn_conn = lv_btn_create(page_wifi, NULL);
     lv_obj_set_event_cb(btn_conn, btn_connect_cb);
     // lv_btn_set_fit2(btn_conn, LV_FIT_NONE, LV_FIT_TIGHT);
     lv_obj_set_width(btn_conn, 100);
     lv_obj_set_height(btn_conn, 40);
-    lv_obj_t * lb_conn = lv_label_create(btn_conn, NULL);
-    lv_label_set_text(lb_conn, "Connect");
+    lb_conn = lv_label_create(btn_conn, NULL);
+    if (app_state_get_wifi_connected())
+    {
+        lv_label_set_text(lb_conn, "Disconnect");
+    }
+    else
+    {
+        lv_label_set_text(lb_conn, "Connect");
+    }
     lv_obj_set_drag_parent(btn_conn, true);
     lv_btn_toggle(btn_conn);
 }
@@ -156,21 +177,30 @@ void create_wifi_screen(void)
  */
 LV_EVENT_CB_DECLARE(btn_connect_cb)
 {
-    if(e == LV_EVENT_CLICKED)
+    if (e == LV_EVENT_CLICKED)
     {
-        esp_err_t err;
-        wifi_creds_t creds = {};
-        const char* ssid = lv_textarea_get_text(ta_ssid);
-        const char* pass = lv_textarea_get_text(ta_passw);
-        strcpy(creds.ssid, ssid);
-        strcpy(creds.pass, pass);
-        creds.valid = true;
-        err = app_nvs_set_wifi_creds(&creds);
-        if (err != ESP_OK)
+        if (app_state_get_wifi_connected())
         {
-            ESP_LOGI(TAG, "could not set credentials !");
+            app_state_disconnect_wifi();
+            lv_label_set_text(lb_conn, "Connect");
         }
-        create_account_screen();
+        else
+        {
+            esp_err_t err;
+            wifi_creds_t creds = {};
+            const char *ssid = lv_textarea_get_text(ta_ssid);
+            const char *pass = lv_textarea_get_text(ta_passw);
+            strcpy(creds.ssid, ssid);
+            strcpy(creds.pass, pass);
+            creds.valid = true;
+            err = app_nvs_set_wifi_creds(&creds);
+            if (err != ESP_OK)
+            {
+                ESP_LOGI(TAG, "could not set credentials !");
+            }
+            app_state_connect_wifi((char *)ssid, (char *)pass);
+            create_account_screen();
+        }
     }
 }
 
@@ -179,9 +209,9 @@ LV_EVENT_CB_DECLARE(btn_connect_cb)
  */
 LV_EVENT_CB_DECLARE(ta_event_cb)
 {
-    if(e == LV_EVENT_RELEASED)
+    if (e == LV_EVENT_RELEASED)
     {
-        if(kb == NULL)
+        if (kb == NULL)
         {
             lv_coord_t h = lv_obj_get_height(page_wifi);
             lv_obj_set_height(page_wifi, LV_VER_RES / 2 - TITLE_BG_OVERFLOW);
@@ -191,7 +221,7 @@ LV_EVENT_CB_DECLARE(ta_event_cb)
         lv_textarea_set_cursor_hidden(obj, false);
         lv_keyboard_set_textarea(kb, obj);
     }
-    else if(e == LV_EVENT_DEFOCUSED)
+    else if (e == LV_EVENT_DEFOCUSED)
     {
         lv_textarea_set_cursor_hidden(obj, true);
     }
@@ -204,9 +234,9 @@ LV_EVENT_CB_DECLARE(kb_event_cb)
 {
     lv_keyboard_def_event_cb(kb, e);
 
-    if(e == LV_EVENT_CANCEL || e == LV_EVENT_APPLY)
+    if (e == LV_EVENT_CANCEL || e == LV_EVENT_APPLY)
     {
-        if(kb)
+        if (kb)
         {
             lv_coord_t h = lv_obj_get_height(page_wifi);
             lv_obj_set_height(page_wifi, -GUI_BG_SMALL);
@@ -221,10 +251,8 @@ LV_EVENT_CB_DECLARE(kb_event_cb)
  */
 LV_EVENT_CB_DECLARE(return_icon_event_cb)
 {
-    if(e == LV_EVENT_CLICKED)
+    if (e == LV_EVENT_CLICKED)
     {
         create_start_screen();
     }
 }
-
-
