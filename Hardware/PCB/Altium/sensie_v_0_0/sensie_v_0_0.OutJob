@@ -132,9 +132,9 @@ Configuration5_Name1=OutputConfigurationParameter1
 Configuration5_Item1=BoardEdgeRoutToolDia=2000000|GenerateBoardEdgeRout=False|GenerateDrilledSlotsG85=False|GenerateEIADrillFile=False|GenerateSeparatePlatedNonPlatedFiles=False|NumberOfDecimals=5|NumberOfUnits=2|OptimizeChangeLocationCommands=True|OriginPosition=Relative|Record=DrillView|Units=Imperial|ZeroesMode=SuppressLeadingZeroes
 
 [PublishSettings]
-OutputFilePath2=C:\Users\maxim\Documents\git\Sensies\Hardware\PCB\Altium\sensie_v_0_0\.PDF
+OutputFilePath2=C:\Users\maxim\Documents\git\Wootch\Hardware\PCB\Altium\sensie_v_0_0\.PDF
 ReleaseManaged2=0
-OutputBasePath2=C:\Users\maxim\Documents\git\Sensies\Hardware\PCB\Altium\sensie_v_0_0\
+OutputBasePath2=C:\Users\maxim\Documents\git\Wootch\Hardware\PCB\Altium\sensie_v_0_0\
 OutputPathMedia2=
 OutputPathMediaValue2=
 OutputPathOutputer2=[Output Type]
@@ -159,7 +159,7 @@ ShowComponentParameters2=1
 GlobalBookmarks2=0
 PDFACompliance2=Disabled
 PDFVersion2=Default
-OutputFilePath3=C:\Users\maxim\Documents\git\Sensies\Hardware\PCB\Altium\sensie_v_0_0\Output\
+OutputFilePath3=C:\Users\maxim\Documents\git\Wootch\Hardware\PCB\Altium\sensie_v_0_0\Output\
 ReleaseManaged3=1
 OutputBasePath3=Output
 OutputPathMedia3=
@@ -211,9 +211,9 @@ WmvVideoCodecName4=Windows Media Video V7
 WmvQuality4=80
 
 [GeneratedFilesSettings]
-RelativeOutputPath2=C:\Users\maxim\Documents\git\Sensies\Hardware\PCB\Altium\sensie_v_0_0\.PDF
+RelativeOutputPath2=C:\Users\maxim\Documents\git\Wootch\Hardware\PCB\Altium\sensie_v_0_0\.PDF
 OpenOutputs2=1
-RelativeOutputPath3=C:\Users\maxim\Documents\git\Sensies\Hardware\PCB\Altium\sensie_v_0_0\Output\
+RelativeOutputPath3=C:\Users\maxim\Documents\git\Wootch\Hardware\PCB\Altium\sensie_v_0_0\Output\
 OpenOutputs3=0
 AddToProject3=1
 TimestampFolder3=0

@@ -1,7 +1,7 @@
 first export idf paths 
 C:\Users\maxim\Programming\SDKs\Espressif\terminal\esp-idf\export.ps1
 
-navigate to ./sensies/ 
+navigate to ./wootch/ 
 
 replace with the correct COM port number
 clear ; idf.py.exe build flash monitor -p COM7
