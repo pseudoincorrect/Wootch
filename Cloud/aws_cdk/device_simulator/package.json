@@ -1,0 +1,24 @@
+{
+  "name": "device_simulator",
+  "version": "1.0.0",
+  "description": "Wootch device simulator with AWS iot-core nodeJs",
+  "main": "index.js",
+  "scripts": {
+    "sendSomeData": "ts-node sendSomeData"
+  },
+  "keywords": [
+    "aws",
+    "iot-core",
+    "nodejs",
+    "wootch"
+  ],
+  "author": "Maxime Clement",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-node": "^10.2.1"
+  },
+  "dependencies": {
+    "aws-iot-device-sdk-v2": "^1.6.2",
+    "yargs": "^14.2.3"
+  }
+}

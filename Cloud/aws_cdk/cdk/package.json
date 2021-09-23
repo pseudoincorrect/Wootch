@@ -1,0 +1,50 @@
+{
+  "name": "wootch_cdk",
+  "version": "0.1.0",
+  "bin": {
+    "wootch_cdk": "src/wootchStack.js"
+  },
+  "license": "Closed Sources",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk",
+    "devSynth": "npx cdk synth -c config=dev",
+    "prodSynth": "npx cdk synth -c config=prod",
+    "devDiff": "npx cdk diff -c config=dev",
+    "prodDiff": "npx cdk diff -c config=prod",
+    "devDeploy": "npx cdk deploy -c config=dev --require-approval never",
+    "prodDeploy": "npx cdk deploy -c config=prod",
+    "devDestroy": "npx cdk destroy -c config=dev",
+    "prodDestroy": "npx cdk destroy -c config=prodr"
+  },
+  "devDependencies": {
+    "@aws-cdk/assert": "1.99.0",
+    "@types/aws-lambda": "^8.10.75",
+    "@types/jest": "^26.0.10",
+    "@types/node": "10.17.27",
+    "aws-cdk": "^1.99.0",
+    "jest": "^26.4.2",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^26.2.0",
+    "ts-node": "^9.0.0",
+    "typescript": "~3.9.7"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-apigateway": "1.99.0",
+    "@aws-cdk/aws-cognito": "1.99.0",
+    "@aws-cdk/aws-dynamodb": "1.99.0",
+    "@aws-cdk/aws-iam": "1.99.0",
+    "@aws-cdk/aws-iot": "1.99.0",
+    "@aws-cdk/aws-iotwireless": "1.99.0",
+    "@aws-cdk/aws-lambda": "1.99.0",
+    "@aws-cdk/aws-route53": "1.99.0",
+    "@aws-cdk/aws-route53-targets": "1.99.0",
+    "@aws-cdk/aws-timestream": "1.99.0",
+    "@aws-cdk/core": "1.99.0",
+    "@aws-solutions-constructs/aws-iot-lambda": "1.99.0",
+    "aws-sdk": "^2.895.0",
+    "source-map-support": "^0.5.16"
+  }
+}
