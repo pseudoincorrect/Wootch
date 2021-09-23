@@ -1,131 +1,23 @@
 import { mqtt, auth, http, io, iot } from "aws-iot-device-sdk-v2";
 import { TextDecoder } from "util";
-
-// var device = new awsIot.device({
-//   keyPath: "certificates/private.pem.key",
-//   certPath: "certificates/certificate.pem.crt",
-//   caPath: "certificates/aws-root-ca.pem",
-//   clientId: "281859560513",
-//   host: "a2nqzpd004xxw5-ats.iot.eu-west-1.amazonaws.com",
-// });
+import * as secrets from "./secrets";
 
 // npx ts-node sendSomeData -e xxx-ats.iot.eu-west-1.amazonaws.com -r certificates/aws-root-ca.pem -c certificates/certificate.pem.crt -k  certificates/private.pem.key -C xxx -W true
 
-type Args = { [index: string]: any };
+// based on example : https://github.com/aws/aws-iot-device-sdk-js-v2/blob/main/samples/node/pub_sub/index.ts
 
-const yargs = require("yargs");
-yargs
-  .command(
-    "*",
-    false,
-    (yargs: any) => {
-      yargs
-        .option("endpoint", {
-          alias: "e",
-          description:
-            "Your AWS IoT custom endpoint, not including a port. " +
-            'Ex: "abcd123456wxyz-ats.iot.us-east-1.amazonaws.com"',
-          type: "string",
-          required: true,
-        })
-        .option("ca_file", {
-          alias: "r",
-          description: "FILE: path to a Root CA certficate file in PEM format.",
-          type: "string",
-          required: false,
-        })
-        .option("cert", {
-          alias: "c",
-          description:
-            "FILE: path to a PEM encoded certificate to use with mTLS",
-          type: "string",
-          required: false,
-        })
-        .option("key", {
-          alias: "k",
-          description:
-            "FILE: Path to a PEM encoded private key that matches cert.",
-          type: "string",
-          required: false,
-        })
-        .option("client_id", {
-          alias: "C",
-          description: "Client ID for MQTT connection.",
-          type: "string",
-          required: false,
-        })
-        .option("topic", {
-          alias: "t",
-          description: "STRING: Targeted topic",
-          type: "string",
-          default: "test/topic",
-        })
-        .option("count", {
-          alias: "n",
-          default: 10,
-          description:
-            "Number of messages to publish/receive before exiting. " +
-            "Specify 0 to run forever.",
-          type: "number",
-          required: false,
-        })
-        .option("use_websocket", {
-          alias: "W",
-          default: false,
-          description:
-            "To use a websocket instead of raw mqtt. If you " +
-            "specify this option you must specify a region for signing, you can also enable proxy mode.",
-          type: "boolean",
-          required: false,
-        })
-        .option("signing_region", {
-          alias: "s",
-          default: "eu-west-1",
-          description:
-            "If you specify --use_websocket, this " +
-            "is the region that will be used for computing the Sigv4 signature",
-          type: "string",
-          required: false,
-        })
-        .option("proxy_host", {
-          alias: "H",
-          description:
-            "Hostname for proxy to connect to. Note: if you use this feature, " +
-            "you will likely need to set --ca_file to the ca for your proxy.",
-          type: "string",
-          required: false,
-        })
-        .option("proxy_port", {
-          alias: "P",
-          default: 8080,
-          description: "Port for proxy to connect to.",
-          type: "number",
-          required: false,
-        })
-        .option("message", {
-          alias: "M",
-          description: "Message to publish.",
-          type: "string",
-          default: "Hello world!",
-        })
-        .option("verbosity", {
-          alias: "v",
-          description: "BOOLEAN: Verbose output",
-          type: "string",
-          default: "info",
-          choices: ["fatal", "error", "warn", "info", "debug", "trace", "none"],
-        })
-        .help()
-        .alias("help", "h")
-        .showHelpOnFail(false);
-    },
-    main
-  )
-  .parse();
+
+const messageCount: number = 10;
+const testTopic: string = "topic/test";
+const testMessage: string = "Hellow World !";
+// choices: "fatal", "error", "warn", "info", "debug", "trace", "none"
+const verbosity: string = "info";
+const use_websocket: boolean = true;
+const signing_region: string = "eu-west-1";
+
 
 async function execute_session(
-  connection: mqtt.MqttClientConnection,
-  argv: Args
+  connection: mqtt.MqttClientConnection
 ) {
   return new Promise(async (resolve, reject) => {
     try {
@@ -143,21 +35,21 @@ async function execute_session(
         );
         console.log(json);
         const message = JSON.parse(json);
-        if (message.sequence == argv.count) {
+        if (message.sequence == messageCount) {
           resolve(null);
         }
       };
 
-      await connection.subscribe(argv.topic, mqtt.QoS.AtLeastOnce, on_publish);
+      await connection.subscribe(testTopic, mqtt.QoS.AtLeastOnce, on_publish);
 
-      for (let op_idx = 0; op_idx < argv.count; ++op_idx) {
+      for (let op_idx = 0; op_idx < messageCount; ++op_idx) {
         const publish = async () => {
           const msg = {
-            message: argv.message,
+            message: testMessage,
             sequence: op_idx + 1,
           };
           const json = JSON.stringify(msg);
-          connection.publish(argv.topic, json, mqtt.QoS.AtLeastOnce);
+          connection.publish(testTopic, json, mqtt.QoS.AtLeastOnce);
         };
         setTimeout(publish, op_idx * 1000);
       }
@@ -167,10 +59,10 @@ async function execute_session(
   });
 }
 
-async function main(argv: Args) {
-  if (argv.verbosity != "none") {
+async function main() {
+  if (verbosity != "none") {
     const level: io.LogLevel = parseInt(
-      io.LogLevel[argv.verbosity.toUpperCase()]
+      io.LogLevel[verbosity.toUpperCase() as any]
     );
     io.enable_logging(level);
   }
@@ -178,38 +70,32 @@ async function main(argv: Args) {
   const client_bootstrap = new io.ClientBootstrap();
 
   let config_builder = null;
-  if (argv.use_websocket) {
+  if (use_websocket) {
     config_builder = iot.AwsIotMqttConnectionConfigBuilder.new_with_websockets({
-      region: argv.signing_region,
+      region: signing_region,
       credentials_provider:
         auth.AwsCredentialsProvider.newDefault(client_bootstrap),
     });
   } else {
     config_builder =
       iot.AwsIotMqttConnectionConfigBuilder.new_mtls_builder_from_path(
-        argv.cert,
-        argv.key
+        secrets.cert,
+        secrets.key
       );
   }
 
-  if (argv.proxy_host) {
-    config_builder.with_http_proxy_options(
-      new http.HttpProxyOptions(argv.proxy_host, argv.proxy_port)
-    );
-  }
-
-  if (argv.ca_file != null) {
+  if (secrets.ca_file != null) {
     config_builder.with_certificate_authority_from_path(
       undefined,
-      argv.ca_file
+      secrets.ca_file
     );
   }
 
   config_builder.with_clean_session(false);
   config_builder.with_client_id(
-    argv.client_id || "test-" + Math.floor(Math.random() * 100000000)
+    secrets.client_id || "test-" + Math.floor(Math.random() * 100000000)
   );
-  config_builder.with_endpoint(argv.endpoint);
+  config_builder.with_endpoint(secrets.endpoint);
 
   // force node to wait 60 seconds before killing itself, promises do not keep node alive
   const timer = setTimeout(() => {}, 60 * 1000);
@@ -219,9 +105,13 @@ async function main(argv: Args) {
   const connection = client.new_connection(config);
 
   await connection.connect();
-  await execute_session(connection, argv);
+  await execute_session(connection);
   await connection.disconnect();
 
   // Allow node to die if the promise above resolved
   clearTimeout(timer);
 }
+
+
+// Run the example
+main();
