@@ -1,0 +1,33 @@
+How to add a component in the component directory with git submodules
+
+navigate to the componenent directory
+
+$ git submodule add <https:your-git-repository> components/<your-git-repository-name>
+    example:
+        git submodule add https://github.com/pseudoincorrect/esp_mpu60x0_C components/esp_mpu60x0_C
+
+$ git submodule update --init --recursive
+
+*******************************************************************************
+
+Rename a folder with a submodule in init
+
+USE GIT BASH, not smartgit
+
+git mv old_path new_path
+ex: git mv Embedded_firmware/Sensies/ Embedded_firmware/Wootch --c
+
+in the .git modify every file that include the old new_path
+
+recursively in every submodule folder (not in the .git folder) modify each .git to replace the old path by the new path
+
+in .git, also change the folder name in "modules"
+
+basically replay every "old_path" by "new_path" every where
+
+sync the submodules
+ex:  git submodule sync --recursive
+
+git add .
+ 
+git commit -m " your message "

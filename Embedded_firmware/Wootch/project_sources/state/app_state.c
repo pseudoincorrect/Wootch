@@ -13,13 +13,11 @@ void app_state_init(void)
 
 bool app_state_get_wifi_connected(void)
 {
-
     return wifi_connected;
 }
 
 void app_state_set_wifi_connected(bool state)
 {
-    ESP_LOGI(TAG, "wifi is connected = %d", state);
     wifi_connected = state;
 }
 
