@@ -3,8 +3,8 @@ import * as cdk from "@aws-cdk/core";
 import { Utils, CdkContext } from "./utils";
 // import { ExpressConstruct } from "./expressConstruct";
 // import { CognitoConstruct } from "./cognitoConstruct";
-// import { IotConstruct } from "./iotConstruct";
-// import { DbConstruct } from "./dbConstruct";
+import { IotConstruct } from "./iotConstruct";
+import { DbConstruct } from "./dbConstruct";
 
 interface WootchStackProps extends cdk.StackProps {
   cdkContext: CdkContext;
@@ -14,9 +14,9 @@ export class WootchStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props: WootchStackProps) {
     super(scope, id, props);
 
-    // const stackDbs = new DbConstruct(this, "Databases", {
-    //   cdkContext: props.cdkContext,
-    // });
+    const stackDbs = new DbConstruct(this, "Databases", {
+      cdkContext: props.cdkContext,
+    });
 
     // const cognitoConstruct = new CognitoConstruct(this, "Cognito", {
     //   cdkContext: props.cdkContext,
@@ -28,10 +28,10 @@ export class WootchStack extends cdk.Stack {
     //   stackDbs: stackDbs.dbs,
     // });
 
-    // new IotConstruct(this, "Iot", {
-    //   cdkContext: props.cdkContext,
-    //   stackDbs: stackDbs.dbs,
-    // });
+    new IotConstruct(this, "Iot", {
+      cdkContext: props.cdkContext,
+      stackDbs: stackDbs.dbs,
+    });
 
     new cdk.CfnOutput(this, "Region", {
       description: "Region",

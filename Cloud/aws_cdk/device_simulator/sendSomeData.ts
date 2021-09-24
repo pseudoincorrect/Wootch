@@ -6,19 +6,15 @@ import * as secrets from "./secrets";
 
 // based on example : https://github.com/aws/aws-iot-device-sdk-js-v2/blob/main/samples/node/pub_sub/index.ts
 
-
 const messageCount: number = 10;
-const testTopic: string = "topic/test";
-const testMessage: string = "Hellow World !";
+const testTopic: string = "WootchDev/sensorData";
+const testMessage: string = "I am Wootching !";
 // choices: "fatal", "error", "warn", "info", "debug", "trace", "none"
 const verbosity: string = "info";
 const use_websocket: boolean = true;
 const signing_region: string = "eu-west-1";
 
-
-async function execute_session(
-  connection: mqtt.MqttClientConnection
-) {
+async function execute_session(connection: mqtt.MqttClientConnection) {
   return new Promise(async (resolve, reject) => {
     try {
       const decoder = new TextDecoder("utf8");
@@ -59,7 +55,7 @@ async function execute_session(
   });
 }
 
-async function main() {
+async function sendSomeData() {
   if (verbosity != "none") {
     const level: io.LogLevel = parseInt(
       io.LogLevel[verbosity.toUpperCase() as any]
@@ -112,6 +108,9 @@ async function main() {
   clearTimeout(timer);
 }
 
-
-// Run the example
-main();
+// ===========================================================================
+// Main
+// ===========================================================================
+if (require.main === module) {
+  sendSomeData();
+}

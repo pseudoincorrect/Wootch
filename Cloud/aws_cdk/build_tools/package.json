@@ -1,0 +1,26 @@
+{
+  "name": "build_tools",
+  "version": "1.0.0",
+  "description": "Build tools to run with shelljs, to deploy and debug lambda functions, one by one, mainly used for development",
+  "main": "index.js",
+  "scripts": {
+    "loadEnv": "ts-node env",
+    "allBuild": "ts-node build",
+    "allInstall": "ts-node install",
+    "expressUpdate": "ts-node ./express/update",
+    "expressLogTail": "ts-node ./express/logTail",
+    "iotUpdate": "ts-node ./iot/update",
+    "iotLogTail": "ts-node ./iot/logTail"
+  },
+  "author": "Maxime Clement",
+  "license": "Closed Sources",
+  "devDependencies": {
+    "@types/shelljs": "^0.8.8",
+    "@types/yargs": "11.0.0",
+    "ts-node": "^9.1.1"
+  },
+  "dependencies": {
+    "shelljs": "^0.8.4",
+    "yargs": "^16.2.0"
+  }
+}

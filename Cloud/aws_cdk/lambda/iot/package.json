@@ -1,0 +1,41 @@
+{
+  "name": "wootch_iot_events",
+  "version": "0.0.0",
+  "description": "Handlers for IoT event for Wootch",
+  "main": "index.js",
+  "keywords": [
+    "iot"
+  ],
+  "author": "Maxime Clement",
+  "license": "Closed Sources",
+  "scripts": {
+    "tsc": "tsc",
+    "build": "tsc -b && copy-node-modules . dist/src",
+    "clean": "tsc -b --clean && npx rimraf ./dist",
+    "package": "cd dist/src && bestzip ../function.zip .",
+    "watch": "tsc -w",
+    "test": "mocha -r ts-node/register tests/**/*.test.ts",
+    "testWithCoverage": "nyc -r lcov -e .ts -x \"*.test.ts\" mocha -r ts-node/register tests/**/*.test.ts && nyc report"
+  },
+  "dependencies": {
+    "build_tools": "file:../../build_tools",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@aws-sdk/types": "^3.13.1",
+    "@types/chai": "^4.2.17",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "^15.0.1",
+    "@types/uuid": "^8.3.0",
+    "aws-sdk": "^2.894.0",
+    "bestzip": "^2.2.0",
+    "chai": "^4.3.4",
+    "copy-node-modules": "^1.1.1",
+    "mocha": "^8.3.2",
+    "nyc": "^15.1.0",
+    "rimraf": "^3.0.2",
+    "ts-node": "^9.1.1",
+    "tslint": "^6.1.3",
+    "typescript": "^4.2.4"
+  }
+}

@@ -1,6 +1,7 @@
 {
   "name": "wootch_cdk",
   "version": "0.1.0",
+  "description": "Serverless app with AWS CDK for Wootch, witch npm scripts to deploy and maintain it.",
   "bin": {
     "wootch_cdk": "src/wootchStack.js"
   },
