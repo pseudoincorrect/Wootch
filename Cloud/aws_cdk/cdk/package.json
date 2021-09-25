@@ -5,7 +5,7 @@
   "bin": {
     "wootch_cdk": "src/wootchStack.js"
   },
-  "license": "Closed Sources",
+  "license": "MIT",
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
