@@ -69,7 +69,7 @@ export async function searchDeviceCmd(argv: Args) {
  * @param id Id of the device
  * @returns
  */
-function nameFromId(id: string) {
+function nameFromId(id: string): string {
   return `wootch_dev_${id.toUpperCase()}`;
 }
 
