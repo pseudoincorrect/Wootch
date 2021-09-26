@@ -2,7 +2,7 @@ import { Args } from "./cmdTypes";
 import * as iot from "@aws-sdk/client-iot";
 import { AWS_REGION } from "./cmdCommonParams";
 
-const WOOTCH_DEVICE_TYPE = "WOOTCH_DEVICE";
+const WOOTCH_DEVICE_TYPE = "wootch_device";
 const client = new iot.IoTClient({ region: AWS_REGION });
 
 interface CreateCertificateOutput {
@@ -92,9 +92,9 @@ async function createDevice(id: string) {
     if (error.message.includes("TYPE")) {
       console.log("ERROR : Please create a thing type");
     } else {
-      console.log(JSON.stringify(error, null, 2));
+      console.log(error);
     }
-    return;
+    throw error;
   }
   console.log(`Success: device ${id} created`);
 }
@@ -112,7 +112,7 @@ async function createDeviceType() {
   try {
     data = await client.send(command);
   } catch (error) {
-    return;
+    throw error;
   }
   console.log(`Success: device type ${WOOTCH_DEVICE_TYPE} created`);
 }
@@ -135,7 +135,7 @@ async function deleteDevice(id: string) {
   try {
     data = await client.send(command);
   } catch (error: any) {
-    return;
+    throw error;
   }
   console.log(`Success: device ${id} deleted`);
 }
