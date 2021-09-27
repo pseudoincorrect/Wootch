@@ -1,5 +1,5 @@
 import yargs from "yargs";
-import * as dev from "./commands/device";
+import * as dev from "./commands/cmdDevice";
 
 function adminCli() {
   yargs
@@ -17,7 +17,7 @@ function adminCli() {
           })
           .help();
       },
-      dev.createDeviceCmd
+      dev.cmdDeviceCreate
     ) 
     // Search Device Command
     .command(
@@ -33,13 +33,7 @@ function adminCli() {
           })
           .help();
       },
-      dev.searchDeviceCmd
-    )
-    // Create Device Type Command
-    .command(
-      "createDeviceType",
-      "Create a device type (mandatory to create a device)",
-      dev.createDeviceTypeCmd
+      dev.cmdDeviceSearch
     )
     // Delete Device Command
     .command(
@@ -55,7 +49,7 @@ function adminCli() {
           })
           .help();
       },
-      dev.deleteDeviceCmd
+      dev.cmdDeviceDelete
     )
     // Cli Options
     .version()
