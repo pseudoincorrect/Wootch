@@ -84,7 +84,7 @@ its main component are the following:
 
 <br>
 
-(These CLIs could later turn into a web/mobile app)
+(These CLIs will later turn into a web/mobile app)
 
 <br>
 <p align="center">
