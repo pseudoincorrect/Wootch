@@ -84,7 +84,7 @@ its main component are the following:
 
 <br>
 <p align="center">
-<img align="center" width=90% src="Support/readme_assets/aws_cdk_architecture.png">
+<img align="center" width=90% src="Support/readme_assets/cloud_archi.png">
 <br>
 (Simplified Architecture)
 </p>
