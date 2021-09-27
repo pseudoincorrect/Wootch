@@ -1,11 +1,14 @@
 import { Args } from "./cmdTypes";
 import * as iot from "@aws-sdk/client-iot";
-import { AWS_REGION } from "./cmdCommonParams";
+import { AWS_REGION, AWS_ACCOUNT_ID } from "../../secrets/awsParams";
+import wootchPolicy from "../policies/iotPolicy.json";
 
 const WOOTCH_DEVICE_TYPE = "wootch_device";
-const client = new iot.IoTClient({ region: AWS_REGION });
+const WOOTCH_POLICY_NAME = "wootch_device_policy";
 
-interface CreateCertificateOutput {
+const iotClient = new iot.IoTClient({ region: AWS_REGION });
+
+export interface CreateCertificateOutput {
   certificateArn: string;
   certificateId: string;
   certificatePem: string;
@@ -15,14 +18,19 @@ interface CreateCertificateOutput {
   };
 }
 
+export interface PolicySearch {
+  policyArn: string;
+  policyName: string;
+}
+
 /**
  * Create a thing device on AWS IOT
  * @param argv cli parameters
  * @returns
  */
-export async function createDeviceCmd(argv: Args) {
+export async function cmdCreateDevice(argv: Args) {
   try {
-    await createDevice(argv.id);
+    await deviceCreate(argv.id);
   } catch (error) {
     console.log(error);
   }
@@ -31,9 +39,9 @@ export async function createDeviceCmd(argv: Args) {
 /**
  * Create a generic device type on AWS IOT
  */
-export async function createDeviceTypeCmd() {
+export async function cmdCreateDeviceType() {
   try {
-    await createDeviceType();
+    await deviceCreateType();
   } catch (error) {
     console.log(error);
   }
@@ -43,9 +51,9 @@ export async function createDeviceTypeCmd() {
  * Delete a thing on AWS IOT if it exists
  * @param argv cli parameter
  */
-export async function deleteDeviceCmd(argv: Args) {
+export async function cmdDeleteDevice(argv: Args) {
   try {
-    await deleteDevice(argv.id);
+    await deviceDelete(argv.id);
   } catch (error) {
     console.log(error);
   }
@@ -55,9 +63,9 @@ export async function deleteDeviceCmd(argv: Args) {
  * Search a thing device and print its info
  * @param argv cli parameters
  */
-export async function searchDeviceCmd(argv: Args) {
+export async function cmdSearchDevice(argv: Args) {
   try {
-    const data = await describeDevice(argv.id);
+    const data = await deviceDescribe(argv.id);
     console.log(JSON.stringify(data, null, 2));
   } catch (error) {
     console.log(error);
@@ -74,12 +82,30 @@ function nameFromId(id: string): string {
 }
 
 /**
+ * Get a shortened Arn (for display purpose)
+ * @param arn AWS Arn address
+ * @returns shortned version of this Arn
+ */
+function shortArn(arn: string): string {
+  return "arn/" + arn.slice(40, 45);
+}
+
+/**
+ * Get a shortened ID (for display purpose)
+ * @param id any ID
+ * * @returns shortned version of this Arn
+ */
+function shortId(id: string): string {
+  if (id.length < 5) throw new Error("id length");
+  return id.slice(0, 5);
+}
+
+/**
  * Create a thing device on AWS IOT
  * @param id device ID
  * @returns
  */
-async function createDevice(id: string) {
-  console.log(`Creating new device ${id}`);
+async function deviceCreate(id: string) {
   const params: iot.CreateThingCommandInput = {
     thingName: nameFromId(id),
     thingTypeName: WOOTCH_DEVICE_TYPE,
@@ -87,7 +113,7 @@ async function createDevice(id: string) {
   const command = new iot.CreateThingCommand(params);
   let data: iot.CreateThingCommandOutput;
   try {
-    data = await client.send(command);
+    data = await iotClient.send(command);
   } catch (error: any) {
     if (error.message.includes("TYPE")) {
       console.log("ERROR : Please create a thing type");
@@ -96,33 +122,31 @@ async function createDevice(id: string) {
     }
     throw error;
   }
-  console.log(`Success: device ${id} created`);
+  console.log(`Created device ${nameFromId(id)}`);
 }
 
 /**
  * Create a generic device type on AWS IOT
  */
-async function createDeviceType() {
-  console.log(`Creating new device type: '${WOOTCH_DEVICE_TYPE}'`);
+async function deviceCreateType() {
   const params: iot.CreateThingTypeCommandInput = {
     thingTypeName: WOOTCH_DEVICE_TYPE,
   };
   const command = new iot.CreateThingTypeCommand(params);
   let data: iot.CreateThingTypeCommandOutput;
   try {
-    data = await client.send(command);
+    data = await iotClient.send(command);
   } catch (error) {
     throw error;
   }
-  console.log(`Success: device type ${WOOTCH_DEVICE_TYPE} created`);
+  console.log(`Created device type ${WOOTCH_DEVICE_TYPE}`);
 }
 
 /**
  * Delete a thing on AWS IOT if it exists
  * @param id device id
  */
-async function deleteDevice(id: string) {
-  console.log(`Deleting device ${id}`);
+async function deviceDelete(id: string) {
   if (!(await deviceExist(id))) {
     console.log(`Device ${nameFromId(id)} does not exist`);
     return;
@@ -133,11 +157,11 @@ async function deleteDevice(id: string) {
   const command = new iot.DeleteThingCommand(params);
   let data: iot.DeleteThingCommandOutput;
   try {
-    data = await client.send(command);
+    data = await iotClient.send(command);
   } catch (error: any) {
     throw error;
   }
-  console.log(`Success: device ${id} deleted`);
+  console.log(`Deleted device ${nameFromId(id)}`);
 }
 
 /**
@@ -145,19 +169,18 @@ async function deleteDevice(id: string) {
  * @param id device id
  * @returns AWS IOT Device Data
  */
-async function describeDevice(id: string): Promise<any> {
-  console.log(`Searching for device ${nameFromId(id)}`);
+async function deviceDescribe(id: string): Promise<any> {
   const params: iot.DescribeThingCommandInput = {
     thingName: nameFromId(id),
   };
   const command = new iot.DescribeThingCommand(params);
   let data: iot.DescribeThingCommandOutput;
   try {
-    data = await client.send(command);
+    data = await iotClient.send(command);
   } catch (error: any) {
     throw error;
   }
-  console.log(`Success: device ${nameFromId(id)} found`);
+  console.log(`Found device ${nameFromId(id)}`);
   return data;
 }
 
@@ -168,7 +191,7 @@ async function describeDevice(id: string): Promise<any> {
  */
 async function deviceExist(id: string): Promise<boolean> {
   try {
-    await describeDevice(id);
+    await deviceDescribe(id);
   } catch (error) {
     return false;
   }
@@ -176,22 +199,120 @@ async function deviceExist(id: string): Promise<boolean> {
 }
 
 /**
+ * Return whether a AWS IOT device has a certificate attached
+ * @param id device ID
+ * @returns if the device has a certificate attached
+ */
+async function deviceHasCertificate(
+  devId: string,
+  certArn: string
+): Promise<boolean> {
+  try {
+    const data = await deviceListCertificate(devId);
+    if (!data.principals) return false;
+    if (data.principals[0] == certArn) return true;
+  } catch (error) {
+    return false;
+  }
+  return false;
+}
+
+/**
+ * Attach a certificate to a device (AWS IOT)
+ * @param devId device ID
+ * @param certifId certificate ID
+ * @returns completion info
+ */
+async function deviceAttachCertificate(
+  devId: string,
+  certArn: string
+): Promise<any> {
+  const params: iot.AttachThingPrincipalCommandInput = {
+    thingName: nameFromId(devId),
+    principal: certArn,
+  };
+  const command = new iot.AttachThingPrincipalCommand(params);
+  let data: iot.AttachThingPrincipalCommandOutput;
+  try {
+    data = await iotClient.send(command);
+  } catch (error) {
+    throw error;
+  }
+  console.log(
+    `Attached certificate ${shortArn(certArn)}.. to device ${nameFromId(devId)}`
+  );
+  return data;
+}
+
+/**
+ * Detach a certificate to a device (AWS IOT)
+ * @param devId device ID
+ * @param certifId certificate ID
+ * @returns completion info
+ */
+async function deviceDetachCertificate(
+  devId: string,
+  certArn: string
+): Promise<any> {
+  const params: iot.DetachThingPrincipalCommandInput = {
+    thingName: nameFromId(devId),
+    principal: certArn,
+  };
+  const command = new iot.DetachThingPrincipalCommand(params);
+  let data: iot.DetachThingPrincipalCommandOutput;
+  try {
+    data = await iotClient.send(command);
+  } catch (error) {
+    throw error;
+  }
+  console.log(
+    `Detached certificate ${shortArn(certArn)}.. from device ${nameFromId(
+      devId
+    )}`
+  );
+  return data;
+}
+
+/**
+ * list the certificate attached to a device (AWS IOT)
+ * @param devId device ID
+ * @returns completion info
+ */
+async function deviceListCertificate(
+  devId: string
+): Promise<iot.ListThingPrincipalsCommandOutput> {
+  const params: iot.ListThingPrincipalsCommandInput = {
+    thingName: nameFromId(devId),
+  };
+  const command = new iot.ListThingPrincipalsCommand(params);
+  let data: iot.ListThingPrincipalsCommandOutput;
+  try {
+    data = await iotClient.send(command);
+  } catch (error) {
+    throw error;
+  }
+  console.log(
+    `Retrieved certificate(s) attached to device ${nameFromId(devId)}`
+  );
+  return data;
+}
+
+/**
  * Create a certificate to be attached to a device
  * @returns Certificate Info and associated Keys
  */
-async function createCertificate(): Promise<CreateCertificateOutput> {
-  console.log("Creating a certificate");
+async function certificateCreate(): Promise<CreateCertificateOutput> {
   const params: iot.CreateKeysAndCertificateCommandInput = {
     setAsActive: true,
   };
   const command = new iot.CreateKeysAndCertificateCommand(params);
   let data: iot.CreateKeysAndCertificateCommandOutput;
   try {
-    data = await client.send(command);
+    data = await iotClient.send(command);
   } catch (error) {
     throw error;
   }
-  console.log("Success: certificate created");
+  console.log(`Created certificate ${shortId(data.certificateId!)}..`);
   return {
     certificateArn: data.certificateArn,
     certificateId: data.certificateId,
@@ -206,21 +327,20 @@ async function createCertificate(): Promise<CreateCertificateOutput> {
 /**
  * Delete a certificate from AWS IOT
  * @param id certificate ID
- * @returns 
+ * @returns
  */
-async function deleteCertificate(id: string): Promise<any> {
-  console.log(`Deleting certificate ${id.slice(0, 5)}...`);
+async function certificateDelete(id: string): Promise<any> {
   const params: iot.DeleteCertificateCommandInput = {
     certificateId: id,
   };
   const command = new iot.DeleteCertificateCommand(params);
   let data: iot.DeleteCertificateCommandOutput;
   try {
-    data = await client.send(command);
+    data = await iotClient.send(command);
   } catch (error) {
     throw error;
   }
-  console.log(`Success: certificate ${id.slice(0, 5)}... deleted`);
+  console.log(`Deleted certificate ${shortId(id)}..`);
   return data;
 }
 
@@ -229,20 +349,41 @@ async function deleteCertificate(id: string): Promise<any> {
  * @param id certificate ID
  * @returns certificate info
  */
-async function describeCertificate(id: string): Promise<any> {
-  console.log(`Searching certificate ${id.slice(0, 5)}...`);
+async function certificateDescribe(id: string): Promise<any> {
   const params: iot.DescribeCertificateCommandInput = {
     certificateId: id,
   };
   const command = new iot.DescribeCertificateCommand(params);
   let data: iot.DescribeCertificateCommandOutput;
   try {
-    data = await client.send(command);
+    data = await iotClient.send(command);
   } catch (error) {
     throw error;
   }
-  console.log(`Success: certificate ${id.slice(0, 5)}... found`);
+  console.log(`Found certificate ${shortId(id)}..`);
   return data;
+}
+
+/**
+ * List the policies attached to a certificate
+ * @param certArn certificate Arn
+ * @returns list of policies
+ */
+async function certificateListPolicies(
+  certArn: string
+): Promise<PolicySearch[]> {
+  const params: iot.ListAttachedPoliciesCommandInput = {
+    target: certArn,
+  };
+  const command = new iot.ListAttachedPoliciesCommand(params);
+  let data: iot.ListAttachedPoliciesCommandOutput;
+  try {
+    data = await iotClient.send(command);
+  } catch (error) {
+    throw error;
+  }
+  console.log(`Found policies for certificate ${shortArn(certArn)}..`);
+  return data.policies as PolicySearch[];
 }
 
 /**
@@ -250,8 +391,7 @@ async function describeCertificate(id: string): Promise<any> {
  * @param id certificate ID
  * @returns deletion data
  */
-async function deactivateCertificate(id: string): Promise<any> {
-  console.log(`Deactivating certificate ${id.slice(0, 5)}...`);
+async function certificateDeactivate(id: string): Promise<any> {
   const params: iot.UpdateCertificateCommandInput = {
     certificateId: id,
     newStatus: "INACTIVE",
@@ -259,22 +399,42 @@ async function deactivateCertificate(id: string): Promise<any> {
   const command = new iot.UpdateCertificateCommand(params);
   let data: iot.UpdateCertificateCommandOutput;
   try {
-    data = await client.send(command);
+    data = await iotClient.send(command);
   } catch (error) {
     throw error;
   }
-  console.log(`Success: certificate ${id.slice(0, 5)}... deactivated`);
+  console.log(`Deactivated certificate ${shortId(id)}..`);
   return data;
 }
 
 /**
+ * Check if a certificate has the policy attached to it
+ * @param certArn certificate Arn
+ * @returns whether the certificate has the policy
+ */
+async function certificateHasPolicy(certArn: string): Promise<boolean> {
+  try {
+    const pols = await certificateListPolicies(certArn);
+    for (let i = 0; i < pols.length; i++) {
+      if(pols[i].policyName == WOOTCH_POLICY_NAME) {
+        return true
+      }
+    }
+  } catch (error) {
+    return false;
+  }
+  return false;
+}
+
+
+/**
  * Check if a certificate exists
- * @param id certificated
+ * @param id certificate ID
  * @returns whether or not a certificate exists
  */
 async function certificateExist(id: string): Promise<boolean> {
   try {
-    await describeCertificate(id);
+    await certificateDescribe(id);
   } catch (error) {
     return false;
   }
@@ -282,53 +442,121 @@ async function certificateExist(id: string): Promise<boolean> {
 }
 
 /**
- * Attach a certificate to a device (AWS IOT)
- * @param devId device ID
- * @param certifId certificate ID
+ * Attach the policy to a certificate
+ * @param certArn certificate Arn
  * @returns completion info
  */
-async function attachCertificateToDevice(
-  devId: string,
-  certifId: string
-): Promise<any> {
-  console.log(
-    `attaching certificate ${certifId.slice(0, 5)}... to device ${devId}`
-  );
-  const params: iot.AttachThingPrincipalCommandInput = {
-    thingName: nameFromId(devId),
-    principal: "",
+async function certificateAttachPolicy(certArn: string): Promise<any> {
+  const params: iot.AttachPolicyCommandInput = {
+    policyName: WOOTCH_POLICY_NAME,
+    target: certArn,
   };
-  const command = new iot.AttachThingPrincipalCommand(params);
-  let data: iot.AttachThingPrincipalCommandOutput;
+  const command = new iot.AttachPolicyCommand(params);
+  let data: iot.AttachPolicyCommandOutput;
   try {
-    data = await client.send(command);
+    data = await iotClient.send(command);
   } catch (error) {
     throw error;
   }
   console.log(
-    `Succes: certificate ${certifId.slice(0, 5)}... attached to device ${devId}`
+    `Attached policy ${WOOTCH_POLICY_NAME} to certificate ${shortArn(certArn)}`
   );
   return data;
 }
 
 /**
- * Archaic end-to-end testing
+ * Detach the policy from a certificate
+ * @param certArn certificate Arn
+ * @returns completion info
  */
-export async function testIt() {
+async function certificateDetachPolicy(certArn: string): Promise<any> {
+  const params: iot.DetachPolicyCommandInput = {
+    policyName: WOOTCH_POLICY_NAME,
+    target: certArn,
+  };
+  const command = new iot.DetachPolicyCommand(params);
+  let data: iot.DetachPolicyCommandOutput;
   try {
-    const cert = await createCertificate();
-    console.log(JSON.stringify(cert, null, 2));
-    let exist = await certificateExist(cert.certificateId);
-    console.log(
-      `certificate ${cert.certificateId.slice(0, 5)}... exists ? ${exist}`
-    );
-    await deactivateCertificate(cert.certificateId);
-    await deleteCertificate(cert.certificateId);
-    exist = await certificateExist(cert.certificateId);
-    console.log(
-      `certificate ${cert.certificateId.slice(0, 5)}... exists ? ${exist}`
-    );
+    data = await iotClient.send(command);
   } catch (error) {
-    console.log(error);
+    throw error;
   }
+  console.log(
+    `Detached policy ${WOOTCH_POLICY_NAME} from certificate ${shortArn(
+      certArn
+    )}`
+  );
+  return data;
+}
+
+/**
+ * Create the policy that enable devices to publish and subscribe to topics
+ * */
+async function policyIotCreate(): Promise<any> {
+  let pol = JSON.stringify(wootchPolicy, null, 2);
+  pol = pol.replace(/AWS_ACCOUNT_ID/g, AWS_ACCOUNT_ID);
+  const params: iot.CreatePolicyCommandInput = {
+    policyName: WOOTCH_POLICY_NAME,
+    policyDocument: pol,
+  };
+  const command = new iot.CreatePolicyCommand(params);
+  let data: iot.CreatePolicyCommandOutput;
+  try {
+    data = await iotClient.send(command);
+  } catch (error) {
+    throw error;
+  }
+  console.log(`Created Policy ${WOOTCH_POLICY_NAME}`);
+  return data;
+}
+
+/**
+ * Create the policy that enable devices to publish and subscribe to topics
+ * */
+async function policyIotDelete(): Promise<any> {
+  const params: iot.DeletePolicyCommandInput = {
+    policyName: WOOTCH_POLICY_NAME,
+  };
+  const command = new iot.DeletePolicyCommand(params);
+  let data: iot.DeletePolicyCommandOutput;
+  try {
+    data = await iotClient.send(command);
+  } catch (error) {
+    throw error;
+  }
+  console.log(`Deleted Policy ${WOOTCH_POLICY_NAME}`);
+  return data;
+}
+/**
+ * Search for an IoT policy
+ * */
+async function policyIotList(): Promise<PolicySearch[]> {
+  const params: iot.ListPoliciesCommandInput = {};
+  const command = new iot.ListPoliciesCommand(params);
+  let data: iot.ListPoliciesCommandOutput;
+  try {
+    data = await iotClient.send(command);
+  } catch (error) {
+    throw error;
+  }
+  console.log(`Retrieved list of Policies`);
+  return data.policies as PolicySearch[];
+}
+
+/**
+ * Return whether a AWS IOT policy ${WOOTCH_POLICY_NAME} exist
+ * @returns if the policy exists
+ */
+async function policyIotExist(): Promise<boolean> {
+  try {
+    const data = await policyIotList();
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].policyName == WOOTCH_POLICY_NAME) {
+        return true;
+      }
+    }
+  } catch (error) {
+    return false;
+  }
+  return false;
 }
