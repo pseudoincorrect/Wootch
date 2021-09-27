@@ -41,6 +41,8 @@ Wootch's PCB has been made on Altium Designer. it features:
 <br>
 
 # Embedded System Firmware
+(Work in progress : 70%)
+
 The code is written in C (not C++) along the ESP-IDF SDK. (No arduino compatibility here). <br>
 its main component are the following: 
 - ESP-IDF SDK, peripheral, wifi, RTOS.
@@ -59,13 +61,30 @@ its main component are the following:
 <br>
 
 # Serverless Application (Backend)
-
-It will use the AWS-CDK (Cloud Development Kit) framework:
+ (Work in progress: 50%)
+## AWS CDK Application 
 - Receive MQTT messages, 
 - Extract data and store them in a dynamoDB Database
 - Run analytics on the stored data
-- Manage users
-- Manage IoT "things" and secure their data link
+- Manage Cognito users pool
+
+<br>
+
+## Admin Command Line Interface
+- Create and manage Users
+- Create and manage Devices and Certificates
+- Automate the device registration process
+
+<br>
+
+## User Command Line Interface
+- Log into the wootch account
+- manage the user's device(s)
+- manage the user's preferences
+
+<br>
+
+(These CLIs could later turn into a web/mobile app)
 
 <br>
 <p align="center">
@@ -74,12 +93,4 @@ It will use the AWS-CDK (Cloud Development Kit) framework:
 (Simplified Architecture)
 </p>
 <br>
-(Work in progress)
-
-<br>
-<br>
-
-# Mobile Application
-
-(Work in progress)
 
