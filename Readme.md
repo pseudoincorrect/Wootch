@@ -68,23 +68,19 @@ its main component are the following:
 - Run analytics on the stored data
 - Manage Cognito users pool
 
-<br>
+
 
 ## Admin Command Line Interface
 - Create and manage Users
 - Create and manage Devices and Certificates
 - Automate the device registration process
 
-<br>
+
 
 ## User Command Line Interface
 - Log into the wootch account
-- manage the user's device(s)
-- manage the user's preferences
-
-<br>
-
-(These CLIs will later turn into a web/mobile app)
+- Manage the user's device(s)
+- Manage the user's preferences
 
 <br>
 <p align="center">
