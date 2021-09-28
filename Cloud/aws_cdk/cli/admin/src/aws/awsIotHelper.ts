@@ -39,6 +39,19 @@ export async function deviceExist(devId: string): Promise<boolean> {
 }
 
 /**
+ * Return whether a AWS IOT device Type exist
+ * @returns whether the device type exists
+ */
+export async function deviceTypeExist(): Promise<boolean> {
+  try {
+    await iot.deviceTypeDescribe();
+  } catch (error) {
+    return false;
+  }
+  return true;
+}
+
+/**
  * Return whether a AWS IOT device has a certificate attached
  * @param id device ID
  * @returns if the device has a certificate attached
@@ -91,17 +104,13 @@ export async function certificateExist(certId: string): Promise<boolean> {
 }
 
 /**
- * Return whether a AWS IOT policy ${WOOTCH_POLICY_NAME} exist
+ * Return whether the AWS IOT policy exist
  * @returns if the policy exists
  */
 export async function policyIotExist(): Promise<boolean> {
   try {
-    const data = await iot.policyIotList();
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].policyName == iot.WOOTCH_POLICY_NAME) {
-        return true;
-      }
-    }
+    const data = await iot.getPolicy();
+    if (data) return true;
   } catch (error) {
     return false;
   }

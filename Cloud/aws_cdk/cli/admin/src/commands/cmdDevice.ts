@@ -4,8 +4,7 @@ import * as iotHelp from "../aws/awsIotHelper";
 
 /**
  * Create a thing device on AWS IOT
- * @param argv cli parameters
- * @returns
+ * @param argv cli parameters, argv.id: device ID
  */
 export async function cmdDeviceCreate(argv: Args) {
   const devId = argv.id;
@@ -15,8 +14,12 @@ export async function cmdDeviceCreate(argv: Args) {
       return;
     }
     await iot.deviceCreate(devId);
-    // TODO: check device type exists
-    // TODO: check policy exists
+    if (! await iotHelp.deviceTypeExist()){
+      await iot.deviceTypeCreate();
+    }
+    if (! await iotHelp.policyIotExist()){
+      await iot.policyIotCreate();
+    }
     const cert: iot.CreateCertificateOutput = await iot.certificateCreate();
     const certArn = cert.certificateArn;
     await iot.deviceAttachCertificate(devId, certArn);
@@ -29,7 +32,7 @@ export async function cmdDeviceCreate(argv: Args) {
 
 /**
  * Delete a thing on AWS IOT if it exists
- * @param argv cli parameter
+ * @param argv cli parameter, argv.id: device ID
  */
 export async function cmdDeviceDelete(argv: Args) {
   const devId = argv.id;
@@ -56,7 +59,7 @@ export async function cmdDeviceDelete(argv: Args) {
 
 /**
  * Search a thing device and print its info
- * @param argv cli parameters
+ * @param argv cli parameters, argv.id: device ID
  */
 export async function cmdDeviceSearch(argv: Args) {
   try {

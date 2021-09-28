@@ -25,7 +25,7 @@ export interface PolicySearch {
 /**
  * Concatene a predefined string with and id
  * @param id Id of the device
- * @returns
+ * @returns a concatened name including the ID
  */
 function nameFromId(id: string): string {
   return `wootch_dev_${id.toUpperCase()}`;
@@ -53,7 +53,7 @@ function shortId(id: string): string {
 /**
  * Create a thing device on AWS IOT
  * @param id device ID
- * @returns
+ * @returns promise of completion
  */
 export async function deviceCreate(id: string) {
   const params: iot.CreateThingCommandInput = {
@@ -72,8 +72,9 @@ export async function deviceCreate(id: string) {
 
 /**
  * Create a generic device type on AWS IOT
+ * @returns promise of completion
  */
-export async function deviceCreateType() {
+export async function deviceTypeCreate() {
   const params: iot.CreateThingTypeCommandInput = {
     thingTypeName: WOOTCH_DEVICE_TYPE,
   };
@@ -108,7 +109,7 @@ export async function deviceDelete(id: string) {
 /**
  * Search for a thing device on AWS IOT
  * @param id device id
- * @returns AWS IOT Device Data
+ * @returns promise AWS IOT Device Data, Throw an error if not found
  */
 export async function deviceDescribe(id: string): Promise<any> {
   const params: iot.DescribeThingCommandInput = {
@@ -126,10 +127,29 @@ export async function deviceDescribe(id: string): Promise<any> {
 }
 
 /**
+ * Search for the thing device Type on AWS IOT
+ * @returns promise AWS IOT Device Type Data, Throw an error if not found
+ */
+export async function deviceTypeDescribe(): Promise<any> {
+  const params: iot.DescribeThingTypeCommandInput = {
+    thingTypeName: WOOTCH_DEVICE_TYPE,
+  };
+  const command = new iot.DescribeThingTypeCommand(params);
+  let data: iot.DescribeThingTypeCommandOutput;
+  try {
+    data = await iotClient.send(command);
+  } catch (error: any) {
+    throw error;
+  }
+  console.log(`Found device type ${WOOTCH_DEVICE_TYPE}`);
+  return data;
+}
+
+/**
  * Attach a certificate to a device (AWS IOT)
  * @param devId device ID
  * @param certifId certificate ID
- * @returns completion info
+ * @returns promise of completion
  */
 export async function deviceAttachCertificate(
   devId: string,
@@ -156,7 +176,7 @@ export async function deviceAttachCertificate(
  * Detach a certificate to a device (AWS IOT)
  * @param devId device ID
  * @param certifId certificate ID
- * @returns completion info
+ * @returns promise of completion
  */
 export async function deviceDetachCertificate(
   devId: string,
@@ -184,11 +204,9 @@ export async function deviceDetachCertificate(
 /**
  * list the certificate attached to a device (AWS IOT)
  * @param devId device ID
- * @returns completion info
+ * @returns promise of certificate attached to a device
  */
-export async function deviceListCertificate(
-  devId: string
-): Promise<string[]> {
+export async function deviceListCertificate(devId: string): Promise<string[]> {
   const params: iot.ListThingPrincipalsCommandInput = {
     thingName: nameFromId(devId),
   };
@@ -235,7 +253,7 @@ export async function certificateCreate(): Promise<CreateCertificateOutput> {
 /**
  * Delete a certificate from AWS IOT
  * @param id certificate ID
- * @returns
+ * @returns promise of completion
  */
 export async function certificateDelete(id: string): Promise<any> {
   const params: iot.DeleteCertificateCommandInput = {
@@ -255,7 +273,7 @@ export async function certificateDelete(id: string): Promise<any> {
 /**
  * Search for a AWS IOT certificate
  * @param id certificate ID
- * @returns certificate info
+ * @returns certificate info, Throw an error if not found
  */
 export async function certificateDescribe(
   id: string
@@ -277,7 +295,7 @@ export async function certificateDescribe(
 /**
  * List the policies attached to a certificate
  * @param certArn certificate Arn
- * @returns list of policies
+ * @returns promise list of policies attached to a certificate
  */
 export async function certificateListPolicies(
   certArn: string
@@ -299,7 +317,7 @@ export async function certificateListPolicies(
 /**
  * Deactivate a certificate, usually before deleting it
  * @param id certificate ID
- * @returns deletion data
+ * @returns promise of completion
  */
 export async function certificateDeactivate(id: string): Promise<any> {
   const params: iot.UpdateCertificateCommandInput = {
@@ -320,7 +338,7 @@ export async function certificateDeactivate(id: string): Promise<any> {
 /**
  * Attach the policy to a certificate
  * @param certArn certificate Arn
- * @returns completion info
+ * @returns promise of completion
  */
 export async function certificateAttachPolicy(certArn: string): Promise<any> {
   const params: iot.AttachPolicyCommandInput = {
@@ -367,6 +385,7 @@ export async function certificateDetachPolicy(certArn: string): Promise<any> {
 
 /**
  * Create the policy that enable devices to publish and subscribe to topics
+ * @returns promise of completion
  * */
 export async function policyIotCreate(): Promise<any> {
   let pol = JSON.stringify(wootchPolicy, null, 2);
@@ -388,6 +407,7 @@ export async function policyIotCreate(): Promise<any> {
 
 /**
  * Create the policy that enable devices to publish and subscribe to topics
+ * @returns promise of completion
  * */
 export async function policyIotDelete(): Promise<any> {
   const params: iot.DeletePolicyCommandInput = {
@@ -405,7 +425,8 @@ export async function policyIotDelete(): Promise<any> {
 }
 
 /**
- * Search for an IoT policy
+ * Retrieve the list of IoT policies
+ * @returns promise of a list of policies
  * */
 export async function policyIotList(): Promise<PolicySearch[]> {
   const params: iot.ListPoliciesCommandInput = {};
@@ -418,4 +439,24 @@ export async function policyIotList(): Promise<PolicySearch[]> {
   }
   console.log(`Retrieved list of Policies`);
   return data.policies as PolicySearch[];
+}
+
+
+/**
+ * Search for an IoT policy
+ * @returns promise of a policy info
+ * */
+export async function getPolicy(): Promise<iot.GetPolicyCommandOutput> {
+  const params: iot.GetPolicyCommandInput = {
+      policyName: WOOTCH_POLICY_NAME,
+  };
+  const command = new iot.GetPolicyCommand(params);
+  let data: iot.GetPolicyCommandOutput;
+  try {
+    data = await iotClient.send(command);
+  } catch (error) {
+    throw error;
+  }
+  console.log(`Retrieved list of Policies`);
+  return data;
 }
