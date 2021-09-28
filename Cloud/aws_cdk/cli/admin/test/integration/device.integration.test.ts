@@ -1,6 +1,5 @@
-import * as chai from "chai";
-const expect = chai.expect;
-import rewire from "rewire";
+import { expect } from "chai";
+// import rewire from "rewire";
 import * as iot from "../../src/aws/awsIot";
 import * as iotHelp from "../../src/aws/awsIotHelper";
 

@@ -6,7 +6,11 @@ import * as iot from "../aws/awsIot";
  * @returns certificate ID
  */
 export function certIdFromCertArn(certArn: string) {
-  return certArn.slice(40);
+  const id = certArn.slice(40);
+  if (id.length != 64 || !id.match(/^[0-9a-z]+$/)) {
+    throw new Error("Arn format error");
+  }
+  return id;
 }
 
 /**
