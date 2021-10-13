@@ -27,7 +27,7 @@ export interface PolicySearch {
  * @param id Id of the device
  * @returns a concatened name including the ID
  */
-function nameFromId(id: string): string {
+export function nameFromId(id: string): string {
   return `wootch_dev_${id.toUpperCase()}`;
 }
 

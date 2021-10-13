@@ -22,13 +22,12 @@ export class IotConstruct extends cdk.Construct {
     const stackAndEnv = props.cdkContext.stackName + props.cdkContext.env;
     const region = props.cdkContext.region;
     const accountId = props.cdkContext.accountId;
-    const topicEnd = "sensorData";
-    const topic = stackAndEnv + "/" + topicEnd;
+    const topic = stackAndEnv + "/device/+/data";
 
     //-------------------------------------------------------------------------
     // Lambda Function
     //-------------------------------------------------------------------------
-    
+
     const IotFunctionId = stackAndEnv + "IotFunction";
 
     const IotFunction: iToL.IotToLambdaProps = {
@@ -46,14 +45,14 @@ export class IotConstruct extends cdk.Construct {
         topicRulePayload: {
           ruleDisabled: false,
           description: `Process any data from '${topic}' topic`,
-          sql: `SELECT * FROM '${topic}'`,
+          sql: `SELECT *, topic() AS topic, clientid() AS clientid FROM '${topic}'`,
           actions: [],
         },
       },
     };
     const topicIotLambda = new iToL.IotToLambda(
       this,
-      "TopicIotLambda",
+      stackAndEnv+"TopicIotLambda",
       IotFunction
     );
 

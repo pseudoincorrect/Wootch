@@ -34,7 +34,7 @@ menu "Wootch Configuration"
 
     config WIFI_PASSWORD
         string "WiFi Password"
-        default "cornimont"
+        default "notmyrealpassword"
         help
             WiFi password (WPA or WPA2) for the example to use.
 
@@ -42,7 +42,7 @@ menu "Wootch Configuration"
 
     config AWS_THING_CLIENT_ID
         string "AWS IoT Client ID"
-        default "esp32_esp_aws_iot_1"
+        default "wootch_dev_8DFF33C0E67B40D5A125D5F0C7DF9E67"
         help
             AWS IoT Client ID for the example. Should be unique for every device.
 

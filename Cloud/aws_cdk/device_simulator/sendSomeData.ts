@@ -6,8 +6,9 @@ import * as secrets from "./secrets";
 
 // based on example : https://github.com/aws/aws-iot-device-sdk-js-v2/blob/main/samples/node/pub_sub/index.ts
 
-const messageCount: number = 10;
-const testTopic: string = "WootchDev/sensorData";
+const clientId = "281859560513";
+const messageCount: number = 3;
+const testTopic: string = `WootchDev/device/${clientId}/data`;
 const testMessage: string = "I am Wootching !";
 // choices: "fatal", "error", "warn", "info", "debug", "trace", "none"
 const verbosity: string = "info";
