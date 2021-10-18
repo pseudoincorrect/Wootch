@@ -1,19 +1,16 @@
-import { mqtt, auth, http, io, iot } from "aws-iot-device-sdk-v2";
+import { mqtt, auth, io, iot } from "aws-iot-device-sdk-v2";
 import { TextDecoder } from "util";
-import * as secrets from "./secrets";
+import * as secrets from "./certificatesAndSecrets/secrets";
 
 // npx ts-node sendSomeData -e xxx-ats.iot.eu-west-1.amazonaws.com -r certificates/aws-root-ca.pem -c certificates/certificate.pem.crt -k  certificates/private.pem.key -C xxx -W true
-
 // based on example : https://github.com/aws/aws-iot-device-sdk-js-v2/blob/main/samples/node/pub_sub/index.ts
 
-const clientId = "281859560513";
 const messageCount: number = 3;
-const testTopic: string = `WootchDev/device/${clientId}/data`;
+const testTopic: string = `WootchDev/device/${secrets.client_id}/data`;
 const testMessage: string = "I am Wootching !";
 // choices: "fatal", "error", "warn", "info", "debug", "trace", "none"
 const verbosity: string = "info";
 const use_websocket: boolean = true;
-const signing_region: string = "eu-west-1";
 
 async function execute_session(connection: mqtt.MqttClientConnection) {
   return new Promise(async (resolve, reject) => {
@@ -69,7 +66,7 @@ async function sendSomeData() {
   let config_builder = null;
   if (use_websocket) {
     config_builder = iot.AwsIotMqttConnectionConfigBuilder.new_with_websockets({
-      region: signing_region,
+      region: secrets.aws_region,
       credentials_provider:
         auth.AwsCredentialsProvider.newDefault(client_bootstrap),
     });
@@ -81,12 +78,10 @@ async function sendSomeData() {
       );
   }
 
-  if (secrets.ca_file != null) {
-    config_builder.with_certificate_authority_from_path(
-      undefined,
-      secrets.ca_file
-    );
-  }
+  config_builder.with_certificate_authority_from_path(
+    undefined,
+    "./certificatesAndSecrets/aws-root-ca.pem"
+  );
 
   config_builder.with_clean_session(false);
   config_builder.with_client_id(
