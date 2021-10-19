@@ -4,7 +4,7 @@
   "description": "Wootch device simulator with AWS iot-core nodeJs",
   "main": "index.js",
   "scripts": {
-    "send": "ts-node sendSomeData"
+    "send": "ts-node sendNotif"
   },
   "keywords": [
     "aws",

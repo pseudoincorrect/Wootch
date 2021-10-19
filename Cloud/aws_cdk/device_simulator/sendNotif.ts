@@ -2,20 +2,37 @@ import { mqtt, auth, io, iot } from "aws-iot-device-sdk-v2";
 import { TextDecoder } from "util";
 import * as secrets from "./certificatesAndSecrets/secrets";
 
-// npx ts-node sendSomeData -e xxx-ats.iot.eu-west-1.amazonaws.com -r certificates/aws-root-ca.pem -c certificates/certificate.pem.crt -k  certificates/private.pem.key -C xxx -W true
 // based on example : https://github.com/aws/aws-iot-device-sdk-js-v2/blob/main/samples/node/pub_sub/index.ts
 
-const messageCount: number = 3;
-const testTopic: string = `WootchDev/device/${secrets.client_id}/data`;
-const testMessage: string = "I am Wootching !";
+const notifTopic: string = `WootchDev/device/${secrets.client_id}/data/activity`;
+
+enum WATCH_LEVEL {
+  none = "NONE",
+  low = "LOW",
+  high = "HIGH",
+}
+
+const notifMessage: object = {
+  watchLvl: WATCH_LEVEL.low,
+  maxAcc: 0.7,
+  threshold: 0.3,
+};
+
 // choices: "fatal", "error", "warn", "info", "debug", "trace", "none"
 const verbosity: string = "info";
 const use_websocket: boolean = true;
 
+/**
+ * Send a notification to AWS
+ * @param connection
+ * @returns
+ */
 async function execute_session(connection: mqtt.MqttClientConnection) {
   return new Promise(async (resolve, reject) => {
     try {
       const decoder = new TextDecoder("utf8");
+
+      // Function to handle MQTT publish (reception)
       const on_publish = async (
         topic: string,
         payload: ArrayBuffer,
@@ -28,32 +45,23 @@ async function execute_session(connection: mqtt.MqttClientConnection) {
           `Publish received. topic:"${topic}" dup:${dup} qos:${qos} retain:${retain}`
         );
         console.log(json);
-        const message = JSON.parse(json);
-        if (message.sequence == messageCount) {
-          resolve(null);
-        }
       };
+      // subscribe to the same topic we will send data
+      await connection.subscribe(notifTopic, mqtt.QoS.AtLeastOnce, on_publish);
 
-      await connection.subscribe(testTopic, mqtt.QoS.AtLeastOnce, on_publish);
-
-      for (let op_idx = 0; op_idx < messageCount; ++op_idx) {
-        const publish = async () => {
-          const msg = {
-            message: testMessage,
-            sequence: op_idx + 1,
-          };
-          const json = JSON.stringify(msg);
-          connection.publish(testTopic, json, mqtt.QoS.AtLeastOnce);
-        };
-        setTimeout(publish, op_idx * 1000);
-      }
+      const json = JSON.stringify(notifMessage);
+      await connection.publish(notifTopic, json, mqtt.QoS.AtLeastOnce);
+      resolve(null);
     } catch (error) {
       reject(error);
     }
   });
 }
 
-async function sendSomeData() {
+/**
+ * Setup and connect to MQTT broker (AWS) and start the app process
+ */
+async function sendIt() {
   if (verbosity != "none") {
     const level: io.LogLevel = parseInt(
       io.LogLevel[verbosity.toUpperCase() as any]
@@ -90,15 +98,22 @@ async function sendSomeData() {
   config_builder.with_endpoint(secrets.endpoint);
 
   // force node to wait 60 seconds before killing itself, promises do not keep node alive
-  const timer = setTimeout(() => {}, 60 * 1000);
+  const timer = setTimeout(() => {}, 10 * 1000);
 
   const config = config_builder.build();
   const client = new mqtt.MqttClient(client_bootstrap);
   const connection = client.new_connection(config);
 
+  
   await connection.connect();
+  console.log("Connected");
+  
   await execute_session(connection);
+  console.log("Data sent");
+  
   await connection.disconnect();
+  console.log("Disconnected");
+
 
   // Allow node to die if the promise above resolved
   clearTimeout(timer);
@@ -108,6 +123,6 @@ async function sendSomeData() {
 // Main
 // ===========================================================================
 if (require.main === module) {
-  console.log("Wootch Simulator will send some data repeatedly !");
-  sendSomeData();
+  console.log("Wootch Simulator will send a notification of activity !");
+  sendIt();
 }

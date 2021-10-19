@@ -1,0 +1,29 @@
+Roadmap for Wootch (whole project)
+
+-------------------------------------------------------------
+TO DO
+-------------------------------------------------------------
+CLOUD  Link a user to a wootch device
+CLOUD  Create and manage users
+CLOUD  Send email to user and add a delay to throttle
+FIRMW  Detect activity and send notif to cloud app
+
+-------------------------------------------------------------
+IN PROCESS
+-------------------------------------------------------------
+
+
+-------------------------------------------------------------
+DONE
+TAGs : PCB, FIRMW, CLOUD
+Date        TAG    Description
+-------------------------------------------------------------
+25/09/2021  CLOUD  Started working on the Command Line Interface (CLI)
+21/09/2021  CLOUD  Started working on the cloud app (AWS-CDK)
+21/09/2021  FIRMW  IMU (I2C) and LCD are working
+15/08/2021  PCB    PCB tested and working
+12/07/2021  PCB    Finished the PCB for manufacture
+03/05/2021  PCB    started working the PCB
+11/01/2021  PCB    Start Wootch project (or rather started to think about it)
+-----------------------------------------------------------
+

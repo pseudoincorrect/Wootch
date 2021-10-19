@@ -1,0 +1,25 @@
+Roadmap for Wootch-Cloud subproject
+
+-------------------------------------------------------------
+TO DO
+-------------------------------------------------------------
+user-cli create an account
+user-cli store JWT
+user-cli link a device
+user-cli unlink a device
+device simulator send a link request (random ID)
+app send an email on activity msg
+store activity on timestream
+
+-------------------------------------------------------------
+IN PROCESS
+-------------------------------------------------------------
+device simulator send notif of activity
+
+-------------------------------------------------------------
+DONE
+Date       Description
+-------------------------------------------------------------
+20/09/2021 Started the AWS-CDK project
+-------------------------------------------------------------
+

@@ -18,7 +18,7 @@
     "devDeploy": "npx cdk deploy -c config=dev --require-approval never",
     "prodDeploy": "npx cdk deploy -c config=prod",
     "devDestroy": "npx cdk destroy -c config=dev",
-    "prodDestroy": "npx cdk destroy -c config=prodr"
+    "prodDestroy": "npx cdk destroy -c config=prod"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.128.0",
