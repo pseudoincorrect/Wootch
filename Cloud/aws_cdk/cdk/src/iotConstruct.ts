@@ -22,7 +22,7 @@ export class IotConstruct extends cdk.Construct {
     const stackAndEnv = props.cdkContext.stackName + props.cdkContext.env;
     const region = props.cdkContext.region;
     const accountId = props.cdkContext.accountId;
-    const topic = stackAndEnv + "/device/+/data";
+    const topic = stackAndEnv + "/device/+/data/#";
 
     //-------------------------------------------------------------------------
     // Lambda Function
@@ -52,7 +52,7 @@ export class IotConstruct extends cdk.Construct {
     };
     const topicIotLambda = new iToL.IotToLambda(
       this,
-      stackAndEnv+"TopicIotLambda",
+      stackAndEnv + "TopicIotLambda",
       IotFunction
     );
 

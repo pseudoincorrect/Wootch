@@ -2,7 +2,7 @@
 import * as cdk from "@aws-cdk/core";
 import { Utils, CdkContext } from "./utils";
 // import { ExpressConstruct } from "./expressConstruct";
-// import { CognitoConstruct } from "./cognitoConstruct";
+import { CognitoConstruct } from "./cognitoConstruct";
 import { IotConstruct } from "./iotConstruct";
 import { DbConstruct } from "./dbConstruct";
 
@@ -18,9 +18,9 @@ export class WootchStack extends cdk.Stack {
       cdkContext: props.cdkContext,
     });
 
-    // const cognitoConstruct = new CognitoConstruct(this, "Cognito", {
-    //   cdkContext: props.cdkContext,
-    // });
+    const cognitoConstruct = new CognitoConstruct(this, "Cognito", {
+      cdkContext: props.cdkContext,
+    });
 
     // new ExpressConstruct(this, "Express", {
     //   cdkContext: props.cdkContext,

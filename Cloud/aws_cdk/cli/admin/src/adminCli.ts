@@ -1,5 +1,6 @@
 import yargs from "yargs";
 import * as dev from "./commands/cmdDevice";
+import * as usr from "./commands/cmdUser";
 
 const cliName = "adminCli";
 
@@ -59,12 +60,56 @@ function adminCli() {
       "Create a unique device ID",
       dev.cmdCreateDeviceId
     )
+    // Create an user
+    .command(
+      "createUser",
+      "Create a regular user with temporary password",
+      (yargs: any) => {
+        yargs
+          .option("email", {
+            alias: "e",
+            description: "Email of the user",
+            type: "string",
+            required: true,
+          })
+          .option("password", {
+            alias: "p",
+            description: "Password of the user",
+            type: "string",
+            required: true,
+          });
+      },
+      usr.cmdCreateUser
+    )
+    // Delete an user
+    .command(
+      "deleteUser",
+      "Delete an user",
+      (yargs: any) => {
+        yargs.option("email", {
+          alias: "e",
+          description: "Email of the user",
+          type: "string",
+          required: true,
+        });
+      },
+      usr.cmdDeleteUser
+    )
     // Cli Options
     .version()
     .alias("v", "version")
     .help()
     .alias("h", "help")
     .showHelpOnFail(true)
+
+    .example(
+      `${cliName} createUser --email jean-george@chezlui.fr --password Password123?`,
+      `Create a user with a temporary password`
+    )
+    .example(
+      `${cliName} deleteUser --email jean-george@chezlui.fr`,
+      `Delete a user`
+    )
     .example(
       `${cliName} createDevice --id 123456`,
       `Create a device with ID 123456`

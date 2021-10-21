@@ -7,10 +7,6 @@
   },
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "test": "jest",
-    "cdk": "cdk",
     "devSynth": "npx cdk synth -c config=dev",
     "prodSynth": "npx cdk synth -c config=prod",
     "devDiff": "npx cdk diff -c config=dev",
@@ -25,6 +21,7 @@
     "@types/aws-lambda": "^8.10.84",
     "@types/jest": "^27.0.2",
     "@types/node": "16.11.1",
+    "@types/uuid": "^8.3.1",
     "aws-cdk": "^1.128.0",
     "jest": "^27.2.5",
     "rimraf": "^3.0.2",
@@ -46,6 +43,7 @@
     "@aws-cdk/core": "1.125.0",
     "@aws-solutions-constructs/aws-iot-lambda": "1.125.0",
     "aws-sdk": "^2.1009.0",
-    "source-map-support": "^0.5.20"
+    "source-map-support": "^0.5.20",
+    "uuid": "^8.3.2"
   }
 }

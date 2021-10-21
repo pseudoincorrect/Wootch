@@ -9,16 +9,10 @@ export interface CdkContext {
   env: string;
   region: string;
   accountId: string;
-}
-
-function ensureString(
-  object: { [name: string]: any },
-  propName: string
-): string {
-  if (!object[propName] || object[propName].trim().length === 0)
-    throw new Error(propName + " does not exist or is empty");
-
-  return object[propName];
+  useCustomDomain: boolean;
+  domainHostedZone: string;
+  certificateArn: string;
+  domainName: string;
 }
 
 export class Utils {
@@ -30,10 +24,14 @@ export class Utils {
       );
     let unparsedEnv = app.node.tryGetContext(env);
     return {
-      accountId: ensureString(unparsedEnv, "accountId"),
-      stackName: ensureString(unparsedEnv, "stackName"),
-      env: ensureString(unparsedEnv, "env"),
-      region: ensureString(unparsedEnv, "region"),
+      accountId: unparsedEnv["accountId"],
+      stackName: unparsedEnv["stackName"],
+      env: unparsedEnv["env"],
+      region: unparsedEnv["region"],
+      useCustomDomain: unparsedEnv["useCustomDomain"] == "true",
+      domainHostedZone: unparsedEnv["domainHostedZone"],
+      certificateArn: unparsedEnv["certificateArn"],
+      domainName: unparsedEnv["domainName"],
     };
   }
 

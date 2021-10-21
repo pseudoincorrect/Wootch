@@ -4,6 +4,7 @@ import * as secrets from "./certificatesAndSecrets/secrets";
 
 // based on example : https://github.com/aws/aws-iot-device-sdk-js-v2/blob/main/samples/node/pub_sub/index.ts
 
+// const notifTopic: string = `WootchDev/device/${secrets.client_id}/data`;
 const notifTopic: string = `WootchDev/device/${secrets.client_id}/data/activity`;
 
 enum WATCH_LEVEL {

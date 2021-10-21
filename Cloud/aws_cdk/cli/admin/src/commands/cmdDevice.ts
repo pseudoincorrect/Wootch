@@ -1,8 +1,8 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
-import * as iot from '../aws/awsIot';
-import * as iotHelp from '../aws/awsIotHelper';
-import { Args } from './cmdTypes';
+import * as iot from "../aws/awsIot";
+import * as iotHelp from "../aws/awsIotHelper";
+import { Args } from "./cmdTypes";
 
 /**
  * Create a thing device on AWS IOT
@@ -16,15 +16,15 @@ export async function cmdDeviceCreate(argv: Args) {
       return;
     }
     await iot.deviceCreate(devId);
-    if (! await iotHelp.deviceTypeExist()){
+    if (!(await iotHelp.deviceTypeExist())) {
       await iot.deviceTypeCreate();
     }
-    if (! await iotHelp.policyIotExist()){
+    if (!(await iotHelp.policyIotExist())) {
       await iot.policyIotCreate();
     }
     const cert: iot.CreateCertificateOutput = await iot.certificateCreate();
 
-    console.log("AWS Thing ID = " + iot.nameFromId(devId),);
+    console.log("AWS Thing ID = " + iot.nameFromId(devId));
     console.log("certificate Arn: \n" + cert.certificateArn + "\n");
     console.log("certificate ID: \n" + cert.certificateId + "\n");
     console.log("certificatePem: \n" + cert.certificatePem + "\n");
@@ -80,8 +80,7 @@ export async function cmdDeviceSearch(argv: Args) {
   }
 }
 
-
-export async function cmdCreateDeviceId(){
+export async function cmdCreateDeviceId() {
   let d = uuidv4().replace(/-/g, "").toUpperCase();
   console.log("ID: " + d);
 }
