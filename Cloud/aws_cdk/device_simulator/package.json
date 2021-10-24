@@ -13,7 +13,7 @@
     "wootch"
   ],
   "author": "Maxime Clement",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@types/node": "^16.11.1",
     "ts-node": "^10.2.1",

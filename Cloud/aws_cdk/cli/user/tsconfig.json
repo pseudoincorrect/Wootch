@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "lib": [
+      "es2018"
+    ],
+    "resolveJsonModule": true,
+    "module": "commonjs",
+    "outDir": "./dist",
+    "strict": true,
+    "baseUrl": "./",
+    "typeRoots": [
+      "./types",
+      "node_modules/@types"
+    ],
+    "types": [
+      "node",
+      "mocha"
+    ],
+    "rootDir": "./",
+    "esModuleInterop": true,
+    "inlineSourceMap": false,
+    "sourceMap": false
+  }
+}

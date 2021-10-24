@@ -1,15 +1,9 @@
 import * as shell from "shelljs";
-import { set_env } from "../env";
-
-shell.set("-e");
-set_env();
-
-const stackName = shell.env["STACK_NAME"];
-const stackRegion = shell.env["STACK_REGION"];
+import * as cst from "../constants";
 
 const t1 = JSON.parse(
   shell
-    .exec(`aws cloudformation describe-stacks --stack-name ${stackName}`, {
+    .exec(`aws cloudformation describe-stacks --stack-name ${cst.stackName}`, {
       silent: true,
     })
     .toString()
@@ -24,7 +18,7 @@ shell.exec("npm run build --prefix ../lambda/iot");
 shell.exec("npm run package --prefix ../lambda/iot");
 
 const updtFuncCmd = `aws lambda update-function-code \
-    --region ${stackRegion} \
+    --region ${cst.stackRegion} \
     --function-name ${functOutputKey} \
     --zip-file fileb://../lambda/iot/dist/function.zip`;
 

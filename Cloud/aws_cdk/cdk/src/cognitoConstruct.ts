@@ -23,24 +23,10 @@ export class CognitoConstruct extends cdk.Construct {
     const env = props.cdkContext.env;
     const stackAndEnv = props.cdkContext.stackName + env;
 
-    const preTokenGenFunction = new lambda.Function(
-      this,
-      "preTokenGenFunction",
-      {
-        functionName: stackAndEnv + "preTokenGenFunction",
-        runtime: nodeRuntime,
-        handler: "index.handler",
-        code: lambda.Code.fromAsset("../lambda/cognito/dist/src"),
-        environment: {
-          GROUPS_ATTRIBUTE_CLAIM_NAME: groupsAttributeClaimName,
-        },
-      }
-    );
-
     // User pool config
     this.userPool = new cognito.UserPool(this, "UserPool", {
       userPoolName: stackAndEnv + "UserPool",
-      lambdaTriggers: { preTokenGenFunction },
+      lambdaTriggers: {},
       selfSignUpEnabled: false,
       userVerification: {
         emailSubject: "Verify your email for Wootch !",
