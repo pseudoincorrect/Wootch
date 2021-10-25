@@ -1,6 +1,8 @@
 import * as iot from "@aws-sdk/client-iot";
-import { AWS_REGION, AWS_ACCOUNT_ID } from "../../secrets/awsParams";
+
+import { AWS_ACCOUNT_ID, AWS_REGION } from "../../secrets/awsParams";
 import wootchPolicy from "../policies/iotPolicy.json";
+import * as awsHelpers from "./awsHelper";
 
 export const WOOTCH_DEVICE_TYPE = "wootch_device";
 export const WOOTCH_POLICY_NAME = "wootch_device_policy";
@@ -23,41 +25,13 @@ export interface PolicySearch {
 }
 
 /**
- * Concatene a predefined string with and id
- * @param id Id of the device
- * @returns a concatened name including the ID
- */
-export function nameFromId(id: string): string {
-  return `wootch_dev_${id.toUpperCase()}`;
-}
-
-/**
- * Get a shortened Arn (for display purpose)
- * @param arn AWS Arn address
- * @returns shortned version of this Arn
- */
-function shortArn(arn: string): string {
-  return "arn/" + arn.slice(40, 45);
-}
-
-/**
- * Get a shortened ID (for display purpose)
- * @param id any ID
- * * @returns shortned version of this Arn
- */
-function shortId(id: string): string {
-  if (id.length < 5) throw new Error("id length");
-  return id.slice(0, 5);
-}
-
-/**
  * Create a thing device on AWS IOT
  * @param id device ID
  * @returns promise of completion
  */
 export async function deviceCreate(id: string) {
   const params: iot.CreateThingCommandInput = {
-    thingName: nameFromId(id),
+    thingName: awsHelpers.nameFromId(id),
     thingTypeName: WOOTCH_DEVICE_TYPE,
   };
   const command = new iot.CreateThingCommand(params);
@@ -67,7 +41,7 @@ export async function deviceCreate(id: string) {
   } catch (error: any) {
     throw error;
   }
-  console.log(`Created device ${nameFromId(id)}`);
+  console.log(`Created device ${awsHelpers.nameFromId(id)}`);
 }
 
 /**
@@ -94,7 +68,7 @@ export async function deviceTypeCreate() {
  */
 export async function deviceDelete(id: string) {
   const params: iot.DeleteThingCommandInput = {
-    thingName: nameFromId(id),
+    thingName: awsHelpers.nameFromId(id),
   };
   const command = new iot.DeleteThingCommand(params);
   let data: iot.DeleteThingCommandOutput;
@@ -103,7 +77,7 @@ export async function deviceDelete(id: string) {
   } catch (error: any) {
     throw error;
   }
-  console.log(`Deleted device ${nameFromId(id)}`);
+  console.log(`Deleted device ${awsHelpers.nameFromId(id)}`);
 }
 
 /**
@@ -113,7 +87,7 @@ export async function deviceDelete(id: string) {
  */
 export async function deviceDescribe(id: string): Promise<any> {
   const params: iot.DescribeThingCommandInput = {
-    thingName: nameFromId(id),
+    thingName: awsHelpers.nameFromId(id),
   };
   const command = new iot.DescribeThingCommand(params);
   let data: iot.DescribeThingCommandOutput;
@@ -122,7 +96,7 @@ export async function deviceDescribe(id: string): Promise<any> {
   } catch (error: any) {
     throw error;
   }
-  console.log(`Found device ${nameFromId(id)}`);
+  console.log(`Found device ${awsHelpers.nameFromId(id)}`);
   return data;
 }
 
@@ -156,7 +130,7 @@ export async function deviceAttachCertificate(
   certArn: string
 ): Promise<any> {
   const params: iot.AttachThingPrincipalCommandInput = {
-    thingName: nameFromId(devId),
+    thingName: awsHelpers.nameFromId(devId),
     principal: certArn,
   };
   const command = new iot.AttachThingPrincipalCommand(params);
@@ -167,7 +141,9 @@ export async function deviceAttachCertificate(
     throw error;
   }
   console.log(
-    `Attached certificate ${shortArn(certArn)}.. to device ${nameFromId(devId)}`
+    `Attached certificate ${awsHelpers.shortArn(
+      certArn
+    )}.. to device ${awsHelpers.nameFromId(devId)}`
   );
   return data;
 }
@@ -183,7 +159,7 @@ export async function deviceDetachCertificate(
   certArn: string
 ): Promise<any> {
   const params: iot.DetachThingPrincipalCommandInput = {
-    thingName: nameFromId(devId),
+    thingName: awsHelpers.nameFromId(devId),
     principal: certArn,
   };
   const command = new iot.DetachThingPrincipalCommand(params);
@@ -194,9 +170,9 @@ export async function deviceDetachCertificate(
     throw error;
   }
   console.log(
-    `Detached certificate ${shortArn(certArn)}.. from device ${nameFromId(
-      devId
-    )}`
+    `Detached certificate ${awsHelpers.shortArn(
+      certArn
+    )}.. from device ${awsHelpers.nameFromId(devId)}`
   );
   return data;
 }
@@ -208,7 +184,7 @@ export async function deviceDetachCertificate(
  */
 export async function deviceListCertificate(devId: string): Promise<string[]> {
   const params: iot.ListThingPrincipalsCommandInput = {
-    thingName: nameFromId(devId),
+    thingName: awsHelpers.nameFromId(devId),
   };
   const command = new iot.ListThingPrincipalsCommand(params);
   let data: iot.ListThingPrincipalsCommandOutput;
@@ -218,7 +194,9 @@ export async function deviceListCertificate(devId: string): Promise<string[]> {
     throw error;
   }
   console.log(
-    `Retrieved certificate(s) attached to device ${nameFromId(devId)}`
+    `Retrieved certificate(s) attached to device ${awsHelpers.nameFromId(
+      devId
+    )}`
   );
   return data.principals!;
 }
@@ -238,7 +216,9 @@ export async function certificateCreate(): Promise<CreateCertificateOutput> {
   } catch (error) {
     throw error;
   }
-  console.log(`Created certificate ${shortId(data.certificateId!)}..`);
+  console.log(
+    `Created certificate ${awsHelpers.shortId(data.certificateId!)}..`
+  );
   return {
     certificateArn: data.certificateArn,
     certificateId: data.certificateId,
@@ -266,7 +246,7 @@ export async function certificateDelete(id: string): Promise<any> {
   } catch (error) {
     throw error;
   }
-  console.log(`Deleted certificate ${shortId(id)}..`);
+  console.log(`Deleted certificate ${awsHelpers.shortId(id)}..`);
   return data;
 }
 
@@ -288,7 +268,7 @@ export async function certificateDescribe(
   } catch (error) {
     throw error;
   }
-  console.log(`Found certificate ${shortId(id)}..`);
+  console.log(`Found certificate ${awsHelpers.shortId(id)}..`);
   return data.certificateDescription!;
 }
 
@@ -310,7 +290,9 @@ export async function certificateListPolicies(
   } catch (error) {
     throw error;
   }
-  console.log(`Found policies for certificate ${shortArn(certArn)}..`);
+  console.log(
+    `Found policies for certificate ${awsHelpers.shortArn(certArn)}..`
+  );
   return data.policies as PolicySearch[];
 }
 
@@ -331,7 +313,7 @@ export async function certificateDeactivate(id: string): Promise<any> {
   } catch (error) {
     throw error;
   }
-  console.log(`Deactivated certificate ${shortId(id)}..`);
+  console.log(`Deactivated certificate ${awsHelpers.shortId(id)}..`);
   return data;
 }
 
@@ -353,7 +335,9 @@ export async function certificateAttachPolicy(certArn: string): Promise<any> {
     throw error;
   }
   console.log(
-    `Attached policy ${WOOTCH_POLICY_NAME} to certificate ${shortArn(certArn)}`
+    `Attached policy ${WOOTCH_POLICY_NAME} to certificate ${awsHelpers.shortArn(
+      certArn
+    )}`
   );
   return data;
 }
@@ -376,7 +360,7 @@ export async function certificateDetachPolicy(certArn: string): Promise<any> {
     throw error;
   }
   console.log(
-    `Detached policy ${WOOTCH_POLICY_NAME} from certificate ${shortArn(
+    `Detached policy ${WOOTCH_POLICY_NAME} from certificate ${awsHelpers.shortArn(
       certArn
     )}`
   );
@@ -441,14 +425,13 @@ export async function policyIotList(): Promise<PolicySearch[]> {
   return data.policies as PolicySearch[];
 }
 
-
 /**
  * Search for an IoT policy
  * @returns promise of a policy info
  * */
 export async function getPolicy(): Promise<iot.GetPolicyCommandOutput> {
   const params: iot.GetPolicyCommandInput = {
-      policyName: WOOTCH_POLICY_NAME,
+    policyName: WOOTCH_POLICY_NAME,
   };
   const command = new iot.GetPolicyCommand(params);
   let data: iot.GetPolicyCommandOutput;

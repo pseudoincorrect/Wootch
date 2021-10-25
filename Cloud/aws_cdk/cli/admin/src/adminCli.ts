@@ -1,4 +1,5 @@
 import yargs from "yargs";
+
 import * as dev from "./commands/cmdDevice";
 import * as usr from "./commands/cmdUser";
 

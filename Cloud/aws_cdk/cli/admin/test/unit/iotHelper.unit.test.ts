@@ -1,9 +1,8 @@
-import * as sinon from "sinon";
 import { expect } from "chai";
+import * as sinon from "sinon";
 
 import * as iot from "../../src/aws/awsIot";
 import * as iotH from "../../src/aws/awsIotHelper";
-import { assert } from "console";
 
 describe("certIdFromCertArn", function () {
   it("should pass without error and return the correct value", () => {

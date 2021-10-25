@@ -5,7 +5,7 @@ import * as secrets from "./certificatesAndSecrets/secrets";
 // based on example : https://github.com/aws/aws-iot-device-sdk-js-v2/blob/main/samples/node/pub_sub/index.ts
 
 // const notifTopic: string = `WootchDev/device/${secrets.client_id}/data`;
-const notifTopic: string = `WootchDev/device/${secrets.client_id}/data/activity`;
+const notifTopic: string = `WootchDev/device/${secrets.spoof_wootch_client_id}/data/activity`;
 
 enum WATCH_LEVEL {
   none = "NONE",
@@ -94,7 +94,8 @@ async function sendIt() {
 
   config_builder.with_clean_session(false);
   config_builder.with_client_id(
-    secrets.client_id || "test-" + Math.floor(Math.random() * 100000000)
+    secrets.spoof_wootch_client_id ||
+      "test-" + Math.floor(Math.random() * 100000000)
   );
   config_builder.with_endpoint(secrets.endpoint);
 
@@ -105,16 +106,14 @@ async function sendIt() {
   const client = new mqtt.MqttClient(client_bootstrap);
   const connection = client.new_connection(config);
 
-  
   await connection.connect();
   console.log("Connected");
-  
+
   await execute_session(connection);
   console.log("Data sent");
-  
+
   await connection.disconnect();
   console.log("Disconnected");
-
 
   // Allow node to die if the promise above resolved
   clearTimeout(timer);

@@ -1,4 +1,4 @@
-import * as iot from "../aws/awsIot";
+import * as iot from "./awsIot";
 
 /**
  * return the ID of a certificate from its Arn

@@ -1,4 +1,3 @@
-
 import * as cdk from "@aws-cdk/core";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as timeStream from "@aws-cdk/aws-timestream";
@@ -67,20 +66,7 @@ export class DbConstruct extends cdk.Construct {
         name: "PK",
         type: dynamodb.AttributeType.STRING,
       },
-      sortKey: {
-        name: "SK",
-        type: dynamodb.AttributeType.STRING,
-      },
       timeToLiveAttribute: "ttl",
-    });
-
-    mainTable.addGlobalSecondaryIndex({
-      indexName: "SK_SORT_KEY",
-      partitionKey: {
-        name: "SK",
-        type: dynamodb.AttributeType.STRING,
-      },
-      projectionType: dynamodb.ProjectionType.ALL,
     });
 
     const mainTableCfn = mainTable.node.defaultChild as CfnTable;
