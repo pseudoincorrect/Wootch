@@ -1,31 +1,21 @@
 import { mqtt } from "aws-iot-device-sdk-v2";
-import { executeSession } from "./communication";
 import { TextDecoder } from "util";
+import { v4 as uuidv4 } from "uuid";
+
 import * as secrets from "./certificatesAndSecrets/secrets";
+import { executeSession } from "./communication";
 
 // based on example : https://github.com/aws/aws-iot-device-sdk-js-v2/blob/main/samples/node/pub_sub/index.ts
 
-// const notifTopic: string = `WootchDev/device/${secrets.client_id}/data`;
-const notifTopic: string = `WootchDev/device/${secrets.spoof_wootch_client_id}/data/activity`;
+const notifTopic: string = `WootchDev/device/${secrets.spoof_wootch_client_id}/pairing/request`;
 
-enum WATCH_LEVEL {
-  none = "NONE",
-  low = "LOW",
-  high = "HIGH",
+interface PairingRequestMessage {
+  secret: string;
 }
 
-const notifMessage: object = {
-  watchLvl: WATCH_LEVEL.low,
-  maxAcc: 0.7,
-  threshold: 0.3,
-};
-
-/**
- * Send a notification to AWS
- * @param connection
- * @returns
- */
-export async function sendNotif(connection: mqtt.MqttClientConnection) {
+export async function sendPairingRequest(
+  connection: mqtt.MqttClientConnection
+) {
   return new Promise(async (resolve, reject) => {
     try {
       const decoder = new TextDecoder("utf8");
@@ -47,8 +37,16 @@ export async function sendNotif(connection: mqtt.MqttClientConnection) {
       // subscribe to the same topic we will send data
       await connection.subscribe(notifTopic, mqtt.QoS.AtLeastOnce, on_publish);
 
-      const json = JSON.stringify(notifMessage);
+      let uuidSecrets = uuidv4().replace(/-/g, "").toUpperCase().slice(0, 6);
+      console.log(`uuidSecrets: ${uuidSecrets}`);
+
+      const pairingRequest: PairingRequestMessage = {
+        secret: uuidSecrets,
+      };
+      const json = JSON.stringify(pairingRequest);
+
       await connection.publish(notifTopic, json, mqtt.QoS.AtLeastOnce);
+
       resolve(null);
     } catch (error) {
       reject(error);
@@ -61,5 +59,5 @@ export async function sendNotif(connection: mqtt.MqttClientConnection) {
 // ===========================================================================
 if (require.main === module) {
   console.log("Wootch Simulator will send a notification of activity !");
-  executeSession(sendNotif);
+  executeSession(sendPairingRequest);
 }

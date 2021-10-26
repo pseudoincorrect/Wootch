@@ -25,8 +25,9 @@ export async function cmdDeviceCreate() {
       await iot.policyIotCreate();
     }
     const cert: iot.CreateCertificateOutput = await iot.certificateCreate();
-
-    console.log("AWS Thing ID = " + awsHelpers.getThingNameFromId(devId));
+    console.log(
+      "AWS Thing Name (ID) = " + awsHelpers.getThingNameFromId(devId)
+    );
     console.log("certificate Arn: \n" + cert.certificateArn + "\n");
     console.log("certificate ID: \n" + cert.certificateId + "\n");
     console.log("certificatePem: \n" + cert.certificatePem + "\n");

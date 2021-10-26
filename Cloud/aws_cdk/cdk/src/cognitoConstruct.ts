@@ -47,11 +47,6 @@ export class CognitoConstruct extends cdk.Construct {
         },
       },
       customAttributes: {
-        organisationID: new cognito.StringAttribute({
-          minLen: 3,
-          maxLen: 64,
-          mutable: true,
-        }),
         userID: new cognito.StringAttribute({
           minLen: 3,
           maxLen: 64,

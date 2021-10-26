@@ -7,19 +7,19 @@ User-cli link a device
 express link a device to a user
 User-cli unlink a device
 iot store link request in dynamoDB
-Device simulator send a link request (random ID)
+Device simulator send a link request
 App send an email on activity msg
 Store activity on timestream
 
 -------------------------------------------------------------
 IN PROCESS
 -------------------------------------------------------------
-admin cli add device to dynamodb 
 
 -------------------------------------------------------------
 DONE
 Date       Description
 -------------------------------------------------------------
+26/10/2021 Admin cli add device and user to dynamodb 
 24/10/2021 User-cli store JWT
 20/10/2021 Admin-cli create an account
 19/10/2021 Device simulator send notif of activity

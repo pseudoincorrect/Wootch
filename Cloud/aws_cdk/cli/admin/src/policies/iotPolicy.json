@@ -13,7 +13,8 @@
       "Action": "iot:Publish",
       "Resource": [
         "arn:aws:iot:eu-west-1:AWS_ACCOUNT_ID:topic/WootchDev/device/${iot:ClientId}/data/activity",
-        "arn:aws:iot:eu-west-1:AWS_ACCOUNT_ID:topic/WootchDev/device/${iot:ClientId}/data/securityLvl"
+        "arn:aws:iot:eu-west-1:AWS_ACCOUNT_ID:topic/WootchDev/device/${iot:ClientId}/data/securityLvl",
+        "arn:aws:iot:eu-west-1:AWS_ACCOUNT_ID:topic/WootchDev/device/${iot:ClientId}/pairing/request"
       ]
     },
     {

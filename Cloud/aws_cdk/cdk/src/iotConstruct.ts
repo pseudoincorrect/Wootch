@@ -22,7 +22,7 @@ export class IotConstruct extends cdk.Construct {
     const stackAndEnv = props.cdkContext.stackName + props.cdkContext.env;
     const region = props.cdkContext.region;
     const accountId = props.cdkContext.accountId;
-    const topic = stackAndEnv + "/device/+/data/#";
+    const topic = stackAndEnv + "/#";
 
     //-------------------------------------------------------------------------
     // Lambda Function
