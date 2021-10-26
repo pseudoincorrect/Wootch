@@ -1,10 +1,10 @@
-import * as cdk from "@aws-cdk/core";
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as iot from "@aws-cdk/aws-iot";
 import * as iam from "@aws-cdk/aws-iam";
+import * as lambda from "@aws-cdk/aws-lambda";
+import * as cdk from "@aws-cdk/core";
 import * as iToL from "@aws-solutions-constructs/aws-iot-lambda";
-import { CdkContext } from "./utils";
+
 import { StackDatabases } from "./dbConstruct";
+import { CdkContext } from "./utils";
 
 export interface IotConstructProps {
   cdkContext: CdkContext;
@@ -28,11 +28,11 @@ export class IotConstruct extends cdk.Construct {
     // Lambda Function
     //-------------------------------------------------------------------------
 
-    const IotFunctionId = stackAndEnv + "IotFunction";
+    const iotFunctionId = stackAndEnv + "IotFunction";
 
-    const IotFunction: iToL.IotToLambdaProps = {
+    const iotFunction: iToL.IotToLambdaProps = {
       lambdaFunctionProps: {
-        functionName: IotFunctionId,
+        functionName: iotFunctionId,
         runtime: lambda.Runtime.NODEJS_10_X,
         code: lambda.Code.fromAsset("../lambda/iot/dist/src"),
         handler: "iotReceive.handler",
@@ -53,7 +53,12 @@ export class IotConstruct extends cdk.Construct {
     const topicIotLambda = new iToL.IotToLambda(
       this,
       stackAndEnv + "TopicIotLambda",
-      IotFunction
+      iotFunction
+    );
+
+    // Dynamodb Policy
+    props.stackDbs.mainTable.grantReadWriteData(
+      topicIotLambda.lambdaFunction.role!
     );
 
     const iotFunctionPolicies = [
@@ -85,7 +90,7 @@ export class IotConstruct extends cdk.Construct {
     new cdk.CfnOutput(this, "IotTopicFunctionName", {
       description: "IoT topic lambda function name",
       value:
-        IotFunction.lambdaFunctionProps?.functionName || "IotFunction error",
+        iotFunction.lambdaFunctionProps?.functionName || "iotFunction error",
     });
   }
 }

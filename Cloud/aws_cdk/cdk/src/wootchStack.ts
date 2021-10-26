@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 import * as cdk from "@aws-cdk/core";
-import { Utils, CdkContext } from "./utils";
-// import { ExpressConstruct } from "./expressConstruct";
-import { CognitoConstruct } from "./cognitoConstruct";
-import { IotConstruct } from "./iotConstruct";
-import { DbConstruct } from "./dbConstruct";
 
+import { CognitoConstruct } from "./cognitoConstruct";
+import { DbConstruct } from "./dbConstruct";
+import { IotConstruct } from "./iotConstruct";
+import { CdkContext, Utils } from "./utils";
+
+// import { ExpressConstruct } from "./expressConstruct";
 interface WootchStackProps extends cdk.StackProps {
   cdkContext: CdkContext;
 }

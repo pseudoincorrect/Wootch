@@ -1,14 +1,15 @@
-import * as cdk from "@aws-cdk/core";
+import * as apigw from "@aws-cdk/aws-apigateway";
+import * as cert from "@aws-cdk/aws-certificatemanager";
+import * as cognito from "@aws-cdk/aws-cognito";
 import * as iam from "@aws-cdk/aws-iam";
 import * as lambda from "@aws-cdk/aws-lambda";
-import * as apigw from "@aws-cdk/aws-apigateway";
-import * as cognito from "@aws-cdk/aws-cognito";
-import * as cert from "@aws-cdk/aws-certificatemanager";
 import * as r53 from "@aws-cdk/aws-route53";
 import * as r53Rt from "@aws-cdk/aws-route53-targets";
+import * as cdk from "@aws-cdk/core";
+
 import * as cst from "./constants";
-import { CdkContext } from "./utils";
 import { StackDatabases } from "./dbConstruct";
+import { CdkContext } from "./utils";
 
 const nodeRuntime: lambda.Runtime = lambda.Runtime.NODEJS_10_X;
 const lambdaMemory: number = 128;
@@ -29,7 +30,7 @@ export class ExpressConstruct extends cdk.Construct {
     const domainHostedZone = props.cdkContext.domainHostedZone;
     const certificateArn = props.cdkContext.certificateArn;
     const domainName = props.cdkContext.domainName;
-    
+
     ///////////////////////////////////////////////////////////////////////////////
 
     const apiFunction = new lambda.Function(this, "APIFunction", {

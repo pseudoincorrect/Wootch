@@ -1,9 +1,10 @@
-import * as cdk from "@aws-cdk/core";
-import * as lambda from "@aws-cdk/aws-lambda";
 import * as cognito from "@aws-cdk/aws-cognito";
-import { CdkContext, Utils } from "./utils";
-import * as cst from "./constants";
+import * as lambda from "@aws-cdk/aws-lambda";
+import * as cdk from "@aws-cdk/core";
 import { v4 as uuidv4 } from "uuid";
+
+import * as cst from "./constants";
+import { CdkContext, Utils } from "./utils";
 
 const groupsAttributeName = Utils.getEnv("GROUPS_ATTRIBUTE_NAME", "groups");
 const groupsAttributeClaimName = "custom:" + groupsAttributeName;
@@ -46,13 +47,13 @@ export class CognitoConstruct extends cdk.Construct {
           mutable: false,
         },
       },
-      customAttributes: {
-        userID: new cognito.StringAttribute({
-          minLen: 3,
-          maxLen: 64,
-          mutable: true,
-        }),
-      },
+      // customAttributes: {
+      //   userID: new cognito.StringAttribute({
+      //     minLen: 3,
+      //     maxLen: 64,
+      //     mutable: false,
+      //   }),
+      // },
       passwordPolicy: {
         minLength: 8,
         requireLowercase: true,
@@ -75,6 +76,15 @@ export class CognitoConstruct extends cdk.Construct {
         required: false,
         stringAttributeConstraints: {
           maxLength: "2000",
+        },
+      },
+      {
+        name: "userId",
+        attributeDataType: "String",
+        mutable: false,
+        required: false,
+        stringAttributeConstraints: {
+          maxLength: "128",
         },
       },
     ];
