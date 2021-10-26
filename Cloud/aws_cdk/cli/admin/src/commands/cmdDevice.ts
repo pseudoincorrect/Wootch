@@ -5,13 +5,13 @@ import * as iot from "../aws/awsIot";
 import * as ddb from "../aws/awsDdb";
 import * as iotHelp from "../aws/awsIotHelpers";
 import { Args } from "./cmdTypes";
+import { getAnId } from "./cmdHelpers";
 
 /**
  * Create a thing device on AWS IOT
- * @param argv cli parameters, argv.id: device ID
  */
-export async function cmdDeviceCreate(argv: Args) {
-  const devId = argv.id;
+export async function cmdDeviceCreate() {
+  const devId = getAnId();
   try {
     if (await iotHelp.deviceExist(devId)) {
       console.log(`device ${devId} already exists`);
@@ -26,7 +26,7 @@ export async function cmdDeviceCreate(argv: Args) {
     }
     const cert: iot.CreateCertificateOutput = await iot.certificateCreate();
 
-    console.log("AWS Thing ID = " + awsHelpers.devIdFromUuid(devId));
+    console.log("AWS Thing ID = " + awsHelpers.getThingNameFromId(devId));
     console.log("certificate Arn: \n" + cert.certificateArn + "\n");
     console.log("certificate ID: \n" + cert.certificateId + "\n");
     console.log("certificatePem: \n" + cert.certificatePem + "\n");
@@ -37,6 +37,8 @@ export async function cmdDeviceCreate(argv: Args) {
     await iot.deviceAttachCertificate(devId, certArn);
     await iot.certificateAttachPolicy(certArn);
     await iot.deviceAttachCertificate(devId, certArn);
+    await ddb.createDevice(devId);
+    console.log(`Device ID: ${devId}`);
   } catch (error) {
     console.log(error);
   }
@@ -64,6 +66,7 @@ export async function cmdDeviceDelete(argv: Args) {
     await iot.certificateDeactivate(certId);
     await iot.certificateDelete(certId);
     await iot.deviceDelete(devId);
+    await ddb.deleteDevice(devId);
   } catch (error) {
     console.log(error);
   }
@@ -75,8 +78,11 @@ export async function cmdDeviceDelete(argv: Args) {
  */
 export async function cmdDeviceSearch(argv: Args) {
   try {
-    const data = await iot.deviceDescribe(argv.id);
+    const devId = argv.id;
+    let data = await iot.deviceDescribe(devId);
     console.log(JSON.stringify(data, null, 2));
+    data = await ddb.getDevice(devId);
+    console.log(devId);
   } catch (error) {
     console.log(error);
   }

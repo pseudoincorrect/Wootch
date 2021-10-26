@@ -8,21 +8,7 @@ const cliName = "adminCli";
 function adminCli() {
   yargs
     // Create Device Command
-    .command(
-      "createDevice",
-      "Create a device with an ID",
-      (yargs: any) => {
-        yargs
-          .option("id", {
-            alias: "i",
-            description: "ID of the device",
-            type: "string",
-            required: true,
-          })
-          .help();
-      },
-      dev.cmdDeviceCreate
-    )
+    .command("createDevice", "Create a device with an ID", dev.cmdDeviceCreate)
     // Delete Device Command
     .command(
       "deleteDevice",

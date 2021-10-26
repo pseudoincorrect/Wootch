@@ -30,8 +30,9 @@ export interface PolicySearch {
  * @returns promise of completion
  */
 export async function deviceCreate(id: string) {
+  const thingName = awsHelpers.getThingNameFromId(id);
   const params: iot.CreateThingCommandInput = {
-    thingName: awsHelpers.devIdFromUuid(id),
+    thingName,
     thingTypeName: WOOTCH_DEVICE_TYPE,
   };
   const command = new iot.CreateThingCommand(params);
@@ -41,7 +42,7 @@ export async function deviceCreate(id: string) {
   } catch (error: any) {
     throw error;
   }
-  console.log(`Created device ${awsHelpers.devIdFromUuid(id)}`);
+  console.log(`Created device, thing name: ${thingName}`);
 }
 
 /**
@@ -67,8 +68,10 @@ export async function deviceTypeCreate() {
  * @param id device id
  */
 export async function deviceDelete(id: string) {
+  const thingName = awsHelpers.getThingNameFromId(id);
+
   const params: iot.DeleteThingCommandInput = {
-    thingName: awsHelpers.devIdFromUuid(id),
+    thingName: thingName,
   };
   const command = new iot.DeleteThingCommand(params);
   let data: iot.DeleteThingCommandOutput;
@@ -77,7 +80,7 @@ export async function deviceDelete(id: string) {
   } catch (error: any) {
     throw error;
   }
-  console.log(`Deleted device ${awsHelpers.devIdFromUuid(id)}`);
+  console.log(`Deleted device, thing name: ${thingName}`);
 }
 
 /**
@@ -86,8 +89,9 @@ export async function deviceDelete(id: string) {
  * @returns promise AWS IOT Device Data, Throw an error if not found
  */
 export async function deviceDescribe(id: string): Promise<any> {
+  const thingName = awsHelpers.getThingNameFromId(id);
   const params: iot.DescribeThingCommandInput = {
-    thingName: awsHelpers.devIdFromUuid(id),
+    thingName: thingName,
   };
   const command = new iot.DescribeThingCommand(params);
   let data: iot.DescribeThingCommandOutput;
@@ -96,7 +100,7 @@ export async function deviceDescribe(id: string): Promise<any> {
   } catch (error: any) {
     throw error;
   }
-  console.log(`Found device ${awsHelpers.devIdFromUuid(id)}`);
+  console.log(`Found device, thing name: ${thingName}`);
   return data;
 }
 
@@ -129,8 +133,10 @@ export async function deviceAttachCertificate(
   devId: string,
   certArn: string
 ): Promise<any> {
+  const thingName = awsHelpers.getThingNameFromId(devId);
+
   const params: iot.AttachThingPrincipalCommandInput = {
-    thingName: awsHelpers.devIdFromUuid(devId),
+    thingName: thingName,
     principal: certArn,
   };
   const command = new iot.AttachThingPrincipalCommand(params);
@@ -143,7 +149,7 @@ export async function deviceAttachCertificate(
   console.log(
     `Attached certificate ${awsHelpers.shortArn(
       certArn
-    )}.. to device ${awsHelpers.devIdFromUuid(devId)}`
+    )}.. to device ${thingName}`
   );
   return data;
 }
@@ -158,8 +164,10 @@ export async function deviceDetachCertificate(
   devId: string,
   certArn: string
 ): Promise<any> {
+  const thingName = awsHelpers.getThingNameFromId(devId);
+
   const params: iot.DetachThingPrincipalCommandInput = {
-    thingName: awsHelpers.devIdFromUuid(devId),
+    thingName: thingName,
     principal: certArn,
   };
   const command = new iot.DetachThingPrincipalCommand(params);
@@ -172,7 +180,7 @@ export async function deviceDetachCertificate(
   console.log(
     `Detached certificate ${awsHelpers.shortArn(
       certArn
-    )}.. from device ${awsHelpers.devIdFromUuid(devId)}`
+    )}.. from device ${thingName}`
   );
   return data;
 }
@@ -183,8 +191,10 @@ export async function deviceDetachCertificate(
  * @returns promise of certificate attached to a device
  */
 export async function deviceListCertificate(devId: string): Promise<string[]> {
+  const thingName = awsHelpers.getThingNameFromId(devId);
+
   const params: iot.ListThingPrincipalsCommandInput = {
-    thingName: awsHelpers.devIdFromUuid(devId),
+    thingName: thingName,
   };
   const command = new iot.ListThingPrincipalsCommand(params);
   let data: iot.ListThingPrincipalsCommandOutput;
@@ -193,11 +203,7 @@ export async function deviceListCertificate(devId: string): Promise<string[]> {
   } catch (error) {
     throw error;
   }
-  console.log(
-    `Retrieved certificate(s) attached to device ${awsHelpers.devIdFromUuid(
-      devId
-    )}`
-  );
+  console.log(`Retrieved certificate(s) attached to device ${thingName}`);
   return data.principals!;
 }
 

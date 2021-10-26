@@ -5,7 +5,7 @@ const devPrefix = "wootch_dev_";
  * @param id Id of the device
  * @returns a concatened name including the ID
  */
-export function devIdFromUuid(id: string): string {
+export function getThingNameFromId(id: string): string {
   return `${devPrefix.toUpperCase()}${id.toUpperCase()}`;
 }
 

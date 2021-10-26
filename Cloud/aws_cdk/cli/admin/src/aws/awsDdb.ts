@@ -89,10 +89,11 @@ export async function deleteDevice(id: string) {
  * Create a User Model and put it in dynamodb
  * @param id User ID
  */
-export async function createUser(id: string) {
+export async function createUser(id: string, email: string) {
   const userKey = awsHelpers.userKeyFromId(id);
   const userModel = UserModel.fromScratch({
     userKey,
+    userEmail: email,
     userCreationDate: new Date().getTime(),
   });
   const record = userModel.createDynamodbRecord();
@@ -113,7 +114,7 @@ export async function createUser(id: string) {
  * @param id User ID
  * @returns User Model or Undefined
  */
-export async function getUser(id: string): Promise<UserModel | undefined> {
+export async function getUserById(id: string): Promise<UserModel | undefined> {
   const userKey = awsHelpers.userKeyFromId(id);
   try {
     const record = await ddbClient.get({
@@ -135,7 +136,7 @@ export async function getUser(id: string): Promise<UserModel | undefined> {
  * Delete a User in Dynamydb
  * @param id User ID
  */
-export async function deleteUser(id: string) {
+export async function deleteUserById(id: string) {
   const userKey = awsHelpers.userKeyFromId(id);
   try {
     await ddbClient.delete({

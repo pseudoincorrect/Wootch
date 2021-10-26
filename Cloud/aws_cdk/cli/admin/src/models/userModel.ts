@@ -5,6 +5,7 @@ import * as pat from "./patternsModel";
 /** Validation Schema for UserModel Dynamodb record */
 const UserModelDynamoDbValidationSchema = Joi.object({
   PK: Joi.string().pattern(pat.USER_KEY).uppercase().required(),
+  USER_EMAIL: Joi.string().email().required(),
   USER_CREATION_DATE: Joi.number().required(),
   USER_LAST_ONLINE_DATE: Joi.number(),
 });
@@ -12,6 +13,7 @@ const UserModelDynamoDbValidationSchema = Joi.object({
 /** Validation Schema for UserModel Dynamodb record */
 const UserModelConfValidationSchema = Joi.object({
   userKey: Joi.string().pattern(pat.USER_KEY).uppercase().required(),
+  userEmail: Joi.string().email().required(),
   userCreationDate: Joi.number().required(),
   userLastOnlineDate: Joi.number(),
 });
@@ -19,6 +21,7 @@ const UserModelConfValidationSchema = Joi.object({
 /** Interface used to construct a User Model on DynamoDb */
 export interface UserModelDynamoDb {
   PK: string;
+  USER_EMAIL: string;
   USER_CREATION_DATE: number;
   USER_LAST_ONLINE_DATE?: number;
 }
@@ -26,17 +29,20 @@ export interface UserModelDynamoDb {
 /** Interface used to construct a UserModel */
 export interface UserModelConf {
   userKey: string;
+  userEmail: string;
   userCreationDate: number;
   userLastOnlineDate?: number;
 }
 
 export class UserModel {
   public userKey: string;
+  public userEmail: string;
   public userCreationDate: number;
   public userLastOnlineDate?: number;
 
   constructor(conf: UserModelConf) {
     this.userKey = conf.userKey;
+    this.userEmail = conf.userEmail;
     this.userCreationDate = conf.userCreationDate;
     if (conf.userLastOnlineDate)
       this.userLastOnlineDate = conf.userLastOnlineDate;
@@ -49,6 +55,7 @@ export class UserModel {
 
     return new UserModel({
       userKey: record.PK,
+      userEmail: record.USER_EMAIL,
       userCreationDate: record.USER_CREATION_DATE,
       userLastOnlineDate: record.USER_LAST_ONLINE_DATE,
     });
@@ -65,8 +72,8 @@ export class UserModel {
   createDynamodbRecord(): UserModelDynamoDb {
     const record: UserModelDynamoDb = {
       PK: this.userKey,
+      USER_EMAIL: this.userEmail,
       USER_CREATION_DATE: this.userCreationDate,
-      USER_LAST_ONLINE_DATE: this.userLastOnlineDate,
     };
 
     if (this.userLastOnlineDate) {

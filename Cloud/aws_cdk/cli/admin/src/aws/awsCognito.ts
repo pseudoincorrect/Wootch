@@ -14,14 +14,18 @@ const cognClient = new cogn.CognitoIdentityProviderClient({
  * @param email
  * @param tempPassword
  */
-export async function createUser(email: string, tempPassword: string) {
+export async function createUser(
+  email: string,
+  tempPassword: string,
+  userId: string
+) {
   const cmd = new cogn.AdminCreateUserCommand({
     UserPoolId: userPoolId,
     Username: email,
     DesiredDeliveryMediums: ["EMAIL"],
     ForceAliasCreation: false,
     TemporaryPassword: tempPassword,
-    UserAttributes: [],
+    UserAttributes: [{ Name: "custom:userId", Value: userId }],
     ClientMetadata: {},
     MessageAction: "SUPPRESS",
     ValidationData: [],

@@ -3,6 +3,7 @@ import { expect } from "chai";
 import * as ddb from "../../src/aws/awsDdb";
 import * as iot from "../../src/aws/awsIot";
 import * as iotHelpers from "../../src/aws/awsIotHelpers";
+import { getAnId } from "../../src/commands/cmdHelpers";
 
 describe("aws iot, device creation and deletion", function () {
   it("should pass without error", async () => {
@@ -33,7 +34,7 @@ describe("aws iot, certificate creation and deletion", function () {
 
 describe("aws iot, certificate and device: creation, linking and deletion", function () {
   it("should pass without error", async () => {
-    const devId = "123";
+    const devId = getAnId();
     let exists = null;
     let hasCert = null;
 
@@ -54,11 +55,11 @@ describe("aws iot, certificate and device: creation, linking and deletion", func
     expect(exists).to.be.true;
 
     await iot.deviceAttachCertificate(devId, certArn);
-    hasCert = await iotHelpers.deviceHasCertificate(devId, certId);
+    hasCert = await iotHelpers.deviceHasCertificate(devId, certArn);
     expect(hasCert).to.be.true;
 
     await iot.deviceDetachCertificate(devId, certArn);
-    hasCert = await iotHelpers.deviceHasCertificate(devId, certId);
+    hasCert = await iotHelpers.deviceHasCertificate(devId, certArn);
     expect(hasCert).to.be.false;
 
     await iot.certificateDeactivate(certId);
@@ -114,7 +115,7 @@ describe("aws iot, certificate, device, policy: creation, linking and deletion",
     expect(hasPol).to.be.false;
 
     await iot.deviceDetachCertificate(devId, certArn);
-    hasCert = await iotHelpers.deviceHasCertificate(devId, certId);
+    hasCert = await iotHelpers.deviceHasCertificate(devId, certArn);
     expect(hasCert).to.be.false;
 
     await iot.certificateDeactivate(certId);
@@ -141,15 +142,16 @@ describe("dynamodb, device creation and deletion dynamodb", function () {
   });
 });
 
-describe.only("dynamodb, user creation and deletion dynamodb", function () {
+describe("dynamodb, user creation and deletion dynamodb", function () {
   it("should pass without error", async () => {
     const id = "3871BED249D24A019196E88F4E384325";
-    await ddb.createUser(id);
-    let userModel = await ddb.getUser(id);
+    const email = "nimporte@quoi.com";
+    await ddb.createUser(id, email);
+    let userModel = await ddb.getUserById(id);
     expect(userModel).not.to.be.undefined;
 
-    await ddb.deleteUser(id);
-    userModel = await ddb.getUser(id);
+    await ddb.deleteUserById(id);
+    userModel = await ddb.getUserById(id);
     expect(userModel).to.be.undefined;
   });
 });
