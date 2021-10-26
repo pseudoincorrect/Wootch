@@ -2,7 +2,7 @@ import * as iot from "@aws-sdk/client-iot";
 
 import { AWS_ACCOUNT_ID, AWS_REGION } from "../../secrets/awsParams";
 import wootchPolicy from "../policies/iotPolicy.json";
-import * as awsHelpers from "./awsHelper";
+import * as awsHelpers from "./awsHelpers";
 
 export const WOOTCH_DEVICE_TYPE = "wootch_device";
 export const WOOTCH_POLICY_NAME = "wootch_device_policy";
@@ -31,7 +31,7 @@ export interface PolicySearch {
  */
 export async function deviceCreate(id: string) {
   const params: iot.CreateThingCommandInput = {
-    thingName: awsHelpers.nameFromId(id),
+    thingName: awsHelpers.devIdFromUuid(id),
     thingTypeName: WOOTCH_DEVICE_TYPE,
   };
   const command = new iot.CreateThingCommand(params);
@@ -41,7 +41,7 @@ export async function deviceCreate(id: string) {
   } catch (error: any) {
     throw error;
   }
-  console.log(`Created device ${awsHelpers.nameFromId(id)}`);
+  console.log(`Created device ${awsHelpers.devIdFromUuid(id)}`);
 }
 
 /**
@@ -68,7 +68,7 @@ export async function deviceTypeCreate() {
  */
 export async function deviceDelete(id: string) {
   const params: iot.DeleteThingCommandInput = {
-    thingName: awsHelpers.nameFromId(id),
+    thingName: awsHelpers.devIdFromUuid(id),
   };
   const command = new iot.DeleteThingCommand(params);
   let data: iot.DeleteThingCommandOutput;
@@ -77,7 +77,7 @@ export async function deviceDelete(id: string) {
   } catch (error: any) {
     throw error;
   }
-  console.log(`Deleted device ${awsHelpers.nameFromId(id)}`);
+  console.log(`Deleted device ${awsHelpers.devIdFromUuid(id)}`);
 }
 
 /**
@@ -87,7 +87,7 @@ export async function deviceDelete(id: string) {
  */
 export async function deviceDescribe(id: string): Promise<any> {
   const params: iot.DescribeThingCommandInput = {
-    thingName: awsHelpers.nameFromId(id),
+    thingName: awsHelpers.devIdFromUuid(id),
   };
   const command = new iot.DescribeThingCommand(params);
   let data: iot.DescribeThingCommandOutput;
@@ -96,7 +96,7 @@ export async function deviceDescribe(id: string): Promise<any> {
   } catch (error: any) {
     throw error;
   }
-  console.log(`Found device ${awsHelpers.nameFromId(id)}`);
+  console.log(`Found device ${awsHelpers.devIdFromUuid(id)}`);
   return data;
 }
 
@@ -130,7 +130,7 @@ export async function deviceAttachCertificate(
   certArn: string
 ): Promise<any> {
   const params: iot.AttachThingPrincipalCommandInput = {
-    thingName: awsHelpers.nameFromId(devId),
+    thingName: awsHelpers.devIdFromUuid(devId),
     principal: certArn,
   };
   const command = new iot.AttachThingPrincipalCommand(params);
@@ -143,7 +143,7 @@ export async function deviceAttachCertificate(
   console.log(
     `Attached certificate ${awsHelpers.shortArn(
       certArn
-    )}.. to device ${awsHelpers.nameFromId(devId)}`
+    )}.. to device ${awsHelpers.devIdFromUuid(devId)}`
   );
   return data;
 }
@@ -159,7 +159,7 @@ export async function deviceDetachCertificate(
   certArn: string
 ): Promise<any> {
   const params: iot.DetachThingPrincipalCommandInput = {
-    thingName: awsHelpers.nameFromId(devId),
+    thingName: awsHelpers.devIdFromUuid(devId),
     principal: certArn,
   };
   const command = new iot.DetachThingPrincipalCommand(params);
@@ -172,7 +172,7 @@ export async function deviceDetachCertificate(
   console.log(
     `Detached certificate ${awsHelpers.shortArn(
       certArn
-    )}.. from device ${awsHelpers.nameFromId(devId)}`
+    )}.. from device ${awsHelpers.devIdFromUuid(devId)}`
   );
   return data;
 }
@@ -184,7 +184,7 @@ export async function deviceDetachCertificate(
  */
 export async function deviceListCertificate(devId: string): Promise<string[]> {
   const params: iot.ListThingPrincipalsCommandInput = {
-    thingName: awsHelpers.nameFromId(devId),
+    thingName: awsHelpers.devIdFromUuid(devId),
   };
   const command = new iot.ListThingPrincipalsCommand(params);
   let data: iot.ListThingPrincipalsCommandOutput;
@@ -194,7 +194,7 @@ export async function deviceListCertificate(devId: string): Promise<string[]> {
     throw error;
   }
   console.log(
-    `Retrieved certificate(s) attached to device ${awsHelpers.nameFromId(
+    `Retrieved certificate(s) attached to device ${awsHelpers.devIdFromUuid(
       devId
     )}`
   );

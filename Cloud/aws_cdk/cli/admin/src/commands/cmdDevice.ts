@@ -1,8 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
 
-import * as awsHelpers from "../aws/awsHelper";
+import * as awsHelpers from "../aws/awsHelpers";
 import * as iot from "../aws/awsIot";
-import * as iotHelp from "../aws/awsIotHelper";
+import * as ddb from "../aws/awsDdb";
+import * as iotHelp from "../aws/awsIotHelpers";
 import { Args } from "./cmdTypes";
 
 /**
@@ -25,7 +26,7 @@ export async function cmdDeviceCreate(argv: Args) {
     }
     const cert: iot.CreateCertificateOutput = await iot.certificateCreate();
 
-    console.log("AWS Thing ID = " + awsHelpers.nameFromId(devId));
+    console.log("AWS Thing ID = " + awsHelpers.devIdFromUuid(devId));
     console.log("certificate Arn: \n" + cert.certificateArn + "\n");
     console.log("certificate ID: \n" + cert.certificateId + "\n");
     console.log("certificatePem: \n" + cert.certificatePem + "\n");

@@ -1,10 +1,12 @@
+const devPrefix = "wootch_dev_";
+
 /**
  * Concatene a predefined string with and id
  * @param id Id of the device
  * @returns a concatened name including the ID
  */
-export function nameFromId(id: string): string {
-  return `wootch_dev_${id.toUpperCase()}`;
+export function devIdFromUuid(id: string): string {
+  return `${devPrefix.toUpperCase()}${id.toUpperCase()}`;
 }
 
 /**
@@ -31,8 +33,8 @@ export function shortId(id: string): string {
  * @param id device ID
  * @returns dynamodb primary key
  */
-export function getDevKeyFromId(id: string): string {
-  return `DEV#${id.toUpperCase}`;
+export function devKeyFromId(id: string): string {
+  return `DEV#${id.toUpperCase()}`;
 }
 
 /**
@@ -40,6 +42,6 @@ export function getDevKeyFromId(id: string): string {
  * @param id user ID
  * @returns dynamodb primary key
  */
-export function getUserKeyFromId(id: string): string {
-  return `USR#${id.toUpperCase}`;
+export function userKeyFromId(id: string): string {
+  return `USR#${id.toUpperCase()}`;
 }

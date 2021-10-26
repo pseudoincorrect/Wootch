@@ -5,32 +5,40 @@ import * as pat from "./patternsModel";
 /** Validation Schema for DevModel Dynamodb record */
 const DevModelDynamoDbValidationSchema = Joi.object({
   PK: Joi.string().pattern(pat.DEV_KEY).uppercase().required(),
-  DEV_CREATION_DATE: Joi.date().required(),
-  DEV_USR_KEY: Joi.string().pattern(pat.USR_KEY).uppercase(),
-  DEV_LAST_ONLINE: Joi.date(),
+  DEV_CREATION_DATE: Joi.number().required(),
+  DEV_USER_KEY: Joi.string().pattern(pat.USER_KEY).uppercase(),
+  DEV_LAST_ONLINE_DATE: Joi.number(),
+});
+
+/** Validation Schema for DevModel Dynamodb record */
+const DevModelConfValidationSchema = Joi.object({
+  devKey: Joi.string().pattern(pat.DEV_KEY).uppercase().required(),
+  devCreationDate: Joi.number().required(),
+  devUsrKey: Joi.string().pattern(pat.USER_KEY).uppercase(),
+  devLastOnlineDate: Joi.number(),
 });
 
 /** Interface used to construct a Device Model on DynamoDb */
 export interface DevModelDynamoDb {
   PK: string;
-  DEV_CREATION_DATE: string;
-  DEV_USR_KEY?: string;
-  DEV_LAST_ONLINE_DATE?: string;
+  DEV_CREATION_DATE: number;
+  DEV_USER_KEY?: string;
+  DEV_LAST_ONLINE_DATE?: number;
 }
 
 /** Interface used to construct a DevModel */
 export interface DevModelConf {
   devKey: string;
-  devCreationDate: string;
+  devCreationDate: number;
   devUsrKey?: string;
-  devLastOnlineDate?: string;
+  devLastOnlineDate?: number;
 }
 
 export class DevModel {
   public devKey: string;
-  public devCreationDate: string;
+  public devCreationDate: number;
   public devUsrKey?: string;
-  public devLastOnlineDate?: string;
+  public devLastOnlineDate?: number;
 
   constructor(conf: DevModelConf) {
     this.devKey = conf.devKey;
@@ -47,23 +55,33 @@ export class DevModel {
     return new DevModel({
       devKey: record.PK,
       devCreationDate: record.DEV_CREATION_DATE,
-      devUsrKey: record.DEV_USR_KEY,
+      devUsrKey: record.DEV_USER_KEY,
       devLastOnlineDate: record.DEV_LAST_ONLINE_DATE,
     });
   }
 
-  /** Factory, create DevModelDynamoDb from DevModel*/
+  /** Factory, create DevModel from DevModelConf*/
+  static fromScratch(conf: DevModelConf) {
+    const { error } = DevModelConfValidationSchema.validate(conf);
+    if (error) throw error;
+    return new DevModel(conf);
+  }
+
+  /** Factory, create dynamodb record from DevModel*/
   createDynamodbRecord(): DevModelDynamoDb {
     const record: DevModelDynamoDb = {
       PK: this.devKey,
-      DEV_USR_KEY: this.devUsrKey,
+      DEV_USER_KEY: this.devUsrKey,
       DEV_CREATION_DATE: this.devCreationDate,
       DEV_LAST_ONLINE_DATE: this.devLastOnlineDate,
     };
 
-    if (this.devUsrKey) record["DEV_USR_KEY"] = this.devUsrKey;
-    if (this.devLastOnlineDate)
+    if (this.devUsrKey) {
+      record["DEV_USER_KEY"] = this.devUsrKey;
+    }
+    if (this.devLastOnlineDate) {
       record["DEV_LAST_ONLINE_DATE"] = this.devLastOnlineDate;
+    }
 
     const { error } = DevModelDynamoDbValidationSchema.validate(record);
     if (error) throw error;
