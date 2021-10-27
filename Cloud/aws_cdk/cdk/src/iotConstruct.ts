@@ -39,6 +39,8 @@ export class IotConstruct extends cdk.Construct {
         environment: {
           SENSOR_DATA_DB: props.stackDbs.sensorDataDb.databaseName!,
           SENSOR_DATA_TABLE: props.stackDbs.sensorDataTable.tableName!,
+          MAIN_DATA_TABLE: props.stackDbs.mainTable.tableName,
+          WOOTCH_AWS_REGION: region,
         },
       },
       iotTopicRuleProps: {

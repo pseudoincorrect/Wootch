@@ -40,9 +40,7 @@ export async function sendPairingRequest(
       let uuidSecrets = uuidv4().replace(/-/g, "").toUpperCase().slice(0, 6);
       console.log(`uuidSecrets: ${uuidSecrets}`);
 
-      const pairingRequest: PairingRequestMessage = {
-        secret: uuidSecrets,
-      };
+      const pairingRequest: PairingRequestMessage = { secret: uuidSecrets };
       const json = JSON.stringify(pairingRequest);
 
       await connection.publish(notifTopic, json, mqtt.QoS.AtLeastOnce);

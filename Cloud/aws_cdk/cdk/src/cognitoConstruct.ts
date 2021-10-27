@@ -153,5 +153,10 @@ export class CognitoConstruct extends cdk.Construct {
       description: "App Client ID",
       value: cfnUserPoolClient.ref,
     });
+
+    new cdk.CfnOutput(this, "AppClientDomainOutput", {
+      description: "App Client Domain",
+      value: randomDomain,
+    });
   }
 }

@@ -4,7 +4,7 @@
   "description": "Wootch device simulator with AWS iot-core nodeJs",
   "main": "index.js",
   "scripts": {
-    "sendNotif": "ts-node sendNotif",
+    "sendActivity": "ts-node sendActivity",
     "sendPairing": "ts-node sendPairingRequest"
   },
   "keywords": [
@@ -18,6 +18,9 @@
   "devDependencies": {
     "@types/node": "^16.11.1",
     "@types/uuid": "^8.3.1",
+    "chai": "^4.3.4",
+    "mocha": "^9.1.3",
+    "ts-mocha": "^8.0.0",
     "ts-node": "^10.2.1",
     "typescript": "^4.4.4"
   },

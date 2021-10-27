@@ -14,11 +14,13 @@
     "clean": "tsc -b --clean && npx rimraf ./dist",
     "package": "cd dist/src && bestzip ../function.zip .",
     "watch": "tsc -w",
-    "test": "mocha -r ts-node/register tests/**/*.test.ts",
+    "unit": "ts-mocha test/unit/**",
     "testWithCoverage": "nyc -r lcov -e .ts -x \"*.test.ts\" mocha -r ts-node/register tests/**/*.test.ts && nyc report"
   },
   "dependencies": {
-    "build_tools": "file:../../build_tools",
+    "@aws-sdk/client-dynamodb": "^3.38.0",
+    "@aws-sdk/lib-dynamodb": "^3.38.0",
+    "joi": "^17.4.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
@@ -26,14 +28,15 @@
     "@types/chai": "^4.2.17",
     "@types/mocha": "^8.2.2",
     "@types/node": "^15.0.1",
-    "@types/uuid": "^8.3.0",
+    "@types/uuid": "^8.3.1",
     "aws-sdk": "^2.894.0",
     "bestzip": "^2.2.0",
     "chai": "^4.3.4",
     "copy-node-modules": "^1.1.1",
-    "mocha": "^8.3.2",
+    "mocha": "^8.4.0",
     "nyc": "^15.1.0",
     "rimraf": "^3.0.2",
+    "ts-mocha": "^8.0.0",
     "ts-node": "^9.1.1",
     "tslint": "^6.1.3",
     "typescript": "^4.2.4"

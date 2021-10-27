@@ -14,7 +14,13 @@ enum WATCH_LEVEL {
   high = "HIGH",
 }
 
-const notifMessage: object = {
+interface ActivityMessage {
+  watchLvl: string;
+  maxAcc: number;
+  threshold: number;
+}
+
+const notifMessage: ActivityMessage = {
   watchLvl: WATCH_LEVEL.low,
   maxAcc: 0.7,
   threshold: 0.3,
@@ -25,7 +31,7 @@ const notifMessage: object = {
  * @param connection
  * @returns
  */
-export async function sendNotif(connection: mqtt.MqttClientConnection) {
+export async function sendActivity(connection: mqtt.MqttClientConnection) {
   return new Promise(async (resolve, reject) => {
     try {
       const decoder = new TextDecoder("utf8");
@@ -60,6 +66,6 @@ export async function sendNotif(connection: mqtt.MqttClientConnection) {
 // Main
 // ===========================================================================
 if (require.main === module) {
-  console.log("Wootch Simulator will send a notification of activity !");
-  executeSession(sendNotif);
+  console.log("Wootch Simulator will send an activity message !");
+  executeSession(sendActivity);
 }
