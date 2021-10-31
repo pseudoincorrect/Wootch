@@ -1,14 +1,14 @@
 import * as cognito from "@aws-cdk/aws-cognito";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
-import { v4 as uuidv4 } from "uuid";
 
+import * as secrets from "../secrets/secrets";
 import * as cst from "./constants";
 import { CdkContext, Utils } from "./utils";
 
+const clientDomain = secrets.WOOTCH_COGNITO_POOL_ID;
+
 const groupsAttributeName = Utils.getEnv("GROUPS_ATTRIBUTE_NAME", "groups");
-const groupsAttributeClaimName = "custom:" + groupsAttributeName;
-const nodeRuntime: lambda.Runtime = lambda.Runtime.NODEJS_10_X;
 const redirectUrl = "https://github.com/pseudoincorrect/Wootch";
 
 export interface CognitoConstructProps {
@@ -121,18 +121,16 @@ export class CognitoConstruct extends cdk.Construct {
       }
     );
 
-    const randomDomain = `wootch-` + uuidv4().toString();
-
     const cfnUserPoolDomain = new cognito.CfnUserPoolDomain(
       this,
       "userPoolDomain",
       {
         userPoolId: this.userPool.userPoolId,
-        domain: randomDomain,
+        domain: clientDomain,
       }
     );
 
-    const signingUiUrl = `https://${randomDomain}/login?response_type=code&client_id=${cfnUserPoolClient.ref}&redirect_uri=${redirectUrl}`;
+    const signingUiUrl = `https://${clientDomain}/login?response_type=code&client_id=${cfnUserPoolClient.ref}&redirect_uri=${redirectUrl}`;
 
     new cdk.CfnOutput(this, "UserPoolSigningPage", {
       description: "User Pool Signing UI URL",
@@ -156,7 +154,7 @@ export class CognitoConstruct extends cdk.Construct {
 
     new cdk.CfnOutput(this, "AppClientDomainOutput", {
       description: "App Client Domain",
-      value: randomDomain,
+      value: clientDomain,
     });
   }
 }

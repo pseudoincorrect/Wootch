@@ -15,8 +15,6 @@
     "dev": {
       "stackName": "Wootch",
       "env": "Dev",
-      "region": "eu-west-1",
-      "accountId": "281859560513",
       "useCustomDomain": "false",
       "certificateArn":"",
       "domainName": "",
@@ -25,8 +23,6 @@
     "prod": {
       "stackName": "Wootch",
       "env": "Prod",
-      "region": "eu-west-1",
-      "accountId": "281859560513",
       "useCustomDomain": "false",
       "certificateArn":"",
       "domainName": "",

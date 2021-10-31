@@ -1,7 +1,7 @@
 import yargs from "yargs";
 import * as usr from "./commands/cmdUser";
 
-const cliName = "adminCli";
+const cliName = "userCli";
 
 function adminCli() {
   yargs

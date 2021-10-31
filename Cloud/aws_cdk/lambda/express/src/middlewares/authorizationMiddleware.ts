@@ -151,14 +151,8 @@ export const authorizationMiddleware =
 export function isAuthorized(groups: Set<string>, level: string) {
   if (level == authGroups.admins) {
     return groups.has(authGroups.admins);
-  } else if ((level = authGroups.managers)) {
-    return groups.has(authGroups.admins) || groups.has(authGroups.managers);
   } else if ((level = authGroups.users)) {
-    return (
-      groups.has(authGroups.admins) ||
-      groups.has(authGroups.managers) ||
-      groups.has(authGroups.users)
-    );
+    return groups.has(authGroups.admins) || groups.has(authGroups.users);
   }
   return false;
 }

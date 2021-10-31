@@ -2,6 +2,7 @@ import * as iam from "@aws-cdk/aws-iam";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as cdk from "@aws-cdk/core";
 import * as iToL from "@aws-solutions-constructs/aws-iot-lambda";
+import * as secrets from "../secrets/secrets";
 
 import { StackDatabases } from "./dbConstruct";
 import { CdkContext } from "./utils";
@@ -20,8 +21,7 @@ export class IotConstruct extends cdk.Construct {
     //-------------------------------------------------------------------------
 
     const stackAndEnv = props.cdkContext.stackName + props.cdkContext.env;
-    const region = props.cdkContext.region;
-    const accountId = props.cdkContext.accountId;
+    const region = secrets.WOOTCH_AWS_REGION;
     const topic = stackAndEnv + "/#";
 
     //-------------------------------------------------------------------------
@@ -33,14 +33,14 @@ export class IotConstruct extends cdk.Construct {
     const iotFunction: iToL.IotToLambdaProps = {
       lambdaFunctionProps: {
         functionName: iotFunctionId,
-        runtime: lambda.Runtime.NODEJS_10_X,
+        runtime: lambda.Runtime.NODEJS_14_X,
         code: lambda.Code.fromAsset("../lambda/iot/dist/src"),
         handler: "iotReceive.handler",
         environment: {
           SENSOR_DATA_DB: props.stackDbs.sensorDataDb.databaseName!,
           SENSOR_DATA_TABLE: props.stackDbs.sensorDataTable.tableName!,
           MAIN_DATA_TABLE: props.stackDbs.mainTable.tableName,
-          WOOTCH_AWS_REGION: region,
+          MAIN_AWS_REGION: region,
         },
       },
       iotTopicRuleProps: {

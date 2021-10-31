@@ -8,6 +8,7 @@ const PairingRequestValidationSchema = Joi.object({
   PK: Joi.string().pattern(PAT_PAIR_KEY).uppercase().required(),
   PAIR_CREATION_DATE: Joi.number().required(),
   DEV_KEY: Joi.string().pattern(PAT_DEV_KEY).uppercase().required(),
+  ttl: Joi.number().required(),
 });
 
 /** Interface used to construct a PairModel */
@@ -15,6 +16,7 @@ interface PairModelConf {
   PK: string;
   PAIR_CREATION_DATE: number;
   DEV_KEY: string;
+  ttl: number;
 }
 
 interface PairModelDynamoDbRecord extends PairModelConf {}
@@ -23,11 +25,13 @@ export class PairModel {
   public PK: string;
   public PAIR_CREATION_DATE: number;
   public DEV_KEY: string;
+  public ttl: number;
 
   constructor(conf: PairModelConf) {
     this.PK = conf.PK;
     this.PAIR_CREATION_DATE = conf.PAIR_CREATION_DATE;
     this.DEV_KEY = conf.DEV_KEY;
+    this.ttl = conf.ttl;
   }
 
   /** Factory, create PairModel from DynamoDb Record */
@@ -51,6 +55,7 @@ export class PairModel {
       PK: this.PK,
       PAIR_CREATION_DATE: this.PAIR_CREATION_DATE,
       DEV_KEY: this.DEV_KEY,
+      ttl: this.ttl,
     };
 
     return record;
@@ -67,6 +72,7 @@ export class PairModel {
       PK: this.PK,
       PAIR_CREATION_DATE: this.PAIR_CREATION_DATE,
       DEV_KEY: this.DEV_KEY,
+      ttl: this.ttl,
     };
   }
 }

@@ -3,9 +3,6 @@
   "version": "0.0.0",
   "description": "Handlers for IoT event for Wootch",
   "main": "index.js",
-  "keywords": [
-    "iot"
-  ],
   "author": "Maxime Clement",
   "license": "MIT",
   "scripts": {
@@ -24,7 +21,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@aws-sdk/types": "^3.13.1",
+    "@aws-sdk/types": "^3.38.0",
     "@types/chai": "^4.2.17",
     "@types/mocha": "^8.2.2",
     "@types/node": "^15.0.1",

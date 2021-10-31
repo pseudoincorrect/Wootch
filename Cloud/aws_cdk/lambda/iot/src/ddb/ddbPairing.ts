@@ -21,6 +21,7 @@ export async function createPairingRequest(devId: string, secret: string) {
     PK: pairKey,
     DEV_KEY: devKey,
     PAIR_CREATION_DATE: new Date().getTime(),
+    ttl: new Date().getTime() + 3 * 60 * 1000, // now + 3 minutes (in ms)
   });
   const record = pairModel.createDynamodbRecord();
 

@@ -24,4 +24,7 @@ module.exports = {
     filename: "index.js",
     libraryTarget: "umd",
   },
+  externals: {
+    express: 'express',
+  }
 };

@@ -8,11 +8,9 @@ import * as r53Rt from "@aws-cdk/aws-route53-targets";
 import * as cdk from "@aws-cdk/core";
 
 import * as cst from "./constants";
+import * as secrets from "../secrets/secrets";
 import { StackDatabases } from "./dbConstruct";
 import { CdkContext } from "./utils";
-
-const nodeRuntime: lambda.Runtime = lambda.Runtime.NODEJS_10_X;
-const lambdaMemory: number = 128;
 
 export interface ExpressConstructProps {
   cdkContext: CdkContext;
@@ -24,12 +22,17 @@ export class ExpressConstruct extends cdk.Construct {
   constructor(scope: cdk.Construct, id: string, props: ExpressConstructProps) {
     super(scope, id);
 
+    const region = secrets.WOOTCH_AWS_REGION;
+
     const env = props.cdkContext.env;
     const stackAndEnv = props.cdkContext.stackName + env;
     const useCustomDomain = props.cdkContext.useCustomDomain;
     const domainHostedZone = props.cdkContext.domainHostedZone;
     const certificateArn = props.cdkContext.certificateArn;
     const domainName = props.cdkContext.domainName;
+
+    const nodeRuntime: lambda.Runtime = lambda.Runtime.NODEJS_14_X;
+    const lambdaMemory: number = 128;
 
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -41,7 +44,7 @@ export class ExpressConstruct extends cdk.Construct {
       timeout: cdk.Duration.seconds(10),
       memorySize: lambdaMemory,
       environment: {
-        AWS_APP_REGION: props.cdkContext.region,
+        AWS_APP_REGION: region,
         APP_TABLE_NAME: props.stackDbs.mainTable.tableName!,
         SENSOR_DATA_DB_NAME: props.stackDbs.sensorDataDb.databaseName!,
         SENSOR_DATA_TABLE_NAME: props.stackDbs.sensorDataTable.tableName!,

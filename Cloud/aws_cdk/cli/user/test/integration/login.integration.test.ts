@@ -3,7 +3,7 @@ import * as fs from "fs";
 
 // import rewire from "rewire";
 import * as auth from "../../src/aws/awsAmplifyAuth";
-import { amplifyConfigure } from "../../src/aws/awsConfiguration";
+import { amplifyConfigure } from "../../src/aws/awsAmplifyConfig";
 import * as secrets from "../../secrets/awsParams";
 import * as fm from "../../src/utils/filesManipulation";
 

@@ -1,11 +1,19 @@
-import { Args } from "./cmdTypes";
+import { amplifyConfigure } from "../../src/aws/awsAmplifyConfig";
 import * as awsUser from "../aws/awsAmplifyAuth";
 import * as fm from "../utils/filesManipulation";
+import { Args } from "./cmdTypes";
 
 export async function cmdLogin(argv: Args) {
-  const username = argv.username;
+  await amplifyConfigure();
+
+  const username = argv.email;
   const password = argv.password;
 
   const idToken = await awsUser.signUp(username, password);
-  fm.storeCredentials(idToken);
+
+  if (idToken) {
+    fm.storeCredentials(idToken);
+  }
+
+  console.log(`ID Token : ${idToken}`);
 }

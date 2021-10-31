@@ -7,8 +7,6 @@ import { URL } from "url";
 export interface CdkContext {
   stackName: string;
   env: string;
-  region: string;
-  accountId: string;
   useCustomDomain: boolean;
   domainHostedZone: string;
   certificateArn: string;
@@ -24,10 +22,8 @@ export class Utils {
       );
     let unparsedEnv = app.node.tryGetContext(env);
     return {
-      accountId: unparsedEnv["accountId"],
       stackName: unparsedEnv["stackName"],
       env: unparsedEnv["env"],
-      region: unparsedEnv["region"],
       useCustomDomain: unparsedEnv["useCustomDomain"] == "true",
       domainHostedZone: unparsedEnv["domainHostedZone"],
       certificateArn: unparsedEnv["certificateArn"],
