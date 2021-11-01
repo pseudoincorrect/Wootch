@@ -113,15 +113,6 @@ export const authorizationMiddleware =
         req.username = claims.sub;
       }
 
-      if (claims["custom:orgKey"]) {
-        req.orgKey = claims["custom:orgKey"];
-      } else {
-        res
-          .status(StatusCodes.FORBIDDEN)
-          .json({ error: "Unauthorized, no orgKey" });
-        return;
-      }
-
       const groups = getGroups(claims);
       req.groups = groups;
 

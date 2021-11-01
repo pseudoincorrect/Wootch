@@ -23,8 +23,5 @@ module.exports = {
     path: `${process.cwd()}/dist/packed`,
     filename: "index.js",
     libraryTarget: "umd",
-  },
-  externals: {
-    express: 'express',
   }
 };

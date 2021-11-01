@@ -2,7 +2,7 @@ import * as shell from "shelljs";
 import * as cst from "../constants";
 
 // All path are relative to "package.json", not to this file's location
-shell.exec("npm run build --prefix ../lambda/express");
+shell.exec("npm run buildWithModules --prefix ../lambda/express");
 shell.exec("npm run pack --prefix ../lambda/express");
 shell.exec("npm run zipPack --prefix ../lambda/express");
 

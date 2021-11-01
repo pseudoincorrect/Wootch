@@ -1,9 +1,10 @@
-import { body, validationResult, query } from "express-validator";
 import { NextFunction, Request, Response, Router } from "express";
+import { body, validationResult } from "express-validator";
 import { StatusCodes } from "http-status-codes";
+
 import { minAuth } from "../middlewares/authorizationMiddleware";
-import { authGroups } from "../utils/authGroups";
 import { AppValidationError } from "../utils/appErrors";
+import { authGroups } from "../utils/authGroups";
 
 const router = Router();
 
