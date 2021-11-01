@@ -4,25 +4,21 @@
 #         "host": "https://blablabla.com",
 #         "token": "yourToken"
 #     },
-#
-# Tutorial:
-# https://www.youtube.com/watch?v=RcxvrhQKv8I
-#
 
-#   %23 = '#'
-@pairingSecret = 123456
+# Do not put comma on the last item of a JSON object
+# %23 = '#'
 
+@pairingSecret = 9F9546
 
 ### POST pairing request attempt
 POST {{host}}/pairing/attempt
-# POST https://l9gysa4p54.execute-api.eu-west-1.amazonaws.com/WootchDev/pair/attempt/
 Authorization: {{token}}
 content-type: application/json
 
 {
-    "secret": "{{pairingSecret}}",
+    "secret": "{{pairingSecret}}"
 }
 
 ### Get user
-GET https://l9gysa4p54.execute-api.eu-west-1.amazonaws.com/WootchDev/user/
+GET {{host}}/user
 Authorization: {{token}}

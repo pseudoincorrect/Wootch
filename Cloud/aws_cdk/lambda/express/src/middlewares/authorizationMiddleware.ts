@@ -48,7 +48,7 @@ declare global {
       claims: Claims;
       groups: Set<string>;
       username: string;
-      orgKey: string;
+      userId: string;
     }
   }
 }
@@ -111,6 +111,16 @@ export const authorizationMiddleware =
       } else {
         console.warn(`No username claim found in token, using sub as username`);
         req.username = claims.sub;
+      }
+
+      if (claims["custom:userId"]) {
+        req.userId = claims["custom:userId"];
+      } else {
+        console.warn(`No userId claim found in token`);
+        res
+          .status(StatusCodes.FORBIDDEN)
+          .json({ error: "Unauthorized, no userId" });
+        return;
       }
 
       const groups = getGroups(claims);

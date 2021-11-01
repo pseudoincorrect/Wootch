@@ -23,5 +23,11 @@ module.exports = {
     path: `${process.cwd()}/dist/packed`,
     filename: "index.js",
     libraryTarget: "umd",
-  }
+  },
+  externals: {
+    "aws-crt": "aws-crt",
+  },
+  module: {
+    exprContextCritical: false,
+  },
 };

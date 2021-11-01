@@ -109,6 +109,8 @@ export class CognitoConstruct extends cdk.Construct {
       {
         userPoolId: this.userPool.userPoolId,
         clientName: "mobileAppClient",
+        // accessTokenValidity: 60 * 60 * 24, // 1 day in seconds
+        // idTokenValidity: 60 * 60 * 24,     // 1 day in seconds
         allowedOAuthFlows: ["implicit"],
         allowedOAuthScopes: ["email", "openid"],
         supportedIdentityProviders: ["COGNITO"],
