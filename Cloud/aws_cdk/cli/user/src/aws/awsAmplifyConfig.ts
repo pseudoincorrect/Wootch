@@ -1,6 +1,6 @@
 import Amplify from "aws-amplify";
 
-import * as secrets from "../../secrets/awsParams";
+import * as secrets from "../../secrets/secrets";
 
 // docs.amplify.aws/lib/auth/start/q/platform/js/#create-new-authentication-resource
 

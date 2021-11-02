@@ -1,4 +1,4 @@
-import { amplifyConfigure } from "../../src/aws/awsAmplifyConfig";
+import { amplifyConfigure } from "../aws/awsAmplifyConfig";
 import * as awsUser from "../aws/awsAmplifyAuth";
 import * as fm from "../utils/filesManipulation";
 import { Args } from "./cmdTypes";

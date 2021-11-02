@@ -1,5 +1,6 @@
 import yargs from "yargs";
-import * as usr from "./commands/cmdUser";
+import * as login from "./commands/cmdLogin";
+import * as pairing from "./commands/cmdPairing";
 
 const cliName = "userCli";
 
@@ -25,7 +26,23 @@ function adminCli() {
           })
           .help();
       },
-      usr.cmdLogin
+      login.cmdLogin
+    )
+    // Pairing
+    .command(
+      "pairing",
+      "Pairing a device with a user through a common secret",
+      (yargs: any) => {
+        yargs
+          .option("secret", {
+            alias: "s",
+            description: "pairing secret given by the device",
+            type: "string",
+            required: true,
+          })
+          .help();
+      },
+      pairing.cmdPairing
     )
     // Cli Options
     .version()
@@ -33,10 +50,13 @@ function adminCli() {
     .help()
     .alias("h", "help")
     .showHelpOnFail(true)
-
     .example(
       `${cliName} login --email jean-george@chezlui.fr --password Password123?`,
       `Login and receive your credentials`
+    )
+    .example(
+      `${cliName} pairing --secret 1A2B3C`,
+      `Pair with the device that issued the secret "1A2B3C"`
     )
     .parse();
 }

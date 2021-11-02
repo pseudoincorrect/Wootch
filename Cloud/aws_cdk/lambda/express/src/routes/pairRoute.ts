@@ -70,6 +70,7 @@ router.post(
         .json({ message: "User does not exist" });
     }
 
+    const userEmail = userModel!.USER_EMAIL;
     devModel!.DEV_USER_KEY = userKey;
 
     try {
@@ -77,7 +78,7 @@ router.post(
     } catch (error) {
       console.log(error);
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: `Could not pair user ${userKey} to device ${devKey}`,
+        message: `Could not pair user ${userEmail} to device ${devKey}`,
       });
     }
 
@@ -90,9 +91,9 @@ router.post(
       });
     }
 
-    return res
-      .status(StatusCodes.OK)
-      .json({ message: `Paired user ${userKey} to device ${devKey}` });
+    return res.status(StatusCodes.OK).json({
+      message: `Paired user ${userEmail} to device ${devKey}`,
+    });
   }
 );
 

@@ -4,7 +4,7 @@ import * as fs from "fs";
 // import rewire from "rewire";
 import * as auth from "../../src/aws/awsAmplifyAuth";
 import { amplifyConfigure } from "../../src/aws/awsAmplifyConfig";
-import * as secrets from "../../secrets/awsParams";
+import * as secrets from "../../secrets/secrets";
 import * as fm from "../../src/utils/filesManipulation";
 
 const username = secrets.MOCK_USERNAME;

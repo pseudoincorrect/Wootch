@@ -3,9 +3,8 @@ Roadmap for Wootch-Cloud subproject
 -------------------------------------------------------------
 TO DO
 -------------------------------------------------------------
-User-cli link a device
-express link a device to a user
 User-cli unlink a device
+Express unlink a device
 App send an email on activity msg
 Store activity on timestream
 Device get whether it is linked to a user or not (MQTT)
@@ -13,12 +12,14 @@ Device get whether it is linked to a user or not (MQTT)
 -------------------------------------------------------------
 IN PROCESS
 -------------------------------------------------------------
-iot store link request in dynamoDB with a time-to-live
+User-cli link a device
 
 -------------------------------------------------------------
 DONE
 Date       Description
 -------------------------------------------------------------
+02/11/2021 Express link a device to a user
+27/10/2021 Iot store link request in dynamoDB with a time-to-live
 26/10/2021 Device simulator send a link request
 26/10/2021 Admin cli add device and user to dynamodb 
 24/10/2021 User-cli store JWT

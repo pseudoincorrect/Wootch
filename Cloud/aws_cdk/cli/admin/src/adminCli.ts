@@ -97,10 +97,7 @@ function adminCli() {
       `${cliName} deleteUser --email jean-george@chezlui.fr`,
       `Delete a user`
     )
-    .example(
-      `${cliName} createDevice --id 123456`,
-      `Create a device with ID 123456`
-    )
+    .example(`${cliName} createDevice`, `Create a device`)
     .example(
       `${cliName} deleteDevice --id 123456`,
       `Delete the device with ID 123456`

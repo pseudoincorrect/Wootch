@@ -14,6 +14,15 @@ export function storeCredentials(creds: string) {
   fs.writeFileSync(getCredentialsFilePath(), creds);
 }
 
+export function getCredentials(): string {
+  const credPath = getCredentialsFilePath();
+  if (!fs.existsSync(credPath)) {
+    throw new Error("No credentials found");
+  }
+  const creds = fs.readFileSync(credPath, { encoding: "utf8", flag: "r" });
+  return creds.toString();
+}
+
 export function createCredentialsDir() {
   const dirPath = getCredentialsDir();
   if (!fs.existsSync(dirPath)) {
