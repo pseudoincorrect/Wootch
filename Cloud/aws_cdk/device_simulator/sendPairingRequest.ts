@@ -9,13 +9,11 @@ import { executeSession } from "./communication";
 
 const notifTopic: string = `WootchDev/device/${secrets.spoof_wootch_client_id}/pairing/request`;
 
-interface PairingRequestMessage {
+interface PairingMessage {
   secret: string;
 }
 
-export async function sendPairingRequest(
-  connection: mqtt.MqttClientConnection
-) {
+export async function sendPairing(connection: mqtt.MqttClientConnection) {
   return new Promise(async (resolve, reject) => {
     try {
       const decoder = new TextDecoder("utf8");
@@ -40,8 +38,8 @@ export async function sendPairingRequest(
       let uuidSecrets = uuidv4().replace(/-/g, "").toUpperCase().slice(0, 6);
       console.log(`uuidSecrets: ${uuidSecrets}`);
 
-      const pairingRequest: PairingRequestMessage = { secret: uuidSecrets };
-      const json = JSON.stringify(pairingRequest);
+      const Pairing: PairingMessage = { secret: uuidSecrets };
+      const json = JSON.stringify(Pairing);
 
       await connection.publish(notifTopic, json, mqtt.QoS.AtLeastOnce);
 
@@ -57,5 +55,5 @@ export async function sendPairingRequest(
 // ===========================================================================
 if (require.main === module) {
   console.log("Wootch Simulator will send a notification of activity !");
-  executeSession(sendPairingRequest);
+  executeSession(sendPairing);
 }

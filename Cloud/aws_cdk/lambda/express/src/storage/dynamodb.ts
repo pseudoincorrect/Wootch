@@ -22,9 +22,7 @@ export class DynamodbAccess {
       data = await this.ddb.send(
         new ddbLib.GetCommand({
           TableName: this.tableName,
-          Key: {
-            PK: pk,
-          },
+          Key: { PK: pk },
         })
       );
     } catch (err: any) {
@@ -44,5 +42,39 @@ export class DynamodbAccess {
     } catch (err: any) {
       throw new AppDbError("failed put org record in db", err);
     }
+  }
+
+  async dynamodbUpdate(
+    pk: string,
+    updateExpression: string,
+    expressionAttributeValues: { [key: string]: any }
+  ) {
+    try {
+      await this.ddb.send(
+        new ddbLib.UpdateCommand({
+          TableName: this.tableName,
+          Key: { PK: pk },
+          UpdateExpression: updateExpression,
+          ExpressionAttributeValues: expressionAttributeValues,
+        })
+      );
+    } catch (err: any) {
+      throw new AppDbError("failed put org record in db", err);
+    }
+  }
+
+  async dynamodbDelete(pk: string): Promise<any | null> {
+    let data: any;
+    try {
+      data = await this.ddb.send(
+        new ddbLib.DeleteCommand({
+          TableName: this.tableName,
+          Key: { PK: pk },
+        })
+      );
+    } catch (err: any) {
+      throw new AppDbError("failed get org record from db", err);
+    }
+    return data.Item;
   }
 }

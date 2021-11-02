@@ -5,45 +5,45 @@ import * as pat from "./patternsModel";
 /** Validation Schema for DevModel Dynamodb record */
 const DevModelDynamoDbValidationSchema = Joi.object({
   PK: Joi.string().pattern(pat.DEV_KEY).uppercase().required(),
-  DEV_CREATION_DATE: Joi.number().required(),
+  CREATION_DATE: Joi.number().required(),
   DEV_USER_KEY: Joi.string().pattern(pat.USER_KEY).uppercase(),
-  DEV_LAST_ONLINE_DATE: Joi.number(),
+  LAST_ONLINE_DATE: Joi.number(),
 });
 
-/** Validation Schema for DevModel Dynamodb record */
+/** Validation Schema for DevModel configuration */
 const DevModelConfValidationSchema = Joi.object({
   devKey: Joi.string().pattern(pat.DEV_KEY).uppercase().required(),
-  devCreationDate: Joi.number().required(),
+  creationDate: Joi.number().required(),
   devUsrKey: Joi.string().pattern(pat.USER_KEY).uppercase(),
-  devLastOnlineDate: Joi.number(),
+  lastOnlineDate: Joi.number(),
 });
 
 /** Interface used to construct a Device Model on DynamoDb */
 export interface DevModelDynamoDb {
   PK: string;
-  DEV_CREATION_DATE: number;
+  CREATION_DATE: number;
   DEV_USER_KEY?: string;
-  DEV_LAST_ONLINE_DATE?: number;
+  LAST_ONLINE_DATE?: number;
 }
 
 /** Interface used to construct a DevModel */
 export interface DevModelConf {
   devKey: string;
-  devCreationDate: number;
+  creationDate: number;
   devUsrKey?: string;
-  devLastOnlineDate?: number;
+  lastOnlineDate?: number;
 }
 
 export class DevModel {
   public devKey: string;
-  public devCreationDate: number;
+  public creationDate: number;
   public devUsrKey?: string;
-  public devLastOnlineDate?: number;
+  public lastOnlineDate?: number;
 
   constructor(conf: DevModelConf) {
     this.devKey = conf.devKey;
-    this.devCreationDate = conf.devCreationDate;
-    if (conf.devLastOnlineDate) this.devLastOnlineDate = conf.devLastOnlineDate;
+    this.creationDate = conf.creationDate;
+    if (conf.lastOnlineDate) this.lastOnlineDate = conf.lastOnlineDate;
     if (conf.devUsrKey) this.devUsrKey = conf.devUsrKey;
   }
 
@@ -54,9 +54,9 @@ export class DevModel {
 
     return new DevModel({
       devKey: record.PK,
-      devCreationDate: record.DEV_CREATION_DATE,
+      creationDate: record.CREATION_DATE,
       devUsrKey: record.DEV_USER_KEY,
-      devLastOnlineDate: record.DEV_LAST_ONLINE_DATE,
+      lastOnlineDate: record.LAST_ONLINE_DATE,
     });
   }
 
@@ -72,15 +72,15 @@ export class DevModel {
     const record: DevModelDynamoDb = {
       PK: this.devKey,
       DEV_USER_KEY: this.devUsrKey,
-      DEV_CREATION_DATE: this.devCreationDate,
-      DEV_LAST_ONLINE_DATE: this.devLastOnlineDate,
+      CREATION_DATE: this.creationDate,
+      LAST_ONLINE_DATE: this.lastOnlineDate,
     };
 
     if (this.devUsrKey) {
       record["DEV_USER_KEY"] = this.devUsrKey;
     }
-    if (this.devLastOnlineDate) {
-      record["DEV_LAST_ONLINE_DATE"] = this.devLastOnlineDate;
+    if (this.lastOnlineDate) {
+      record["LAST_ONLINE_DATE"] = this.lastOnlineDate;
     }
 
     const { error } = DevModelDynamoDbValidationSchema.validate(record);
@@ -98,9 +98,9 @@ export class DevModel {
   toJson(): object {
     return {
       devKey: this.devKey,
-      devCreationDate: this.devCreationDate,
+      creationDate: this.creationDate,
       devUsrKey: this.devUsrKey,
-      devLastOnline: this.devLastOnlineDate,
+      devLastOnline: this.lastOnlineDate,
     };
   }
 }

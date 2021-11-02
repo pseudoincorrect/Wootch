@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "sendActivity": "ts-node sendActivity",
-    "sendPairing": "ts-node sendPairingRequest"
+    "sendPairing": "ts-node sendPairing"
   },
   "keywords": [
     "aws",

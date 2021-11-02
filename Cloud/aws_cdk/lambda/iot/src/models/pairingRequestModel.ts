@@ -4,9 +4,9 @@ const PAT_PAIR_KEY = RegExp(/^PAI#[a-zA-Z0-9]*$/);
 const PAT_DEV_KEY = RegExp(/^DEV#[a-fA-F0-9]*$/);
 
 /** Validation Schema for pairing request */
-const PairingRequestValidationSchema = Joi.object({
+const PairingValidationSchema = Joi.object({
   PK: Joi.string().pattern(PAT_PAIR_KEY).uppercase().required(),
-  PAIR_CREATION_DATE: Joi.number().required(),
+  CREATION_DATE: Joi.number().required(),
   DEV_KEY: Joi.string().pattern(PAT_DEV_KEY).uppercase().required(),
   ttl: Joi.number().required(),
 });
@@ -14,7 +14,7 @@ const PairingRequestValidationSchema = Joi.object({
 /** Interface used to construct a PairModel */
 interface PairModelConf {
   PK: string;
-  PAIR_CREATION_DATE: number;
+  CREATION_DATE: number;
   DEV_KEY: string;
   ttl: number;
 }
@@ -23,20 +23,20 @@ interface PairModelDynamoDbRecord extends PairModelConf {}
 
 export class PairModel {
   public PK: string;
-  public PAIR_CREATION_DATE: number;
+  public CREATION_DATE: number;
   public DEV_KEY: string;
   public ttl: number;
 
   constructor(conf: PairModelConf) {
     this.PK = conf.PK;
-    this.PAIR_CREATION_DATE = conf.PAIR_CREATION_DATE;
+    this.CREATION_DATE = conf.CREATION_DATE;
     this.DEV_KEY = conf.DEV_KEY;
     this.ttl = conf.ttl;
   }
 
   /** Factory, create PairModel from DynamoDb Record */
   static fromDynamodb(record: PairModelConf) {
-    const { error } = PairingRequestValidationSchema.validate(record);
+    const { error } = PairingValidationSchema.validate(record);
     if (error) throw error;
 
     return new PairModel(record);
@@ -44,7 +44,7 @@ export class PairModel {
 
   /** Factory, create PairModel from PairModelConf*/
   static fromScratch(conf: PairModelConf) {
-    const { error } = PairingRequestValidationSchema.validate(conf);
+    const { error } = PairingValidationSchema.validate(conf);
     if (error) throw error;
     return new PairModel(conf);
   }
@@ -53,7 +53,7 @@ export class PairModel {
   createDynamodbRecord(): PairModelDynamoDbRecord {
     const record: PairModelDynamoDbRecord = {
       PK: this.PK,
-      PAIR_CREATION_DATE: this.PAIR_CREATION_DATE,
+      CREATION_DATE: this.CREATION_DATE,
       DEV_KEY: this.DEV_KEY,
       ttl: this.ttl,
     };
@@ -70,7 +70,7 @@ export class PairModel {
   toJson(): object {
     return {
       PK: this.PK,
-      PAIR_CREATION_DATE: this.PAIR_CREATION_DATE,
+      CREATION_DATE: this.CREATION_DATE,
       DEV_KEY: this.DEV_KEY,
       ttl: this.ttl,
     };

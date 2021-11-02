@@ -1,6 +1,6 @@
 import * as ddbPairing from "./ddb/ddbPairing";
 import * as utils from "./utils/utils";
-const pairingRequestPattern = RegExp(
+const PairingPattern = RegExp(
   /^WootchDev\/device\/WOOTCH_DEV_[a-zA-Z0-9]+\/pairing\/request/
 );
 const activityPattern = RegExp(
@@ -26,7 +26,7 @@ async function iotReceive(event: any, context: any) {
 
   if (activityPattern.test(event.topic)) {
     await processActivityEvent(event as ActivityEvent);
-  } else if (pairingRequestPattern.test(event.topic)) {
+  } else if (PairingPattern.test(event.topic)) {
     await processPairingEvent(event as PairingEvent);
   }
 }
@@ -39,7 +39,7 @@ async function processPairingEvent(event: PairingEvent) {
   console.log("Pairing message");
   const secret = event.secret;
   const devId = utils.devIdFromThingName(event.clientid);
-  await ddbPairing.createPairingRequest(devId, secret);
+  await ddbPairing.createPairing(devId, secret);
 }
 
 export const handler = iotReceive;

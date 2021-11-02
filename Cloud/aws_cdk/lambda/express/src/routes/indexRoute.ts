@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import PairRouter from "./pairRoute";
-import UsrRouter from "./usrRoute";
+import UsrRouter from "./userRoute";
 
 // Init router and path
 const router = Router();

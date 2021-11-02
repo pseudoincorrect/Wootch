@@ -6,46 +6,45 @@ import * as pat from "./patternsModel";
 const UserModelDynamoDbValidationSchema = Joi.object({
   PK: Joi.string().pattern(pat.USER_KEY).uppercase().required(),
   USER_EMAIL: Joi.string().email().required(),
-  USER_CREATION_DATE: Joi.number().required(),
-  USER_LAST_ONLINE_DATE: Joi.number(),
+  CREATION_DATE: Joi.number().required(),
+  LAST_ONLINE_DATE: Joi.number(),
 });
 
 /** Validation Schema for UserModel Dynamodb record */
 const UserModelConfValidationSchema = Joi.object({
   userKey: Joi.string().pattern(pat.USER_KEY).uppercase().required(),
   userEmail: Joi.string().email().required(),
-  userCreationDate: Joi.number().required(),
-  userLastOnlineDate: Joi.number(),
+  creationDate: Joi.number().required(),
+  lastOnlineDate: Joi.number(),
 });
 
 /** Interface used to construct a User Model on DynamoDb */
 export interface UserModelDynamoDb {
   PK: string;
   USER_EMAIL: string;
-  USER_CREATION_DATE: number;
-  USER_LAST_ONLINE_DATE?: number;
+  CREATION_DATE: number;
+  LAST_ONLINE_DATE?: number;
 }
 
 /** Interface used to construct a UserModel */
 export interface UserModelConf {
   userKey: string;
   userEmail: string;
-  userCreationDate: number;
-  userLastOnlineDate?: number;
+  creationDate: number;
+  lastOnlineDate?: number;
 }
 
 export class UserModel {
   public userKey: string;
   public userEmail: string;
-  public userCreationDate: number;
-  public userLastOnlineDate?: number;
+  public creationDate: number;
+  public lastOnlineDate?: number;
 
   constructor(conf: UserModelConf) {
     this.userKey = conf.userKey;
     this.userEmail = conf.userEmail;
-    this.userCreationDate = conf.userCreationDate;
-    if (conf.userLastOnlineDate)
-      this.userLastOnlineDate = conf.userLastOnlineDate;
+    this.creationDate = conf.creationDate;
+    if (conf.lastOnlineDate) this.lastOnlineDate = conf.lastOnlineDate;
   }
 
   /** Factory, create UserModel from DynamoDb Record */
@@ -56,8 +55,8 @@ export class UserModel {
     return new UserModel({
       userKey: record.PK,
       userEmail: record.USER_EMAIL,
-      userCreationDate: record.USER_CREATION_DATE,
-      userLastOnlineDate: record.USER_LAST_ONLINE_DATE,
+      creationDate: record.CREATION_DATE,
+      lastOnlineDate: record.LAST_ONLINE_DATE,
     });
   }
 
@@ -73,11 +72,11 @@ export class UserModel {
     const record: UserModelDynamoDb = {
       PK: this.userKey,
       USER_EMAIL: this.userEmail,
-      USER_CREATION_DATE: this.userCreationDate,
+      CREATION_DATE: this.creationDate,
     };
 
-    if (this.userLastOnlineDate) {
-      record["USER_LAST_ONLINE_DATE"] = this.userLastOnlineDate;
+    if (this.lastOnlineDate) {
+      record["LAST_ONLINE_DATE"] = this.lastOnlineDate;
     }
 
     const { error } = UserModelDynamoDbValidationSchema.validate(record);
@@ -95,8 +94,8 @@ export class UserModel {
   toJson(): object {
     return {
       userKey: this.userKey,
-      userCreationDate: this.userCreationDate,
-      userLastOnline: this.userLastOnlineDate,
+      creationDate: this.creationDate,
+      userLastOnline: this.lastOnlineDate,
     };
   }
 }

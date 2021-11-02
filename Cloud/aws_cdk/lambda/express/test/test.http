@@ -8,7 +8,7 @@
 # Do not put comma on the last item of a JSON object
 # %23 = '#'
 
-@pairingSecret = 9F9546
+@pairingSecret = D7725F
 
 ### POST pairing request attempt
 POST {{host}}/pairing/attempt

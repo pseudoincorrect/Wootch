@@ -28,7 +28,7 @@ export async function createDevice(id: string) {
   const devKey = awsHelpers.devKeyFromId(id);
   const devModel = DevModel.fromScratch({
     devKey,
-    devCreationDate: new Date().getTime(),
+    creationDate: new Date().getTime(),
   });
   const record = devModel.createDynamodbRecord();
 
@@ -94,7 +94,7 @@ export async function createUser(id: string, email: string) {
   const userModel = UserModel.fromScratch({
     userKey,
     userEmail: email,
-    userCreationDate: new Date().getTime(),
+    creationDate: new Date().getTime(),
   });
   const record = userModel.createDynamodbRecord();
 
