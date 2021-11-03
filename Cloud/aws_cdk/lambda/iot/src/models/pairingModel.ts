@@ -2,6 +2,9 @@ import * as Joi from "joi";
 
 const PAT_PAIR_KEY = RegExp(/^PAI#[a-zA-Z0-9]*$/);
 const PAT_DEV_KEY = RegExp(/^DEV#[a-fA-F0-9]*$/);
+const PAT_IS_ANUM_UPCASE = RegExp(/^[A-F0-9]*$/);
+
+const PREFIX_PAIR_KEY = "PAI#";
 
 /** Validation Schema for pairing request */
 const PairingValidationSchema = Joi.object({
@@ -59,6 +62,13 @@ export class PairModel {
     };
 
     return record;
+  }
+
+  static getPkFromId(pairId: string): string {
+    if (pairId.length != 6 || !pairId.match(PAT_IS_ANUM_UPCASE)) {
+      throw new Error("Pairing PK format");
+    }
+    return `${PREFIX_PAIR_KEY}${pairId}`;
   }
 
   /** return a string view of PairModel */

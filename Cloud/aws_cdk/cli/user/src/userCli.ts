@@ -1,4 +1,5 @@
 import yargs from "yargs";
+
 import * as login from "./commands/cmdLogin";
 import * as pairing from "./commands/cmdPairing";
 

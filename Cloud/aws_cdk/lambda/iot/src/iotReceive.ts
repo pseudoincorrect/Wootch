@@ -1,5 +1,10 @@
-import * as ddbPairing from "./ddb/ddbPairing";
+import { DevAccess } from "./ddb/devAccess";
+import { PairingAccess } from "./ddb/pairingAccess";
+import { UserAccess } from "./ddb/userAccess";
+import { DevModel } from "./models/devModel";
+import * as sEmail from "./ses/activityEmail";
 import * as utils from "./utils/utils";
+
 const PairingPattern = RegExp(
   /^WootchDev\/device\/WOOTCH_DEV_[a-zA-Z0-9]+\/pairing\/request/
 );
@@ -21,6 +26,10 @@ interface ActivityEvent {
   clientid: string;
 }
 
+const pairAccess = new PairingAccess();
+const userAccess = new UserAccess();
+const devAccess = new DevAccess();
+
 async function iotReceive(event: any, context: any) {
   console.log(JSON.stringify(event, null, 2));
 
@@ -33,13 +42,42 @@ async function iotReceive(event: any, context: any) {
 
 async function processActivityEvent(event: ActivityEvent) {
   console.log("Activity message");
+  const devId = utils.devIdFromThingName(event.clientid);
+  const devKey = DevModel.getPkFromId(devId);
+  let devModel;
+  try {
+    devModel = await devAccess.getDev(devKey);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Could not get DevModel (ddb)");
+  }
+  if (!devModel?.DEV_USER_KEY) {
+    console.log("No user paired to this device");
+    return;
+  }
+  const userKey = devModel.DEV_USER_KEY;
+  let userModel;
+  try {
+    userModel = await userAccess.getUser(userKey);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Could not get UserModel (ddb)");
+  }
+  const userEmail = userModel!.USER_EMAIL;
+  console.log(`Sending email to ${userEmail}`);
+  await sEmail.sendEmail("maximeclement6@gmail.com");
 }
 
 async function processPairingEvent(event: PairingEvent) {
   console.log("Pairing message");
   const secret = event.secret;
   const devId = utils.devIdFromThingName(event.clientid);
-  await ddbPairing.createPairing(devId, secret);
+  try {
+    await pairAccess.putPairing(devId, secret);
+    console.log(`Pairing request ${secret} created`);
+  } catch (error) {
+    throw new Error("Could not create pairing request");
+  }
 }
 
 export const handler = iotReceive;

@@ -15,14 +15,3 @@ export function getEnv(variableName: string) {
 export function devIdFromThingName(thingName: string) {
   return thingName.replace(wootchThingNamePrefix, "");
 }
-
-export function devKeyFromDevId(devId: string) {
-  return `${wootchDevKeyPrefix}${devId.toUpperCase()}`;
-}
-
-export function pairKeyFromSecret(secret: string): string {
-  if (!patternSecret.test(secret)) {
-    throw new Error("wrong pairing secret format");
-  }
-  return `${wootchPairKeyPrefix}${secret}`;
-}

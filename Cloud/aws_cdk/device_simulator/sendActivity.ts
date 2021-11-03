@@ -1,7 +1,8 @@
 import { mqtt } from "aws-iot-device-sdk-v2";
-import { executeSession } from "./communication";
 import { TextDecoder } from "util";
+
 import * as secrets from "./certificatesAndSecrets/secrets";
+import { executeSession } from "./communication";
 
 // based on example : https://github.com/aws/aws-iot-device-sdk-js-v2/blob/main/samples/node/pub_sub/index.ts
 

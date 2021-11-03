@@ -1,4 +1,6 @@
 import { expect } from "chai";
+import { DevModel } from "../../src/models/devModel";
+import { PairModel } from "../../src/models/pairingModel";
 import * as utils from "../../src/utils/utils";
 
 describe("devIdFromThingName", function () {
@@ -14,7 +16,7 @@ describe("devIdFromThingName", function () {
 describe("devKeyFromDevId", function () {
   it("it should pass without error", () => {
     const devId = "8DFF33C0E67B40D5A125D5F0C7DF9E67";
-    const devKey = utils.devKeyFromDevId(devId);
+    const devKey = DevModel.getPkFromId(devId);
     const expectedDevKey =
       utils.wootchDevKeyPrefix + "8DFF33C0E67B40D5A125D5F0C7DF9E67";
     expect(devKey).to.be.equal(expectedDevKey);
@@ -24,7 +26,7 @@ describe("devKeyFromDevId", function () {
 describe("pairKeyFromSecret", function () {
   it("it should pass without error", () => {
     const secret = "8DFF33";
-    const pairKey = utils.pairKeyFromSecret(secret);
+    const pairKey = PairModel.getPkFromId(secret);
     const expectedPairKey = utils.wootchPairKeyPrefix + "8DFF33";
     expect(pairKey).to.be.equal(expectedPairKey);
   });
