@@ -24,6 +24,7 @@ export interface DevModelConf {
 
 export interface DevModelDynamoDb extends DevModelConf {}
 
+/** Device model to interac uniformly on the app */
 export class DevModel {
   public PK: string;
   public CREATION_DATE: number;

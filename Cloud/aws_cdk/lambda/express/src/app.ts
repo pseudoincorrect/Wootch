@@ -20,9 +20,12 @@ export class App {
   ) {
     const app = expressApp;
 
+    // requests are formated in JSON
     app.use(json());
+    // exteded URL
     app.use(urlencoded({ extended: true }));
     app.use(eventContext());
+    // Authorization middleware based on JWT token (cognito)
     app.use(
       authorizationMiddleware({
         authorizationHeaderName: opts.authorizationHeaderName,
@@ -30,9 +33,9 @@ export class App {
         allowedPaths: [],
       })
     );
-
+    // load the routes
     app.use("", BaseRouter);
-
+    // Error handling
     app.use(appErrorHandleMiddleware);
   }
 }

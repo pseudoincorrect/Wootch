@@ -2,11 +2,8 @@ import { DevModel } from "../models/devModel";
 import { PairModel } from "../models/pairingModel";
 import { DynamodbAccess } from "./dynamodb";
 
-export interface PairingStorage {
-  putPairing(devId: string, secret: string): Promise<any>;
-}
-
-export class PairingAccess implements PairingStorage {
+/** Control access to dynamoDb for pairing models*/
+export class PairingDdb {
   private ddbAccess: DynamodbAccess;
 
   constructor() {

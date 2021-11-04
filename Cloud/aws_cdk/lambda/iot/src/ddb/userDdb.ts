@@ -1,17 +1,19 @@
 import { UserModel, UserModelDynamoDb } from "../models/userModel";
-import { DynamodbAccess } from "../storage/dynamodb";
+import { DynamodbAccess } from "./dynamodb";
 
-export interface UserStorage {
-  getUser(id: string): Promise<UserModel | undefined>;
-}
-
-export class UserAccess implements UserStorage {
+/** Control access to dynamoDb for users models*/
+export class UserDdb {
   private ddbAccess: DynamodbAccess;
 
   constructor() {
     this.ddbAccess = new DynamodbAccess();
   }
 
+  /**
+   * Get a user model from dynamodb
+   * @param userKey User dynamodb PK
+   * @returns a user model or undefined
+   */
   async getUser(userKey: string): Promise<UserModel | undefined> {
     const record = await this.ddbAccess.dynamodbGet(userKey);
     console.log(record);

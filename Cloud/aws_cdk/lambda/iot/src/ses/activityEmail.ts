@@ -7,6 +7,10 @@ const awsRegion = utils.getEnv("MAIN_AWS_REGION");
 
 const sesClient = new ses.SESClient({ region: awsRegion });
 
+/**
+ * Send a formated email
+ * @param emailAddress email recipient
+ */
 export async function sendEmail(emailAddress: string) {
   const dateNow = new Date().toISOString();
   const params: ses.SendEmailCommandInput = {
@@ -32,7 +36,7 @@ export async function sendEmail(emailAddress: string) {
   try {
     const data = await sesClient.send(new ses.SendEmailCommand(params));
     console.log("sendEmail Success", data);
-    return data;
+    console.log(data);
   } catch (err) {
     console.log("sendEmail Error", err);
   }

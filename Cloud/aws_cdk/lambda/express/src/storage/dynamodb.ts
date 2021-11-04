@@ -4,6 +4,9 @@ import * as ddbLib from "@aws-sdk/lib-dynamodb";
 import { AppDbError } from "../utils/appErrors";
 import { Utils } from "../utils/utils";
 
+/**
+ * Class controlling the access of dynamodb
+ */
 export class DynamodbAccess {
   private ddbClient: DynamoDBClient;
   private ddb: ddbLib.DynamoDBDocumentClient;
@@ -16,6 +19,11 @@ export class DynamodbAccess {
     this.ddb = ddbLib.DynamoDBDocumentClient.from(this.ddbClient);
   }
 
+  /**
+   * Get a record from dynamodb from a primary key
+   * @param pk Primary Key
+   * @returns a dynamodb record or null
+   */
   async dynamodbGet(pk: string): Promise<any | null> {
     let data: any;
     try {
@@ -31,6 +39,10 @@ export class DynamodbAccess {
     return data.Item;
   }
 
+  /**
+   * Put a record in dynamodb
+   * @param record dynamodb record (key : value)
+   */
   async dynamodbPut(record: any) {
     try {
       await this.ddb.send(
@@ -44,6 +56,13 @@ export class DynamodbAccess {
     }
   }
 
+  /**
+   * Update a dynamodb record with provided values
+   * @param pk Primary Key
+   * @param updateExpression dynamodb update expression
+   * @param expressionAttributeValues dynamodb values associated
+   * with the update expression
+   */
   async dynamodbUpdate(
     pk: string,
     updateExpression: string,
@@ -63,6 +82,11 @@ export class DynamodbAccess {
     }
   }
 
+  /**
+   * Delete a record from dynamodb
+   * @param pk Primary Key
+   * @returns the deleted record or null
+   */
   async dynamodbDelete(pk: string): Promise<any | null> {
     let data: any;
     try {

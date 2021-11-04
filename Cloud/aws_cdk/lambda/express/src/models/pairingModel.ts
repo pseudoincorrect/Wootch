@@ -26,6 +26,7 @@ interface PairModelConf {
 
 export interface PairModelDynamoDbRecord extends PairModelConf {}
 
+/** Model englobing a pairing request device/user for its storage in db */
 export class PairModel {
   public PK: string;
   public CREATION_DATE: number;

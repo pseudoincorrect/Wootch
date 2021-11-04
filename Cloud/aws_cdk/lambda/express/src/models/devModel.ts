@@ -21,6 +21,7 @@ export interface DevModelConf {
 
 export interface DevModelDynamoDb extends DevModelConf {}
 
+/** Model englobing a device for its storage in db */
 export class DevModel {
   public PK: string;
   public CREATION_DATE: number;

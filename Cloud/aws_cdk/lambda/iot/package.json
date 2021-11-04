@@ -7,9 +7,9 @@
   "license": "MIT",
   "scripts": {
     "tsc": "tsc",
-    "build": "tsc -b && copy-node-modules . dist/src",
+    "typescriptBuild": "tsc -b && copy-node-modules . dist/src",
     "clean": "tsc -b --clean && npx rimraf ./dist",
-    "package": "cd dist/src && bestzip ../function.zip .",
+    "zipDist": "cd dist/src && bestzip ../function.zip .",
     "watch": "tsc -w",
     "unit": "ts-mocha test/unit/**",
     "testWithCoverage": "nyc -r lcov -e .ts -x \"*.test.ts\" mocha -r ts-node/register tests/**/*.test.ts && nyc report"

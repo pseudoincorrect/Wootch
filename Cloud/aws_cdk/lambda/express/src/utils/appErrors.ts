@@ -12,6 +12,11 @@ interface AppErrorConf {
   originError?: Error;
 }
 
+/**
+ * Class that provide a concatenation of application specific error
+ * and non-app error (node and packages). It also associate a http
+ * error status code and display the message nicely.
+ */
 export abstract class AppError extends Error {
   private errorType: string;
   public statusCode: number;

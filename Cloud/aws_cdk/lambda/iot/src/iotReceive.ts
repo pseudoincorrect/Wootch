@@ -1,9 +1,10 @@
-import { DevAccess } from "./ddb/devAccess";
-import { PairingAccess } from "./ddb/pairingAccess";
-import { UserAccess } from "./ddb/userAccess";
+import { DevDdb } from "./ddb/devDdb";
+import { PairingDdb } from "./ddb/pairingDdb";
+import { UserDdb } from "./ddb/userDdb";
 import { DevModel } from "./models/devModel";
 import * as sEmail from "./ses/activityEmail";
 import * as utils from "./utils/utils";
+import * as secrets from "./secrets/secrets";
 
 const PairingPattern = RegExp(
   /^WootchDev\/device\/WOOTCH_DEV_[a-zA-Z0-9]+\/pairing\/request/
@@ -26,10 +27,15 @@ interface ActivityEvent {
   clientid: string;
 }
 
-const pairAccess = new PairingAccess();
-const userAccess = new UserAccess();
-const devAccess = new DevAccess();
+const pairingDdb = new PairingDdb();
+const userDdb = new UserDdb();
+const devDdb = new DevDdb();
 
+/**
+ * Entry point of the lambda function
+ * @param event MQTT message and metadata
+ * @param context lambda function context
+ */
 async function iotReceive(event: any, context: any) {
   console.log(JSON.stringify(event, null, 2));
 
@@ -40,13 +46,17 @@ async function iotReceive(event: any, context: any) {
   }
 }
 
+/**
+ * Process an MQTT activity message, by alerting the user by email
+ * @param event data/metadata of the activity MQTT message
+ */
 async function processActivityEvent(event: ActivityEvent) {
-  console.log("Activity message");
+  // Get Model of the device associated with this MQTT message
   const devId = utils.devIdFromThingName(event.clientid);
   const devKey = DevModel.getPkFromId(devId);
   let devModel;
   try {
-    devModel = await devAccess.getDev(devKey);
+    devModel = await devDdb.getDev(devKey);
   } catch (error) {
     console.log(error);
     throw new Error("Could not get DevModel (ddb)");
@@ -55,25 +65,33 @@ async function processActivityEvent(event: ActivityEvent) {
     console.log("No user paired to this device");
     return;
   }
+  // Get user assciated with this device
   const userKey = devModel.DEV_USER_KEY;
   let userModel;
   try {
-    userModel = await userAccess.getUser(userKey);
+    userModel = await userDdb.getUser(userKey);
   } catch (error) {
     console.log(error);
     throw new Error("Could not get UserModel (ddb)");
   }
+  // Send him a message
   const userEmail = userModel!.USER_EMAIL;
   console.log(`Sending email to ${userEmail}`);
-  await sEmail.sendEmail("maximeclement6@gmail.com");
+  await sEmail.sendEmail(secrets.recieverAdress);
 }
 
+/**
+ * Create a pairing request to enable a user to assciate himself
+ * with a device
+ * @param event data/metadata of the pairing MQTT message
+ */
 async function processPairingEvent(event: PairingEvent) {
   console.log("Pairing message");
   const secret = event.secret;
   const devId = utils.devIdFromThingName(event.clientid);
+  // Add a pairing request in the Db
   try {
-    await pairAccess.putPairing(devId, secret);
+    await pairingDdb.putPairing(devId, secret);
     console.log(`Pairing request ${secret} created`);
   } catch (error) {
     throw new Error("Could not create pairing request");

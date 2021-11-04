@@ -24,6 +24,7 @@ export interface UserModelConf {
 /** Interface used to construct a User Model for DynamoDb */
 export interface UserModelDynamoDb extends UserModelConf {}
 
+/** User model to interac uniformly on the app */
 export class UserModel {
   public PK: string;
   public USER_EMAIL: string;
