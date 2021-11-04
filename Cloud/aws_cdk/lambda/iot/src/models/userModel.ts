@@ -11,6 +11,7 @@ const UserModelValidationSchema = Joi.object({
   USER_EMAIL: Joi.string().email().required(),
   CREATION_DATE: Joi.number().required(),
   LAST_ONLINE_DATE: Joi.number(),
+  LAST_EMAIL_DATE: Joi.number(),
 });
 
 /** Interface used to construct a User Model  */
@@ -19,6 +20,7 @@ export interface UserModelConf {
   USER_EMAIL: string;
   CREATION_DATE: number;
   LAST_ONLINE_DATE?: number;
+  LAST_EMAIL_DATE?: number;
 }
 
 /** Interface used to construct a User Model for DynamoDb */
@@ -30,12 +32,14 @@ export class UserModel {
   public USER_EMAIL: string;
   public CREATION_DATE: number;
   public LAST_ONLINE_DATE?: number;
+  public LAST_EMAIL_DATE?: number;
 
   constructor(conf: UserModelConf) {
     this.PK = conf.PK;
     this.USER_EMAIL = conf.USER_EMAIL;
     this.CREATION_DATE = conf.CREATION_DATE;
     if (conf.LAST_ONLINE_DATE) this.LAST_ONLINE_DATE = conf.LAST_ONLINE_DATE;
+    if (conf.LAST_EMAIL_DATE) this.LAST_EMAIL_DATE = conf.LAST_EMAIL_DATE;
   }
 
   /** Factory, create UserModel from DynamoDb Record */
@@ -48,6 +52,7 @@ export class UserModel {
       USER_EMAIL: record.USER_EMAIL,
       CREATION_DATE: record.CREATION_DATE,
       LAST_ONLINE_DATE: record.LAST_ONLINE_DATE,
+      LAST_EMAIL_DATE: record.LAST_EMAIL_DATE,
     });
   }
 
@@ -61,6 +66,9 @@ export class UserModel {
 
     if (this.LAST_ONLINE_DATE) {
       record["LAST_ONLINE_DATE"] = this.LAST_ONLINE_DATE;
+    }
+    if (this.LAST_EMAIL_DATE) {
+      record["LAST_EMAIL_DATE"] = this.LAST_EMAIL_DATE;
     }
 
     const { error } = UserModelValidationSchema.validate(record);
@@ -85,8 +93,10 @@ export class UserModel {
   toJson(): object {
     return {
       PK: this.PK,
+      USER_EMAIL: this.USER_EMAIL,
       CREATION_DATE: this.CREATION_DATE,
-      userLastOnline: this.LAST_ONLINE_DATE,
+      LAST_ONLINE_DATE: this.LAST_ONLINE_DATE,
+      LAST_EMAIL_DATE: this.LAST_ONLINE_DATE,
     };
   }
 }

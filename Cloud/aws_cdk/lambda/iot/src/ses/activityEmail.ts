@@ -35,8 +35,7 @@ export async function sendEmail(emailAddress: string) {
   };
   try {
     const data = await sesClient.send(new ses.SendEmailCommand(params));
-    console.log("sendEmail Success", data);
-    console.log(data);
+    console.log("sendEmail Success");
   } catch (err) {
     console.log("sendEmail Error", err);
   }

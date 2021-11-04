@@ -16,7 +16,6 @@ export class DevDdb {
    */
   async getDev(devKey: string): Promise<DevModel | undefined> {
     const record = await this.ddbAccess.dynamodbGet(devKey);
-    console.log(record);
     return DevModel.fromDynamodb(record as DevModelDynamoDb);
   }
 

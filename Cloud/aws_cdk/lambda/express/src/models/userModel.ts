@@ -1,5 +1,4 @@
 import * as Joi from "joi";
-import { AppValidationError } from "../utils/appErrors";
 
 const PAT_USER_KEY = RegExp(/^USR#[A-Z0-9]*$/);
 const PAT_IS_ANUM_UPCASE = RegExp(/^[A-F0-9]*$/);
@@ -12,6 +11,7 @@ const UserModelValidationSchema = Joi.object({
   USER_EMAIL: Joi.string().email().required(),
   CREATION_DATE: Joi.number().required(),
   LAST_ONLINE_DATE: Joi.number(),
+  LAST_EMAIL_DATE: Joi.number(),
 });
 
 /** Interface used to construct a User Model  */
@@ -20,23 +20,26 @@ export interface UserModelConf {
   USER_EMAIL: string;
   CREATION_DATE: number;
   LAST_ONLINE_DATE?: number;
+  LAST_EMAIL_DATE?: number;
 }
 
 /** Interface used to construct a User Model for DynamoDb */
 export interface UserModelDynamoDb extends UserModelConf {}
 
-/** Model englobing a user for its storage in db */
+/** User model to interac uniformly on the app */
 export class UserModel {
   public PK: string;
   public USER_EMAIL: string;
   public CREATION_DATE: number;
   public LAST_ONLINE_DATE?: number;
+  public LAST_EMAIL_DATE?: number;
 
   constructor(conf: UserModelConf) {
     this.PK = conf.PK;
     this.USER_EMAIL = conf.USER_EMAIL;
     this.CREATION_DATE = conf.CREATION_DATE;
     if (conf.LAST_ONLINE_DATE) this.LAST_ONLINE_DATE = conf.LAST_ONLINE_DATE;
+    if (conf.LAST_EMAIL_DATE) this.LAST_EMAIL_DATE = conf.LAST_EMAIL_DATE;
   }
 
   /** Factory, create UserModel from DynamoDb Record */
@@ -49,6 +52,7 @@ export class UserModel {
       USER_EMAIL: record.USER_EMAIL,
       CREATION_DATE: record.CREATION_DATE,
       LAST_ONLINE_DATE: record.LAST_ONLINE_DATE,
+      LAST_EMAIL_DATE: record.LAST_EMAIL_DATE,
     });
   }
 
@@ -63,6 +67,9 @@ export class UserModel {
     if (this.LAST_ONLINE_DATE) {
       record["LAST_ONLINE_DATE"] = this.LAST_ONLINE_DATE;
     }
+    if (this.LAST_EMAIL_DATE) {
+      record["LAST_EMAIL_DATE"] = this.LAST_EMAIL_DATE;
+    }
 
     const { error } = UserModelValidationSchema.validate(record);
     if (error) throw error;
@@ -70,11 +77,11 @@ export class UserModel {
     return record;
   }
 
-  static getPkFromId(pairId: string): string {
-    if (pairId.length != 32 || !pairId.match(PAT_IS_ANUM_UPCASE)) {
-      throw new AppValidationError("Pairing PK format");
+  static getPkFromId(userId: string): string {
+    if (userId.length != 32 || !userId.match(PAT_IS_ANUM_UPCASE)) {
+      throw new Error("Pairing PK format");
     }
-    return `${PREFIX_USER_KEY}${pairId}`;
+    return `${PREFIX_USER_KEY}${userId}`;
   }
 
   /** return a string view of UserModel */
@@ -86,8 +93,10 @@ export class UserModel {
   toJson(): object {
     return {
       PK: this.PK,
+      USER_EMAIL: this.USER_EMAIL,
       CREATION_DATE: this.CREATION_DATE,
-      userLastOnline: this.LAST_ONLINE_DATE,
+      LAST_ONLINE_DATE: this.LAST_ONLINE_DATE,
+      LAST_EMAIL_DATE: this.LAST_ONLINE_DATE,
     };
   }
 }

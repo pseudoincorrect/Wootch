@@ -51,6 +51,7 @@ async function iotReceive(event: any, context: any) {
  * @param event data/metadata of the activity MQTT message
  */
 async function processActivityEvent(event: ActivityEvent) {
+  console.log("Activity message");
   // Get Model of the device associated with this MQTT message
   const devId = utils.devIdFromThingName(event.clientid);
   const devKey = DevModel.getPkFromId(devId);
@@ -65,7 +66,7 @@ async function processActivityEvent(event: ActivityEvent) {
     console.log("No user paired to this device");
     return;
   }
-  // Get user assciated with this device
+  // Get user associated with this device
   const userKey = devModel.DEV_USER_KEY;
   let userModel;
   try {
@@ -74,10 +75,21 @@ async function processActivityEvent(event: ActivityEvent) {
     console.log(error);
     throw new Error("Could not get UserModel (ddb)");
   }
+  // Check whether an email has been received recently
+  const lastEmail = userModel!.LAST_EMAIL_DATE;
+  const nowMs = new Date().getTime();
+  if (lastEmail != undefined) {
+    if (nowMs - lastEmail < 60 * 1000) {
+      return;
+    }
+  }
   // Send him a message
   const userEmail = userModel!.USER_EMAIL;
-  console.log(`Sending email to ${userEmail}`);
+  console.log(`Sending email to ${secrets.recieverAdress}`);
   await sEmail.sendEmail(secrets.recieverAdress);
+  // Update last email sent date
+  userModel!.LAST_EMAIL_DATE = nowMs;
+  await userDdb.updateLastEmail(userModel!);
 }
 
 /**

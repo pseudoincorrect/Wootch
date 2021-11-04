@@ -77,7 +77,7 @@ router.post(
     const userEmail = userModel!.USER_EMAIL;
     devModel!.DEV_USER_KEY = userKey;
     try {
-      await devDdb.updateDev(devModel!);
+      await devDdb.updateDevUserKey(devModel!);
     } catch (error) {
       console.log(error);
       return res.status(StatusCodes.NOT_FOUND).json({

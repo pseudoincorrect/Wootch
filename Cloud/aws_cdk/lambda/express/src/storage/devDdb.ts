@@ -24,7 +24,7 @@ export class DevDdb {
    * Update the UserKey of a device in dynamodb
    * @param devModel device model
    */
-  async updateDev(devModel: DevModel) {
+  async updateDevUserKey(devModel: DevModel) {
     const updateExpression = "set DEV_USER_KEY = :k";
 
     const expressionAttributeValues = {
