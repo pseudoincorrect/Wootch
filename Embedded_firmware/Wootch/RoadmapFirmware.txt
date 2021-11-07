@@ -1,0 +1,38 @@
+WOOTCH-FIRMWARE ROADMAP (SUBPROJECT)
+
+-------------------------------------------------------------
+TO DO
+-------------------------------------------------------------
+Receive a notif from AWS
+Display a notification in a popup
+Put everything to sleep 
+Use push button to wake up the system
+Create a task to detect movement
+Create a python AWS-IOT simulator (for development without hardware)
+Create a mqtt request to get the current time
+create a queue for IMU message to send
+
+-------------------------------------------------------------
+IN PROGRESS                 
+-------------------------------------------------------------
+Send Accelero data to AWS
+message box does not close correctly
+
+-------------------------------------------------------------
+DONE                        
+Date        Description
+-------------------------------------------------------------
+06/12/2020  Create a queue for IMU message to send
+12/11/2020  Correct the keyboard bug when switching textarea
+12/11/2020  Share sources with LVGL simulator (for development without hardware)
+11/11/2020  Switch image with a push button
+11/11/2020  Get the SSID and Pass with Text Area
+10/11/2020  Improve the IMU lib
+09/11/2020  Store an image in Flash memory and display it
+09/11/2020  Use Gui to log with WiFi
+09/11/2020  Connect to wifi with GUI
+08/11/2020  Create a playground with IMU screen
+05/11/2020  Port on windows (codeblocks) for easier development of GUI
+04/11/2020  Draw a dot on a canva 
+03/11/2020  Create connect to WiFi screen
+02/11/2020  Initialized project with components (IMU, LVGL, AWS, WiFi)

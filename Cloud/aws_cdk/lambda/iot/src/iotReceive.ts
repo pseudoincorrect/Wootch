@@ -38,7 +38,6 @@ const devDdb = new DevDdb();
  */
 async function iotReceive(event: any, context: any) {
   console.log(JSON.stringify(event, null, 2));
-
   if (activityPattern.test(event.topic)) {
     await processActivityEvent(event as ActivityEvent);
   } else if (PairingPattern.test(event.topic)) {

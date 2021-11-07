@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 set(PROJ_SRC_DIR "../project_sources")
 set(IMG_DIR "../images")
+set(CERT_DIR "../certificates")
 
 set(PROJ_SOURCES 
         main.c
@@ -38,6 +39,7 @@ set(PROJ_INCLUDES
         "${PROJ_SRC_DIR}/aws"
         "${PROJ_SRC_DIR}/wifi"
         "${PROJ_SRC_DIR}/state"
+        "${CERT_DIR}"
 )
 
 set(PROJ_REQUIRES

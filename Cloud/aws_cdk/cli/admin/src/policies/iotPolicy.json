@@ -5,29 +5,28 @@
       "Effect": "Allow",
       "Action": "iot:Connect",
       "Resource": [
-        "arn:aws:iot:eu-west-1:AWS_ACCOUNT_ID:client/${iot:ClientId}"
+        "arn:aws:iot:eu-west-1:281859560513:client/${iot:ClientId}"
       ]
     },
     {
       "Effect": "Allow",
       "Action": "iot:Publish",
       "Resource": [
-        "arn:aws:iot:eu-west-1:AWS_ACCOUNT_ID:topic/WootchDev/device/${iot:ClientId}/data/activity",
-        "arn:aws:iot:eu-west-1:AWS_ACCOUNT_ID:topic/WootchDev/device/${iot:ClientId}/pairing/request"
+        "arn:aws:iot:eu-west-1:281859560513:topic/WootchDev/device/${iot:ClientId}*"
       ]
     },
     {
       "Effect": "Allow",
       "Action": "iot:Subscribe",
       "Resource": [
-        "arn:aws:iot:eu-west-1:AWS_ACCOUNT_ID:topicfilter/WootchDev/device/${iot:ClientId}/notification/alert"
+        "arn:aws:iot:eu-west-1:281859560513:topicfilter/WootchDev/device/${iot:ClientId}*"
       ]
     },
     {
       "Effect": "Allow",
       "Action": "iot:Receive",
       "Resource": [
-        "arn:aws:iot:eu-west-1:AWS_ACCOUNT_ID:topic/WootchDev/device/${iot:ClientId}/notification/alert"
+        "arn:aws:iot:eu-west-1:281859560513:topic/WootchDev/device/${iot:ClientId}*"
       ]
     }
   ]

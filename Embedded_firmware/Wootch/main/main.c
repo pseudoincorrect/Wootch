@@ -40,11 +40,10 @@ void app_main(void)
 
     // AWS IOT
     xTaskCreatePinnedToCore(&aws_iot_mqtt_manage_task, "aws_iot_mqtt_manage_task",
-                             9216, NULL, 5, NULL, 1);
+                            9216, NULL, 5, NULL, 1);
 
     // xTaskCreatePinnedToCore(&aws_iot_publish_1_task, "aws_iot_publish_1_task",
     //                          9216, NULL, 5, NULL, 1);
-
 
     // LVGL (Light and Versatile Graphical Library)
     // initialize GUI callbacks
@@ -54,5 +53,4 @@ void app_main(void)
     // imu_init();
 
     // xTaskCreate(imu_task, "imu_task", 1024 * 2, (void *)1, 10, NULL);
-
 }
