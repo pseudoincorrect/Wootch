@@ -21,6 +21,7 @@ set(PROJ_SOURCES
         "${PROJ_SRC_DIR}/gui/watch_screen.c"
         "${PROJ_SRC_DIR}/gui/old_gui/old_gui.c"
         "${PROJ_SRC_DIR}/state/app_state.c"
+        "${PROJ_SRC_DIR}/processing/app_processing.c"
         "${IMG_DIR}/img_watch_dog.c"
         "${IMG_DIR}/img_sleepy_dog.c"
         "${IMG_DIR}/img_play_dog.c"
@@ -38,6 +39,7 @@ set(PROJ_INCLUDES
         "${PROJ_SRC_DIR}/aws"
         "${PROJ_SRC_DIR}/wifi"
         "${PROJ_SRC_DIR}/state"
+        "${PROJ_SRC_DIR}/processing"
         "${CERT_DIR}"
 )
 

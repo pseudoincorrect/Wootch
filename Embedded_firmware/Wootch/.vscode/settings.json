@@ -12,6 +12,9 @@
         "future": "c",
         "esp_log.h": "c",
         "ft6x36.h": "c",
-        "watch_screen.h": "c"
+        "watch_screen.h": "c",
+        "freertos.h": "c",
+        "app_state.h": "c",
+        "queue.h": "c"
     }
 }

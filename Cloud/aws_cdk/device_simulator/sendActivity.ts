@@ -18,13 +18,13 @@ enum WATCH_LEVEL {
 interface ActivityMessage {
   watchLvl: string;
   maxAcc: number;
-  threshold: number;
+  accThresh: number;
 }
 
 const notifMessage: ActivityMessage = {
   watchLvl: WATCH_LEVEL.low,
   maxAcc: 0.7,
-  threshold: 0.3,
+  accThresh: 0.3,
 };
 
 /**

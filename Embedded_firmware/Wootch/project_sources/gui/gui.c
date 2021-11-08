@@ -56,7 +56,6 @@ void gui_task(void *arg)
     ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer,
                                              LV_TICK_PERIOD_MS * 1000));
 
-    // start the GUI
     init_screens();
 
     while (1)

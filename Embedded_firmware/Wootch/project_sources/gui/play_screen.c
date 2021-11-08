@@ -134,6 +134,8 @@ static void refresh_imu_canvas(imu_raw_data_t *acc)
 {
     imu_raw_data_t imu_raw_data = {0};
 
+    imu_raw_data_t *last_imu_raw_data = app_state_get_last_imu_raw_data();
+
     memcpy(&imu_raw_data, &last_imu_raw_data, sizeof(imu_raw_data_t));
 
     sqr_imu.x = -(imu_raw_data.g_x * 100 / 9000 + 100);

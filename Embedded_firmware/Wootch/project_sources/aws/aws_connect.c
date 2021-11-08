@@ -1,24 +1,17 @@
 #include "aws_connect.h"
-// STD
 #include <string.h>
-// ESP-IDF
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
 #include "freertos/task.h"
 #include "freertos/semphr.h"
-// AWS IOT
 #include "aws_iot_config.h"
 #include "aws_iot_log.h"
 #include "aws_iot_version.h"
 #include "aws_iot_mqtt_client_interface.h"
-// WIFI
 #include "esp_wifi.h"
-// MISC
 #include "app_state.h"
-// GUI
 #include "old_gui.h"
-// CERTS
 #include "dev_id.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -64,9 +57,14 @@ void create_topics(void)
     topic_notif_len = strlen(topic_notif);
 }
 
-/*******************************************************************************
- * @brief
- * @param
+/**
+ * @brief Handler for MQTT Topic "notification"
+ * 
+ * @param pClient connection client
+ * @param topicName Topic name
+ * @param topicNameLen Topic name length
+ * @param params publish parameters
+ * @param pData unused
  */
 void iot_subscribe_notif_alert_callback_handler(AWS_IoT_Client *pClient,
                                                 char *topicName, uint16_t topicNameLen,
@@ -90,19 +88,27 @@ void disconnect_callback_handler(AWS_IoT_Client *pClient, void *data)
     ESP_LOGW(TAG, "MQTT Disconnect");
     IoT_Error_t rc = FAILURE;
 
-    if (NULL == pClient)
+    if (pClient == NULL)
+    {
         return;
+    }
 
     if (aws_iot_is_autoreconnect_enabled(pClient))
+    {
         ESP_LOGI(TAG, "Auto Reconnect is enabled, Reconnecting attempt will start now");
+    }
     else
     {
         ESP_LOGW(TAG, "Auto Reconnect not enabled. Starting manual reconnect...");
         rc = aws_iot_mqtt_attempt_reconnect(pClient);
         if (NETWORK_RECONNECTED == rc)
+        {
             ESP_LOGW(TAG, "Manual Reconnect Successful");
+        }
         else
+        {
             ESP_LOGW(TAG, "Manual Reconnect Failed - %d", rc);
+        }
     }
 }
 
@@ -212,30 +218,33 @@ void mqtt_publish(void)
     params_qos0.payload = (void *)cPayload;
     params_qos0.isRetained = 0;
 
-    while ((NETWORK_ATTEMPTING_RECONNECT == rc || NETWORK_RECONNECTED == rc || SUCCESS == rc))
+    do
     {
-        //Max time the yield function will wait for read messages
         rc = aws_iot_mqtt_yield(&client, 100);
         if (rc == NETWORK_ATTEMPTING_RECONNECT)
         {
             vTaskDelay(10000 / portTICK_RATE_MS);
-            continue;
         }
+    } while (NETWORK_ATTEMPTING_RECONNECT == rc);
 
-        ESP_LOGI(TAG, "publishing a message on %s", topic_activ);
+    ESP_LOGI(TAG, "publishing a message on %s", topic_activ);
 
-        sprintf(cPayload, "{ \"device\" : \"debug1\", \"data\": \"%d\"}", pub_cnt++);
-        params_qos0.payloadLen = strlen(cPayload);
+    sprintf(cPayload, "{ \"device\" : \"debug1\", \"data\": \"%d\"}", pub_cnt++);
+    params_qos0.payloadLen = strlen(cPayload);
 
-        rc = aws_iot_mqtt_publish(&client, topic_activ, topic_activ_len, &params_qos0);
-        if (rc != SUCCESS)
-        {
-            ESP_LOGE(TAG, "publish error %d", rc);
-            abort();
-        }
-
-        vTaskDelay(10000 / portTICK_RATE_MS);
+    rc = aws_iot_mqtt_publish(&client, topic_activ, topic_activ_len, &params_qos0);
+    if (rc != SUCCESS)
+    {
+        ESP_LOGE(TAG, "publish error %d", rc);
     }
+}
+
+/**
+ * @brief infinite loop managing MQTT messages pub
+ */
+void aws_iot_mqtt_loop(void)
+{
+    ;
 }
 
 /**
@@ -265,4 +274,6 @@ void aws_iot_mqtt_manage_task(void *param)
     mqtt_publish();
 
     ESP_LOGI(TAG, "published to %s !", topic_activ);
+
+    aws_iot_mqtt_loop();
 }
