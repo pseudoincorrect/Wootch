@@ -1,46 +1,25 @@
-//#include "gui_screens.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "esp_log.h"
 #include "lvgl.h"
-//#include "freertos/FreeRTOS.h"
-//#include "freertos/queue.h"
-//#include "project_extern_variables.h"
 #include "gui_theme.h"
 #include "gui_animation.h"
 #include "start_screen.h"
 #include "watch_screen.h"
 #include "wifi_screen.h"
 
-/**********************
- *  STATIC PROTOTYPES
- **********************/
-static void home_open(void);
-static void create_home(uint32_t delay);
-static void create_settings(void);
-LV_EVENT_CB_DECLARE(setup_icon_event_cb);
-LV_EVENT_CB_DECLARE(back_to_home_event_cb);
-LV_EVENT_CB_DECLARE(icon_generic_event_cb);
-LV_EVENT_CB_DECLARE(home_setup_button_cb);
-
-/**********************
- *  GLOBAL VARIABLES
- **********************/
 lv_style_t style_box;
-lv_obj_t * scan_img;
-lv_obj_t * bg_top;
-lv_obj_t * bg_bottom;
+lv_obj_t *scan_img;
+lv_obj_t *bg_top;
+lv_obj_t *bg_bottom;
 lv_color_t bg_color_prev;
 lv_color_t bg_color_act;
 
-/**********************
- *  STATIC VARIABLES
- **********************/
-static const char * TAG = "SCREEN";
+static const char *TAG = "SCREEN";
 
-/****************************************************************************** * @brief
- * @param
+/**
+ * @brief Init the themes and starting screen 
  */
 void init_screens(void)
 {
@@ -57,10 +36,10 @@ void init_screens(void)
     bg_color_prev = GUI_BG_0;
     bg_color_act = GUI_BG_0;
 
-    lv_theme_t * th = gui_theme_init(LV_COLOR_BLACK, LV_COLOR_BLACK,
-                                     LV_THEME_MATERIAL_FLAG_DARK,
-                                     lv_theme_get_font_small(), lv_theme_get_font_normal(),
-                                     lv_theme_get_font_subtitle(), lv_theme_get_font_title());
+    lv_theme_t *th = gui_theme_init(LV_COLOR_BLACK, LV_COLOR_BLACK,
+                                    LV_THEME_MATERIAL_FLAG_DARK,
+                                    lv_theme_get_font_small(), lv_theme_get_font_normal(),
+                                    lv_theme_get_font_subtitle(), lv_theme_get_font_title());
 
     lv_theme_set_act(th);
 
@@ -81,4 +60,3 @@ void init_screens(void)
     // create_watch_screen();
     // create_wifi_screen();
 }
-

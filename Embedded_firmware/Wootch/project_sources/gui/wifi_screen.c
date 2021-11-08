@@ -10,18 +10,13 @@
 
 #define TITLE_BG_OVERFLOW (LV_VER_RES + GUI_BG_SMALL)
 
-// STATIC PROTOTYPES
 LV_EVENT_CB_DECLARE(btn_connect_cb);
 LV_EVENT_CB_DECLARE(ta_event_cb);
 LV_EVENT_CB_DECLARE(kb_event_cb);
 LV_EVENT_CB_DECLARE(return_icon_event_cb);
 
-// EXTERN VARIABLES
 LV_IMG_DECLARE(icon_left_arrow);
 
-// GLOBAL VARIABLES
-
-// STATIC VARIABLES
 static const char *TAG = "WIFI";
 static char wifi_ssid[64] = {0};
 static char wifi_pass[64] = {0};
@@ -32,6 +27,9 @@ static lv_obj_t *page_wifi;
 static lv_obj_t *btn_conn;
 static lv_obj_t *lb_conn;
 
+/**
+ * @brief Set the wifi creds object in Non Volatile Storage
+ */
 void set_wifi_creds(void)
 {
     esp_err_t err;
@@ -49,8 +47,8 @@ void set_wifi_creds(void)
     }
 }
 
-/*******************************************************************************
- * @brief
+/**
+ * @brief Create a wifi screen object
  */
 void create_wifi_screen(void)
 {
@@ -147,8 +145,9 @@ void create_wifi_screen(void)
     {
         lv_textarea_set_text(ta_ssid, "");
         lv_textarea_set_text(ta_passw, "");
-    } 
-    else {
+    }
+    else
+    {
         lv_textarea_set_text(ta_ssid, creds.ssid);
         lv_textarea_set_text(ta_passw, creds.pass);
     }
@@ -172,8 +171,8 @@ void create_wifi_screen(void)
     lv_btn_toggle(btn_conn);
 }
 
-/*******************************************************************************
- * @brief
+/**
+ * @brief Construct a new lv Button event cb declare object
  */
 LV_EVENT_CB_DECLARE(btn_connect_cb)
 {
@@ -204,8 +203,8 @@ LV_EVENT_CB_DECLARE(btn_connect_cb)
     }
 }
 
-/*******************************************************************************
- * @brief
+/**
+ * @brief Construct a new lv Text Area event cb declare object
  */
 LV_EVENT_CB_DECLARE(ta_event_cb)
 {
@@ -227,8 +226,8 @@ LV_EVENT_CB_DECLARE(ta_event_cb)
     }
 }
 
-/*******************************************************************************
- * @brief
+/**
+ * @brief Construct a new lv Keyboard event cb declare object
  */
 LV_EVENT_CB_DECLARE(kb_event_cb)
 {
@@ -246,8 +245,8 @@ LV_EVENT_CB_DECLARE(kb_event_cb)
     }
 }
 
-/*******************************************************************************
- * @brief
+/**
+ * @brief Construct a new lv Icon event cb declare object
  */
 LV_EVENT_CB_DECLARE(return_icon_event_cb)
 {

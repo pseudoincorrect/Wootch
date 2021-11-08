@@ -42,8 +42,27 @@ uint32_t port = AWS_IOT_MQTT_PORT;
 // ESP LOG TAG
 static const char *TAG = "AWS_CON";
 // Topics
-char TOPIC_NOTIF[128];
-char TOPIC_ACTIV[128];
+char topic_notif[128];
+int topic_notif_len;
+char topic_activ[128];
+int topic_activ_len;
+char topic_pairing[128];
+int topic_pairing_len;
+
+/**
+ * @brief Create the MQTT topic string
+ */
+void create_topics(void)
+{
+    sprintf(topic_activ, "WootchDev/device/%s/data/activity", AWS_THING_NAME);
+    topic_activ_len = strlen(topic_activ);
+
+    sprintf(topic_pairing, "WootchDev/device/%s/pairing/request", AWS_THING_NAME);
+    topic_pairing_len = strlen(topic_pairing);
+
+    sprintf(topic_notif, "WootchDev/device/%s/notification/alert", AWS_THING_NAME);
+    topic_notif_len = strlen(topic_notif);
+}
 
 /*******************************************************************************
  * @brief
@@ -60,9 +79,11 @@ void iot_subscribe_notif_alert_callback_handler(AWS_IoT_Client *pClient,
     // display_alert();
 }
 
-/*******************************************************************************
- * @brief
- * @param
+/**
+ * @brief Disconnect from AWS MQTT
+ * 
+ * @param pClient AWS IoT client
+ * @param data Unused
  */
 void disconnect_callback_handler(AWS_IoT_Client *pClient, void *data)
 {
@@ -85,16 +106,11 @@ void disconnect_callback_handler(AWS_IoT_Client *pClient, void *data)
     }
 }
 
-/******************************************************************************/
-/******************************************************************************/
-/******************************************************************************/
-
 AWS_IoT_Client client;
 IoT_Client_Init_Params mqtt_init_params;
 
-/*******************************************************************************
- * @brief
- * @param
+/**
+ * @brief init MQTT connection to AWS 
  */
 void mqtt_init(void)
 {
@@ -122,9 +138,8 @@ void mqtt_init(void)
     }
 }
 
-/*******************************************************************************
- * @brief
- * @param
+/**
+ * @brief Connect to AWS MQTT broker
  */
 void mqtt_connect(void)
 {
@@ -159,21 +174,17 @@ void mqtt_connect(void)
     }
 }
 
-/*******************************************************************************
- * @brief
- * @param
+/**
+ * @brief Subscribe to the "Notification" MQTT topic
  */
 void mqtt_subscribe_notification(void)
 {
     IoT_Error_t rc = FAILURE;
 
-    sprintf(TOPIC_NOTIF, "WootchDev/device/%s/notification/alert", AWS_THING_NAME);
-    const int TOPIC_NOTIF_LEN = strlen(TOPIC_NOTIF);
+    ESP_LOGI(TAG, "topic_notif     : %s", topic_notif);
+    ESP_LOGI(TAG, "topic_notif_len : %d", topic_notif_len);
 
-    ESP_LOGI(TAG, "TOPIC_NOTIF     : %s", TOPIC_NOTIF);
-    ESP_LOGI(TAG, "TOPIC_NOTIF_LEN : %d", TOPIC_NOTIF_LEN);
-
-    rc = aws_iot_mqtt_subscribe(&client, TOPIC_NOTIF, TOPIC_NOTIF_LEN, QOS0,
+    rc = aws_iot_mqtt_subscribe(&client, topic_notif, topic_notif_len, QOS0,
                                 iot_subscribe_notif_alert_callback_handler,
                                 NULL);
     if (SUCCESS != rc)
@@ -186,9 +197,8 @@ void mqtt_subscribe_notification(void)
     ESP_LOGI(TAG, "Subscribed to alert notifs...");
 }
 
-/*******************************************************************************
- * @brief
- * @param
+/**
+ * @brief Publish on the "Activity" MQTT topic
  */
 void mqtt_publish(void)
 {
@@ -197,9 +207,6 @@ void mqtt_publish(void)
     IoT_Publish_Message_Params params_qos0;
     IoT_Publish_Message_Params params_qos1;
     int32_t pub_cnt = 0;
-
-    sprintf(TOPIC_ACTIV, "WootchDev/device/%s/data/activity", AWS_THING_NAME);
-    const int TOPIC_ACTIV_LEN = strlen(TOPIC_ACTIV);
 
     params_qos0.qos = QOS0;
     params_qos0.payload = (void *)cPayload;
@@ -215,12 +222,12 @@ void mqtt_publish(void)
             continue;
         }
 
-        ESP_LOGI(TAG, "publishing a message on %s", TOPIC_ACTIV);
+        ESP_LOGI(TAG, "publishing a message on %s", topic_activ);
 
         sprintf(cPayload, "{ \"device\" : \"debug1\", \"data\": \"%d\"}", pub_cnt++);
         params_qos0.payloadLen = strlen(cPayload);
 
-        rc = aws_iot_mqtt_publish(&client, TOPIC_ACTIV, TOPIC_ACTIV_LEN, &params_qos0);
+        rc = aws_iot_mqtt_publish(&client, topic_activ, topic_activ_len, &params_qos0);
         if (rc != SUCCESS)
         {
             ESP_LOGE(TAG, "publish error %d", rc);
@@ -231,9 +238,10 @@ void mqtt_publish(void)
     }
 }
 
-/*******************************************************************************
- * @brief
- * @param
+/**
+ * @brief Main task for initiating and managing AWS MQTT
+ * 
+ * @param param unused but needed by FreeRTOS
  */
 void aws_iot_mqtt_manage_task(void *param)
 {
@@ -252,17 +260,9 @@ void aws_iot_mqtt_manage_task(void *param)
 
     mqtt_subscribe_notification();
 
-    ESP_LOGI(TAG, "subscribed to %s !", TOPIC_NOTIF);
+    ESP_LOGI(TAG, "subscribed to %s !", topic_notif);
 
     mqtt_publish();
 
-    ESP_LOGI(TAG, "published to %s !", TOPIC_ACTIV);
-}
-
-/*******************************************************************************
- * @brief
- * @param
- */
-void aws_iot_publish_1_task(void *param)
-{
+    ESP_LOGI(TAG, "published to %s !", topic_activ);
 }

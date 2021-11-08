@@ -6,40 +6,33 @@
 #include "esp_log.h"
 
 #define TITLE_BG_OVERFLOW (LV_VER_RES + GUI_BG_SMALL)
-
-#define DOG_SLEEP  0
+#define DOG_SLEEP 0
 #define DOG_NORMAL 1
-#define DOG_WATCH  2
+#define DOG_WATCH 2
 
-// STATIC PROTOTYPES
 LV_EVENT_CB_DECLARE(slider_event_cb);
 LV_EVENT_CB_DECLARE(return_icon_event_cb);
 
-// EXTERN VARIABLES
 LV_IMG_DECLARE(img_sleepy_dog);
 LV_IMG_DECLARE(img_normal_dog);
 LV_IMG_DECLARE(img_watch_dog);
 LV_IMG_DECLARE(icon_left_arrow);
 
-// GLOBAL VARIABLES
-
-// STATIC VARIABLES
-static const char* TAG = "WATCH";
-static lv_obj_t * page_watch;
-static lv_obj_t * cont_dog;
-static lv_obj_t * img_dog;
+static const char *TAG = "WATCH";
+static lv_obj_t *page_watch;
+static lv_obj_t *cont_dog;
+static lv_obj_t *img_dog;
 static uint8_t on_watch;
 
-/*******************************************************************************
- * @brief
- * @param
+/**
+ * @brief Create a watch screen object
  */
 void create_watch_screen(void)
 {
     gui_anim_out_all(lv_scr_act(), GUI_ANIM_FAST);
     gui_anim_bg(GUI_ANIM_FAST, GUI_ACCENT_BG_1, GUI_BG_NORMAL);
 
-    lv_obj_t * title = lv_label_create(lv_scr_act(), NULL);
+    lv_obj_t *title = lv_label_create(lv_scr_act(), NULL);
     lv_label_set_text(title, "On Wootch !");
     lv_obj_set_style_local_text_color(
         title, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, GUI_ACCENT_FG_1);
@@ -49,7 +42,7 @@ void create_watch_screen(void)
     gui_anim_in(title, GUI_ANIM_SLOW);
 
     // Return Button/Icon
-    lv_obj_t * btn_ret = lv_btn_create(lv_scr_act(), NULL);
+    lv_obj_t *btn_ret = lv_btn_create(lv_scr_act(), NULL);
     lv_obj_set_event_cb(btn_ret, return_icon_event_cb);
     // lv_btn_set_fit2(btn_ret, LV_FIT_NONE, LV_FIT_TIGHT);
     lv_obj_set_width(btn_ret, 40);
@@ -59,7 +52,7 @@ void create_watch_screen(void)
     lv_obj_align(btn_ret, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
     lv_obj_set_style_local_bg_color(
         btn_ret, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, GUI_ACCENT_BG_1);
-    lv_obj_t * img_left = lv_img_create(btn_ret, NULL);
+    lv_obj_t *img_left = lv_img_create(btn_ret, NULL);
     lv_img_set_src(img_left, &icon_left_arrow);
     lv_img_set_antialias(img_left, false);
     lv_obj_set_width(img_left, icon_left_arrow.header.w);
@@ -67,7 +60,7 @@ void create_watch_screen(void)
     lv_obj_align(img_left, NULL, LV_ALIGN_CENTER, 0, 0);
 
     // Main container
-    lv_obj_t * cont_watch = lv_cont_create(lv_scr_act(), NULL);
+    lv_obj_t *cont_watch = lv_cont_create(lv_scr_act(), NULL);
     lv_obj_set_style_local_bg_color(
         cont_watch, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, GUI_BG_2);
     lv_obj_set_width(cont_watch, 300);
@@ -92,7 +85,7 @@ void create_watch_screen(void)
         img_dog, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, true);
 
     // Slider
-    lv_obj_t * slider = lv_slider_create(cont_watch, NULL);
+    lv_obj_t *slider = lv_slider_create(cont_watch, NULL);
     lv_slider_set_value(slider, 0, LV_ANIM_OFF);
     lv_obj_set_width(slider, 250);
     lv_obj_set_event_cb(slider, slider_event_cb);
@@ -100,12 +93,14 @@ void create_watch_screen(void)
         slider, LV_SLIDER_PART_BG, LV_STATE_DEFAULT, LV_DPX(25));
 }
 
-
+/**
+ * @brief Construct a new lv Slider event cb declare object
+ */
 LV_EVENT_CB_DECLARE(slider_event_cb)
 {
-    if(e == LV_EVENT_VALUE_CHANGED)
+    if (e == LV_EVENT_VALUE_CHANGED)
     {
-        if(lv_slider_get_type(obj) == LV_SLIDER_TYPE_NORMAL)
+        if (lv_slider_get_type(obj) == LV_SLIDER_TYPE_NORMAL)
         {
             int16_t val = lv_slider_get_value(obj);
             if (val < 33)
@@ -132,16 +127,13 @@ LV_EVENT_CB_DECLARE(slider_event_cb)
     }
 }
 
-/*******************************************************************************
- * @brief
- * @param
+/**
+ * @brief Construct a new lv Icon event cb declare object
  */
 LV_EVENT_CB_DECLARE(return_icon_event_cb)
 {
-    if(e == LV_EVENT_CLICKED)
+    if (e == LV_EVENT_CLICKED)
     {
         create_account_screen();
     }
 }
-
-

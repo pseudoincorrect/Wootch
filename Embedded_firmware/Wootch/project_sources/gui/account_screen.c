@@ -7,30 +7,23 @@
 
 #define TITLE_BG_OVERFLOW (LV_VER_RES + GUI_BG_SMALL)
 
-// STATIC PROTOTYPES
 LV_EVENT_CB_DECLARE(btn_connect_cb);
 LV_EVENT_CB_DECLARE(ta_event_cb);
 LV_EVENT_CB_DECLARE(kb_event_cb);
 LV_EVENT_CB_DECLARE(return_icon_event_cb);
 
-// EXTERN VARIABLES
 LV_IMG_DECLARE(icon_left_arrow);
 
-// GLOBAL VARIABLES
-
-// STATIC VARIABLES
 static const char *TAG = "ACCOUNT";
-
 static char account_login[32] = {0};
 static char account_passw[32] = {0};
-static lv_obj_t * kb;
-static lv_obj_t * ta_login;
-static lv_obj_t * ta_passw;
-static lv_obj_t * page_account;
+static lv_obj_t *kb;
+static lv_obj_t *ta_login;
+static lv_obj_t *ta_passw;
+static lv_obj_t *page_account;
 
-/*******************************************************************************
- * @brief
- * @param
+/**
+ * @brief Create a account screen object
  */
 void create_account_screen(void)
 {
@@ -39,7 +32,7 @@ void create_account_screen(void)
     gui_anim_bg(GUI_ANIM_FAST, GUI_ACCENT_BG_1, GUI_BG_SMALL);
 
     // Title
-    lv_obj_t * title = lv_label_create(lv_scr_act(), NULL);
+    lv_obj_t *title = lv_label_create(lv_scr_act(), NULL);
     lv_label_set_text(title, "Wootch Account");
     lv_obj_set_style_local_text_color(
         title, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, GUI_ACCENT_FG_1);
@@ -49,7 +42,7 @@ void create_account_screen(void)
     gui_anim_in(title, GUI_ANIM_SLOW);
 
     // Return Button/Icon
-    lv_obj_t * btn_ret = lv_btn_create(lv_scr_act(), NULL);
+    lv_obj_t *btn_ret = lv_btn_create(lv_scr_act(), NULL);
     lv_obj_set_event_cb(btn_ret, return_icon_event_cb);
     // lv_btn_set_fit2(btn_ret, LV_FIT_NONE, LV_FIT_TIGHT);
     lv_obj_set_width(btn_ret, 40);
@@ -59,7 +52,7 @@ void create_account_screen(void)
     lv_obj_align(btn_ret, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
     lv_obj_set_style_local_bg_color(
         btn_ret, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, GUI_ACCENT_BG_1);
-    lv_obj_t * img_left = lv_img_create(btn_ret, NULL);
+    lv_obj_t *img_left = lv_img_create(btn_ret, NULL);
     lv_img_set_src(img_left, &icon_left_arrow);
     lv_img_set_antialias(img_left, false);
     lv_obj_set_width(img_left, icon_left_arrow.header.w);
@@ -80,7 +73,7 @@ void create_account_screen(void)
 
     // SSID
     // Container SSID
-    lv_obj_t * cont_login = lv_cont_create(page_account, NULL);
+    lv_obj_t *cont_login = lv_cont_create(page_account, NULL);
     lv_cont_set_layout(cont_login, LV_LAYOUT_CENTER);
     lv_obj_set_drag_parent(cont_login, true);
     // lv_cont_set_fit(cont_login, LV_FIT_NONE);
@@ -101,7 +94,7 @@ void create_account_screen(void)
 
     // PASSWORD
     // Container PASSWORD
-    lv_obj_t * cont_passwd = lv_cont_create(page_account, NULL);
+    lv_obj_t *cont_passwd = lv_cont_create(page_account, NULL);
     lv_cont_set_layout(cont_passwd, LV_LAYOUT_CENTER);
     lv_obj_set_drag_parent(cont_passwd, true);
     // lv_cont_set_fit(cont_passwd, LV_FIT_NONE);
@@ -121,41 +114,40 @@ void create_account_screen(void)
     // lv_textarea_set_text(ta_passw, "notmyrealpassword"); // please hack me (^_^')
 
     // Connect Button
-    lv_obj_t * btn_conn = lv_btn_create(page_account, NULL);
+    lv_obj_t *btn_conn = lv_btn_create(page_account, NULL);
     lv_obj_set_event_cb(btn_conn, btn_connect_cb);
     // lv_btn_set_fit2(btn_conn, LV_FIT_NONE, LV_FIT_TIGHT);
     lv_obj_set_width(btn_conn, 100);
     lv_obj_set_height(btn_conn, 40);
-    lv_obj_t * lb_conn = lv_label_create(btn_conn, NULL);
+    lv_obj_t *lb_conn = lv_label_create(btn_conn, NULL);
     lv_label_set_text(lb_conn, "Connect");
     lv_obj_set_drag_parent(btn_conn, true);
     lv_btn_toggle(btn_conn);
 }
 
-/*******************************************************************************
- * @brief
- * @param
+/**
+ * @brief Construct a new lv Button event cb declare object
+ * 
  */
 LV_EVENT_CB_DECLARE(btn_connect_cb)
 {
-    if(e == LV_EVENT_CLICKED)
+    if (e == LV_EVENT_CLICKED)
     {
-        const char* login = lv_textarea_get_text(ta_login);
-        const char* pass = lv_textarea_get_text(ta_passw);
+        const char *login = lv_textarea_get_text(ta_login);
+        const char *pass = lv_textarea_get_text(ta_passw);
         // screen_cb.account_connect((char*) login, (char*) pass);
         create_watch_screen();
     }
 }
 
-/*******************************************************************************
- * @brief
- * @param
+/**
+ * @brief Construct a new lv Text Area event cb declare object 
  */
 LV_EVENT_CB_DECLARE(ta_event_cb)
 {
-    if(e == LV_EVENT_RELEASED)
+    if (e == LV_EVENT_RELEASED)
     {
-        if(kb == NULL)
+        if (kb == NULL)
         {
             lv_coord_t h = lv_obj_get_height(page_account);
             lv_obj_set_height(page_account, LV_VER_RES / 2 - TITLE_BG_OVERFLOW);
@@ -165,23 +157,22 @@ LV_EVENT_CB_DECLARE(ta_event_cb)
         lv_textarea_set_cursor_hidden(obj, false);
         lv_keyboard_set_textarea(kb, obj);
     }
-    else if(e == LV_EVENT_DEFOCUSED)
+    else if (e == LV_EVENT_DEFOCUSED)
     {
         lv_textarea_set_cursor_hidden(obj, true);
     }
 }
 
-/*******************************************************************************
- * @brief
- * @param
+/**
+ * @brief Construct a new lv Keyboard event cb declare object
  */
 LV_EVENT_CB_DECLARE(kb_event_cb)
 {
     lv_keyboard_def_event_cb(kb, e);
 
-    if(e == LV_EVENT_CANCEL || e == LV_EVENT_APPLY)
+    if (e == LV_EVENT_CANCEL || e == LV_EVENT_APPLY)
     {
-        if(kb)
+        if (kb)
         {
             lv_coord_t h = lv_obj_get_height(page_account);
             lv_obj_set_height(page_account, -GUI_BG_SMALL);
@@ -191,16 +182,13 @@ LV_EVENT_CB_DECLARE(kb_event_cb)
     }
 }
 
-/*******************************************************************************
- * @brief
- * @param
+/**
+ * @brief Construct a new lv Icon event cb declare object
  */
 LV_EVENT_CB_DECLARE(return_icon_event_cb)
 {
-    if(e == LV_EVENT_CLICKED)
+    if (e == LV_EVENT_CLICKED)
     {
         create_wifi_screen();
     }
 }
-
-

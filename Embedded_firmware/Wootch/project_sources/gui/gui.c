@@ -9,27 +9,21 @@
 #include "lvgl_helpers.h"
 #include "screens.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// DEFINES
 #define LV_TICK_PERIOD_MS 1
 
-////////////////////////////////////////////////////////////////////////////////
-// GLOBAL VARIABLES
-// LVGL (Light and Versatile Graphical Library)
 SemaphoreHandle_t xGuiSemaphore;
 
-////////////////////////////////////////////////////////////////////////////////
-// FUNCTION PROTOTYPES
 static void lv_tick_task(void *arg);
 static const char *TAG = "GUI";
 
-/*******************************************************************************
- * @brief
- * @param
+/**
+ * @brief Main GUI task
+ * 
+ * @param arg  unused but needed by FreeRTOS
  */
 void gui_task(void *arg)
 {
-    (void) arg;
+    (void)arg;
     xGuiSemaphore = xSemaphoreCreateMutex();
     lv_init();
     /* Initialize SPI or I2C bus used by the drivers */
@@ -54,14 +48,13 @@ void gui_task(void *arg)
     lv_indev_drv_register(&indev_drv);
     /* Create and start a periodic timer interrupt to call lv_tick_inc */
     const esp_timer_create_args_t periodic_timer_args =
-    {
-        .callback = &lv_tick_task,
-        .name = "periodic_gui"
-    };
+        {
+            .callback = &lv_tick_task,
+            .name = "periodic_gui"};
     esp_timer_handle_t periodic_timer;
     ESP_ERROR_CHECK(esp_timer_create(&periodic_timer_args, &periodic_timer));
     ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer,
-                    LV_TICK_PERIOD_MS * 1000));
+                                             LV_TICK_PERIOD_MS * 1000));
 
     // start the GUI
     init_screens();
@@ -82,12 +75,13 @@ void gui_task(void *arg)
     vTaskDelete(NULL);
 }
 
-/*******************************************************************************
- * @brief
- * @param
+/**
+ * @brief LV Tick increase for realtime operation
+ * 
+ * @param arg unused but needed by FreeRTOS
  */
 static void lv_tick_task(void *arg)
 {
-    (void) arg;
+    (void)arg;
     lv_tick_inc(LV_TICK_PERIOD_MS);
 }

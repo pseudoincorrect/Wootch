@@ -4,12 +4,12 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:/Users/maxim/Programming/SDKs/Espressif/terminal/esp-idf/components/**"
+                "C:/Users/maxim/Prog/SDKs/ESP-IDF/SDK/components/**"
             ],
             "browse": {
                 "path": [
                 "${workspaceFolder}/**",
-                "C:/Users/maxim/Programming/SDKs/Espressif/terminal/esp-idf/components/**"
+                "C:/Users/maxim/Prog/SDKs/ESP-IDF/SDK/components/**"
                 ]
             },
             "defines": [
@@ -18,7 +18,7 @@
                 "_UNICODE",
                 "CONFIG_LV_USE_DEMO_WIDGETS"
             ],
-            "compilerPath": "C:\\ProgramNoSpace\\mingw-w64\\x86_64-8.1.0-posix-seh-rt_v6-rev0\\mingw64\\bin\\gcc.exe",
+            "compilerPath": "",
             "cStandard": "gnu17",
             "cppStandard": "gnu++14",
             "intelliSenseMode": "gcc-x64"
