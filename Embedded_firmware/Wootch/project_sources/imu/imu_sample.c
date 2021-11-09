@@ -70,8 +70,8 @@ void imu_init(void)
 void imu_task(void *arg)
 {
     esp_err_t err;
-    raw_axes_t accel_raw; // x, y, z axes as int16
-    raw_axes_t gyro_raw;  // x, y, z axes as int16
+    raw_axes_t accel_raw;
+    raw_axes_t gyro_raw;
 
     while (true)
     {

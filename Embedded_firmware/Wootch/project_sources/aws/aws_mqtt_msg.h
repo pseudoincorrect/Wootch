@@ -1,21 +1,28 @@
 #ifndef __awq_mqtt_types_h__
 #define __awq_mqtt_types_h__
 
+#include "esp_err.h"
+
 typedef struct activity_msg_struct
 {
     int watchLvl;
     int maxAcc;
     int accThresh;
+    int maxRot;
+    int rotThresh;
 } activity_msg_t;
 
 typedef struct pairing_msg_struct
 {
-    char buff[6];
+    char secret[6];
 } pairing_msg_t;
 
 typedef struct notification_msg_struct
 {
-    char buff[128];
+    char text[128];
 } notification_msg_t;
+
+esp_err_t activity_msg_to_json_string(activity_msg_t *msg, char *buff, int buff_size);
+esp_err_t pairing_msg_to_json_string(pairing_msg_t *msg, char *buff, int buff_size);
 
 #endif
