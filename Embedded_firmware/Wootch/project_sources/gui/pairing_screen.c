@@ -4,11 +4,12 @@
 #include "watch_screen.h"
 #include "wifi_screen.h"
 #include "esp_log.h"
+#include "app_state.h"
 
 #define TITLE_BG_OVERFLOW (LV_VER_RES + GUI_BG_SMALL)
+#define SECRET_SIZE 6
 
 LV_EVENT_CB_DECLARE(btn_pair_cb);
-LV_EVENT_CB_DECLARE(btn_unpair_cb);
 LV_EVENT_CB_DECLARE(btn_continue_cb);
 LV_EVENT_CB_DECLARE(return_icon_event_cb);
 
@@ -46,7 +47,6 @@ void create_pairing_screen(void)
     // Return Button/Icon
     lv_obj_t *btn_ret = lv_btn_create(lv_scr_act(), NULL);
     lv_obj_set_event_cb(btn_ret, return_icon_event_cb);
-    // lv_btn_set_fit2(btn_ret, LV_FIT_NONE, LV_FIT_TIGHT);
     lv_obj_set_width(btn_ret, 40);
     lv_obj_set_height(btn_ret, 40);
     lv_obj_set_click(btn_ret, true);
@@ -73,42 +73,41 @@ void create_pairing_screen(void)
         page_account, LV_PAGE_PART_SCROLLABLE, LV_STATE_DEFAULT, 10);
     gui_anim_in(page_account, GUI_ANIM_SLOW);
 
-    // PAIRING
-    // Container PAIRING
+    // Pairing
+    // Container Pairing
     cont_pairing = lv_cont_create(page_account, NULL);
     lv_cont_set_layout(cont_pairing, LV_LAYOUT_CENTER);
     lv_obj_set_drag_parent(cont_pairing, true);
     lv_obj_set_height(cont_pairing, 40);
     lv_obj_set_width(cont_pairing, 200);
     lv_theme_apply(cont_pairing, (lv_theme_style_t)GUI_THEME_BOX_BORDER);
-    // Text area PAIRING
+    // Text area Pairing
     ta_pairing = lv_textarea_create(cont_pairing, NULL);
     lv_obj_set_width(ta_pairing, 180);
-    lv_textarea_set_text(ta_pairing, "");
     lv_textarea_set_one_line(ta_pairing, true);
     lv_textarea_set_cursor_hidden(ta_pairing, true);
     lv_theme_apply(ta_pairing, (lv_theme_style_t)LV_THEME_CONT);
     lv_textarea_set_text_align(ta_pairing, LV_LABEL_ALIGN_CENTER);
     lv_textarea_set_text(ta_pairing, " ");
+    lv_obj_set_hidden(cont_pairing, true);
 
-    // USER
-    // Container USER
+    // User
+    // Container User
     cont_user = lv_cont_create(page_account, NULL);
     lv_cont_set_layout(cont_user, LV_LAYOUT_CENTER);
     lv_obj_set_drag_parent(cont_user, true);
     lv_obj_set_height(cont_user, 40);
     lv_obj_set_width(cont_user, 200);
     lv_theme_apply(cont_user, (lv_theme_style_t)GUI_THEME_BOX_BORDER);
-    // Text area USER
+    // Text area User
     ta_user = lv_textarea_create(cont_user, NULL);
     lv_obj_set_width(ta_user, 180);
-    lv_textarea_set_text(ta_user, "");
     lv_textarea_set_one_line(ta_user, true);
     lv_theme_apply(ta_user, (lv_theme_style_t)LV_THEME_CONT);
     lv_textarea_set_text_align(ta_user, LV_LABEL_ALIGN_CENTER);
     lv_textarea_set_text(ta_user, "No user paired");
-    lv_obj_set_hidden(cont_pairing, true);
 
+    // Button container
     lv_obj_t *cont_buttons = lv_cont_create(page_account, NULL);
     lv_obj_set_width(cont_buttons, 300);
     lv_obj_set_height(cont_buttons, 70);
@@ -126,16 +125,6 @@ void create_pairing_screen(void)
     lv_obj_t *lb_pair = lv_label_create(btn_pair, NULL);
     lv_label_set_text(lb_pair, "Pair");
 
-    // Unpair Button
-    lv_obj_t *btn_unpair = lv_btn_create(cont_buttons, NULL);
-    lv_obj_set_event_cb(btn_unpair, btn_unpair_cb);
-    lv_obj_set_width(btn_unpair, 90);
-    lv_obj_set_height(btn_unpair, 40);
-    lv_obj_set_drag_parent(btn_unpair, true);
-    lv_btn_toggle(btn_unpair);
-    lv_obj_t *lb_unpair = lv_label_create(btn_unpair, NULL);
-    lv_label_set_text(lb_unpair, "Unpair");
-
     // Continue Button
     lv_obj_t *btn_continue = lv_btn_create(cont_buttons, NULL);
     lv_obj_set_event_cb(btn_continue, btn_continue_cb);
@@ -148,31 +137,26 @@ void create_pairing_screen(void)
 }
 
 /**
- * @brief Construct a new lv Button event cb declare object
+ * @brief Pairing Button event callback
  */
 LV_EVENT_CB_DECLARE(btn_pair_cb)
 {
     if (e == LV_EVENT_CLICKED)
     {
+        char secret[SECRET_SIZE + 1];
         lv_obj_set_hidden(cont_pairing, false);
-        lv_obj_set_hidden(cont_user, true);
+        esp_err_t err = app_state_start_pairing(secret);
+        if (err)
+        {
+            return;
+        }
+        secret[SECRET_SIZE] = '\0'; // null terminator
+        lv_textarea_set_text(ta_pairing, secret);
     }
 }
 
 /**
- * @brief Construct a new lv Button event cb declare object
- */
-LV_EVENT_CB_DECLARE(btn_unpair_cb)
-{
-    if (e == LV_EVENT_CLICKED)
-    {
-        lv_obj_set_hidden(cont_pairing, true);
-        lv_obj_set_hidden(cont_user, false);
-    }
-}
-
-/**
- * @brief Construct a new lv Button event cb declare object
+ * @brief Continue Button event callback
  */
 LV_EVENT_CB_DECLARE(btn_continue_cb)
 {
@@ -183,7 +167,7 @@ LV_EVENT_CB_DECLARE(btn_continue_cb)
 }
 
 /**
- * @brief Construct a new lv Icon event cb declare object
+ * @brief Back Icon event callback
  */
 LV_EVENT_CB_DECLARE(return_icon_event_cb)
 {

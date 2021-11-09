@@ -28,6 +28,7 @@ extern const uint8_t private_pem_key_end[] asm("_binary_private_pem_key_end");
 static char HostAddress[255] = AWS_IOT_MQTT_HOST;
 static uint32_t port = AWS_IOT_MQTT_PORT;
 static QueueHandle_t *activity_queue;
+static QueueHandle_t *pairing_queue;
 
 static char topic_notif[128];
 static int topic_notif_len;
@@ -35,6 +36,8 @@ static char topic_activ[128];
 static int topic_activ_len;
 static char topic_pairing[128];
 static int topic_pairing_len;
+
+static char mqtt_msg_buffer[MQTT_MSG_BUFFER_SIZE];
 
 /**
  * @brief Create the MQTT topic string
@@ -234,19 +237,87 @@ void mqtt_publish(void)
 }
 
 /**
+ * @brief Set the mqtt buffer to 0s
+ */
+void reset_mqtt_buffer(void)
+{
+    memset(mqtt_msg_buffer, 0, sizeof(char) * MQTT_MSG_BUFFER_SIZE);
+}
+
+/**
+ * @brief Check the activity msg queue and publish pairing request if any
+ */
+void activity_publishing_process(void)
+{
+    IoT_Error_t err = SUCCESS;
+    activity_msg_t activity_msg;
+
+    err = xQueueReceive(*activity_queue, &activity_msg, 0);
+
+    if (err)
+    {
+        IoT_Publish_Message_Params params;
+        params.qos = QOS0;
+        params.payload = (void *)mqtt_msg_buffer;
+        params.isRetained = 0;
+
+        reset_mqtt_buffer();
+        activity_msg_to_json_string(&activity_msg, mqtt_msg_buffer, MQTT_MSG_BUFFER_SIZE);
+
+        params.payloadLen = strlen(mqtt_msg_buffer);
+
+        err = aws_iot_mqtt_publish(&client, topic_activ, topic_activ_len, &params);
+        if (err != SUCCESS)
+        {
+            ESP_LOGE(TAG, "activity publish error %d", err);
+        }
+        else
+        {
+            ESP_LOGI(TAG, "activity published: %s", mqtt_msg_buffer);
+        }
+    }
+}
+
+/**
+ * @brief Check the pairing msg queue and publish pairing request if any
+ */
+void pairing_publishing_process(void)
+{
+    IoT_Error_t err = SUCCESS;
+    pairing_msg_t pairing_msg;
+
+    err = xQueueReceive(*pairing_queue, &pairing_msg, 0);
+
+    if (err)
+    {
+        IoT_Publish_Message_Params params;
+        params.qos = QOS0;
+        params.payload = (void *)mqtt_msg_buffer;
+        params.isRetained = 0;
+
+        reset_mqtt_buffer();
+        pairing_msg_to_json_string(&pairing_msg, mqtt_msg_buffer, MQTT_MSG_BUFFER_SIZE);
+
+        params.payloadLen = strlen(mqtt_msg_buffer);
+
+        err = aws_iot_mqtt_publish(&client, topic_pairing, topic_pairing_len, &params);
+        if (err != SUCCESS)
+        {
+            ESP_LOGE(TAG, "pairing publish error %d", err);
+        }
+        else
+        {
+            ESP_LOGI(TAG, "pairing published: %s", mqtt_msg_buffer);
+        }
+    }
+}
+
+/**
  * @brief infinite loop managing MQTT messages pub
  */
 void aws_iot_mqtt_loop(void)
 {
     IoT_Error_t err = SUCCESS;
-    char mqtt_msg_buffer[MQTT_MSG_BUFFER_SIZE];
-    IoT_Publish_Message_Params params;
-    int32_t pub_cnt = 0;
-    activity_msg_t activity_msg;
-
-    params.qos = QOS0;
-    params.payload = (void *)mqtt_msg_buffer;
-    params.isRetained = 0;
 
     while ((NETWORK_ATTEMPTING_RECONNECT == err || NETWORK_RECONNECTED == err || SUCCESS == err))
     {
@@ -257,24 +328,8 @@ void aws_iot_mqtt_loop(void)
             continue;
         }
 
-        err = xQueueReceive(*activity_queue, &activity_msg, 0);
-
-        if (err)
-        {
-            activity_msg_to_json_string(&activity_msg, mqtt_msg_buffer, MQTT_MSG_BUFFER_SIZE);
-
-            params.payloadLen = strlen(mqtt_msg_buffer);
-
-            err = aws_iot_mqtt_publish(&client, topic_activ, topic_activ_len, &params);
-            if (err != SUCCESS)
-            {
-                ESP_LOGE(TAG, "publish error %d", err);
-            }
-            else
-            {
-                ESP_LOGI(TAG, "published: %s", mqtt_msg_buffer);
-            }
-        }
+        activity_publishing_process();
+        pairing_publishing_process();
 
         vTaskDelay(10000 / portTICK_RATE_MS);
     }
@@ -288,6 +343,8 @@ void aws_iot_mqtt_loop(void)
 void aws_iot_mqtt_manage_task(void *param)
 {
     activity_queue = app_state_get_aws_mqtt_activity_queue();
+    pairing_queue = app_state_get_aws_mqtt_pairing_queue();
+
     create_topics();
 
     mqtt_init();

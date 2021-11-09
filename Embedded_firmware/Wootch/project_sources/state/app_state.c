@@ -12,6 +12,7 @@ static security_lvl_t security_lvl;
 static int acceleration_thresh;
 static QueueHandle_t imu_queue;
 static QueueHandle_t aws_mqtt_activity_queue;
+static QueueHandle_t aws_mqtt_pairing_queue;
 static imu_raw_data_t last_imu_raw_data;
 
 /**
@@ -21,6 +22,7 @@ void app_state_init(void)
 {
     imu_queue = xQueueCreate(50, sizeof(imu_raw_data_t));
     aws_mqtt_activity_queue = xQueueCreate(10, sizeof(activity_msg_t));
+    aws_mqtt_pairing_queue = xQueueCreate(1, sizeof(pairing_msg_t));
     wifi_connected = false;
     security_lvl = SECU_LVL_1;
     acceleration_thresh = 1000;
@@ -92,6 +94,16 @@ QueueHandle_t *app_state_get_imu_queue(void)
 }
 
 /**
+ * @brief Get the AWS MQTT Pairing topic msg queue
+ * 
+ * @return QueueHandle_t* AWS MQTT pairing queue handle
+ */
+QueueHandle_t *app_state_get_aws_mqtt_pairing_queue(void)
+{
+    return &aws_mqtt_pairing_queue;
+}
+
+/**
  * @brief Get the AWS MQTT Activity topic msg queue
  * 
  * @return QueueHandle_t* AWS MQTT activity queue handle
@@ -119,4 +131,22 @@ security_lvl_t app_state_get_security_lvl(void)
 void app_state_set_security_lvl(security_lvl_t lvl)
 {
     security_lvl = lvl;
+}
+
+/**
+ * @brief Create a random secret and publish a pairing request
+ * 
+ * @param secret output, buffer containing the pairing secret  
+ * @return esp_err_t error code
+ */
+esp_err_t app_state_start_pairing(char *secret)
+{
+    secret[0] = '1';
+    secret[1] = '2';
+    secret[2] = 'A';
+    secret[3] = 'B';
+    secret[4] = '3';
+    secret[5] = '4';
+    secret[6] = '\0';
+    return ESP_OK;
 }

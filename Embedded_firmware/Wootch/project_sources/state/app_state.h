@@ -26,7 +26,9 @@ void app_state_set_last_imu_raw_data(imu_raw_data_t *data);
 imu_raw_data_t *app_state_get_last_imu_raw_data(void);
 QueueHandle_t *app_state_get_imu_queue(void);
 QueueHandle_t *app_state_get_aws_mqtt_activity_queue(void);
+QueueHandle_t *app_state_get_aws_mqtt_pairing_queue(void);
 security_lvl_t app_state_get_security_lvl(void);
 void app_state_set_security_lvl(security_lvl_t lvl);
+esp_err_t app_state_start_pairing(char *secret);
 
 #endif
