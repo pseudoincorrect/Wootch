@@ -8,6 +8,7 @@
 #include "start_screen.h"
 #include "watch_screen.h"
 #include "wifi_screen.h"
+#include "pairing_screen.h"
 
 lv_style_t style_box;
 lv_obj_t *scan_img;
@@ -56,7 +57,8 @@ void init_screens(void)
     lv_obj_set_size(bg_top, LV_HOR_RES, LV_VER_RES);
     lv_obj_set_y(bg_top, GUI_BG_NORMAL);
 
-    create_start_screen();
+    // create_start_screen();
     // create_watch_screen();
     // create_wifi_screen();
+    create_pairing_screen();
 }

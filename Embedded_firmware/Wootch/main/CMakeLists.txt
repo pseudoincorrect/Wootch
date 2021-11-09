@@ -15,12 +15,11 @@ set(PROJ_SOURCES
         "${PROJ_SRC_DIR}/gui/gui_theme.c"
         "${PROJ_SRC_DIR}/gui/gui_animation.c"
         "${PROJ_SRC_DIR}/gui/screens.c"
-        "${PROJ_SRC_DIR}/gui/account_screen.c"
+        "${PROJ_SRC_DIR}/gui/pairing_screen.c"
         "${PROJ_SRC_DIR}/gui/play_screen.c"
         "${PROJ_SRC_DIR}/gui/start_screen.c"
         "${PROJ_SRC_DIR}/gui/wifi_screen.c"
         "${PROJ_SRC_DIR}/gui/watch_screen.c"
-        "${PROJ_SRC_DIR}/gui/old_gui/old_gui.c"
         "${PROJ_SRC_DIR}/state/app_state.c"
         "${PROJ_SRC_DIR}/processing/app_processing.c"
         "${IMG_DIR}/img_watch_dog.c"
@@ -34,7 +33,6 @@ set(PROJ_SOURCES
 set(PROJ_INCLUDES 
         .
         "${PROJ_SRC_DIR}/gui"
-        "${PROJ_SRC_DIR}/gui/old_gui"
         "${PROJ_SRC_DIR}/misc"
         "${PROJ_SRC_DIR}/imu"
         "${PROJ_SRC_DIR}/aws"

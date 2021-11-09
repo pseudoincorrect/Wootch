@@ -11,7 +11,6 @@
 #include "aws_iot_mqtt_client_interface.h"
 #include "esp_wifi.h"
 #include "app_state.h"
-#include "old_gui.h"
 #include "dev_id.h"
 #include "aws_mqtt_msg.h"
 

@@ -1,8 +1,8 @@
-#include "account_screen.h"
+#include "pairing_screen.h"
 #include "gui_animation.h"
 #include "gui_theme.h"
 #include "watch_screen.h"
-#include "account_screen.h"
+#include "pairing_screen.h"
 #include "esp_log.h"
 
 #define TITLE_BG_OVERFLOW (LV_VER_RES + GUI_BG_SMALL)
@@ -134,6 +134,6 @@ LV_EVENT_CB_DECLARE(return_icon_event_cb)
 {
     if (e == LV_EVENT_CLICKED)
     {
-        create_account_screen();
+        create_pairing_screen();
     }
 }

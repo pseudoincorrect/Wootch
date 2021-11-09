@@ -2,7 +2,7 @@
 #include "gui_animation.h"
 #include "gui_theme.h"
 #include "start_screen.h"
-#include "account_screen.h"
+#include "pairing_screen.h"
 #include "esp_log.h"
 #include "esp_err.h"
 #include "app_state.h"
@@ -198,7 +198,7 @@ LV_EVENT_CB_DECLARE(btn_connect_cb)
                 ESP_LOGI(TAG, "could not set credentials !");
             }
             app_state_connect_wifi((char *)ssid, (char *)pass);
-            create_account_screen();
+            create_pairing_screen();
         }
     }
 }
