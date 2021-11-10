@@ -3,6 +3,8 @@ import * as Joi from "joi";
 const PAT_DEV_KEY = RegExp(/^DEV#[A-F0-9]*$/);
 const PAT_USER_KEY = RegExp(/^USR#[A-Z0-9]*$/);
 
+const AWS_THING_PREFIX = "WOOTCH_DEV_";
+
 /** Validation Schema for DevModel Dynamodb record */
 const DevModelValidationSchema = Joi.object({
   PK: Joi.string().pattern(PAT_DEV_KEY).uppercase().required(),
@@ -68,6 +70,12 @@ export class DevModel {
     if (error) throw error;
 
     return record;
+  }
+
+  /** return the device ID (without PK key prefix) */
+  thingName(): string {
+    const id = this.PK.slice(4);
+    return `${AWS_THING_PREFIX}${id}`;
   }
 
   /** return a string view of DevModel */

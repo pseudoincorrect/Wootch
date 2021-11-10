@@ -7,7 +7,6 @@
 #include "app_state.h"
 
 #define TITLE_BG_OVERFLOW (LV_VER_RES + GUI_BG_SMALL)
-#define SECRET_SIZE 6
 
 LV_EVENT_CB_DECLARE(btn_pair_cb);
 LV_EVENT_CB_DECLARE(btn_continue_cb);
@@ -24,11 +23,8 @@ static lv_obj_t *ta_user;
 static lv_obj_t *page_account;
 static lv_obj_t *cont_pairing;
 static lv_obj_t *cont_user;
-
-/**
- * @brief Create a pairing screen object
- */
-void create_pairing_screen(void)
+static lv_task_t *user_update_user_update * 00 @brief Create a pairing screen object * /
+    void create_pairing_screen(void)
 {
     // Background
     gui_anim_out_all(lv_scr_act(), GUI_ANIM_FAST);
@@ -134,6 +130,9 @@ void create_pairing_screen(void)
     lv_btn_toggle(btn_continue);
     lv_obj_t *lb_continue = lv_label_create(btn_continue, NULL);
     lv_label_set_text(lb_continue, "Continue");
+
+    user_update_task = lv_task_create(user_update, 10000,
+                                      LV_TASK_PRIO_MID, NULL);
 }
 
 /**
@@ -143,14 +142,14 @@ LV_EVENT_CB_DECLARE(btn_pair_cb)
 {
     if (e == LV_EVENT_CLICKED)
     {
-        char secret[SECRET_SIZE + 1];
+        char secret[PAIRING_SECRET_SIZE + 1];
         lv_obj_set_hidden(cont_pairing, false);
         esp_err_t err = app_state_start_pairing(secret);
         if (err)
         {
             return;
         }
-        secret[SECRET_SIZE] = '\0'; // null terminator
+        secret[PAIRING_SECRET_SIZE] = '\0'; // null terminator
         lv_textarea_set_text(ta_pairing, secret);
     }
 }
@@ -175,4 +174,13 @@ LV_EVENT_CB_DECLARE(return_icon_event_cb)
     {
         create_wifi_screen();
     }
+}
+
+/**
+ * @brief Check (online) whether the user has been updated
+ * 
+ * @param task unused
+ */
+static void user_update(lv_task_t *task)
+{
 }

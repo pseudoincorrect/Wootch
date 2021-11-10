@@ -23,6 +23,7 @@
   "license": "MIT",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.16.0",
+    "@aws-sdk/client-iot-data-plane": "^3.40.0",
     "@aws-sdk/client-timestream-query": "^3.16.0",
     "@aws-sdk/lib-dynamodb": "^3.16.0",
     "aws-serverless-express": "^3.4.0",

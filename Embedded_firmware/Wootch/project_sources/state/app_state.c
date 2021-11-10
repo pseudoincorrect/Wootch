@@ -133,6 +133,17 @@ void app_state_set_security_lvl(security_lvl_t lvl)
     security_lvl = lvl;
 }
 
+static void generate_secret(char *secret, int secret_size)
+{
+    int rand;
+    for (size_t i = 0; i < secret_size - 1; i++)
+    {
+        rand = esp_random() % 26;
+        secret[i] = 65 + rand;
+    }
+    secret[secret_size - 1] = '\0';
+}
+
 /**
  * @brief Create a random secret and publish a pairing request
  * 
@@ -141,12 +152,17 @@ void app_state_set_security_lvl(security_lvl_t lvl)
  */
 esp_err_t app_state_start_pairing(char *secret)
 {
-    secret[0] = '1';
-    secret[1] = '2';
-    secret[2] = 'A';
-    secret[3] = 'B';
-    secret[4] = '3';
-    secret[5] = '4';
-    secret[6] = '\0';
+    pairing_msg_t pairing;
+    generate_secret(secret, PAIRING_SECRET_SIZE);
+
+    for (size_t i = 0; i < PAIRING_SECRET_SIZE; i++)
+    {
+        pairing.secret[i] = secret[i];
+    }
+
+    ESP_LOGI(TAG, "pairing secret: %s", pairing.secret);
+
+    // xQueueSend(aws_mqtt_pairing_queue, &pairing, pdMS_TO_TICKS(50));
+
     return ESP_OK;
 }

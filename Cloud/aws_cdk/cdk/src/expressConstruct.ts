@@ -23,7 +23,8 @@ export class ExpressConstruct extends cdk.Construct {
     super(scope, id);
 
     const region = secrets.WOOTCH_AWS_REGION;
-
+    const accountId = secrets.WOOTCH_AWS_ACCOUNT_ID;
+    const iotEndpoint = secrets.IOT_ENDPOINT;
     const env = props.cdkContext.env;
     const stackAndEnv = props.cdkContext.stackName + env;
     const useCustomDomain = props.cdkContext.useCustomDomain;
@@ -45,6 +46,9 @@ export class ExpressConstruct extends cdk.Construct {
       memorySize: lambdaMemory,
       environment: {
         AWS_APP_REGION: region,
+        AWS_APP_ACCOUNT_ID: accountId,
+        IOT_ENDPOINT: iotEndpoint,
+        STACK_AND_ENV: stackAndEnv,
         APP_TABLE_NAME: props.stackDbs.mainTable.tableName!,
         SENSOR_DATA_DB_NAME: props.stackDbs.sensorDataDb.databaseName!,
         SENSOR_DATA_TABLE_NAME: props.stackDbs.sensorDataTable.tableName!,
@@ -75,6 +79,14 @@ export class ExpressConstruct extends cdk.Construct {
         effect: iam.Effect.ALLOW,
         actions: ["timestream:DescribeEndpoints"],
         resources: ["*"],
+      }),
+      // IoT Policy (MQTT)
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ["iot:Publish"],
+        resources: [
+          `arn:aws:iot:${region}:${accountId}:topic/${stackAndEnv}/device/#/pairing/user*`,
+        ],
       }),
     ];
 

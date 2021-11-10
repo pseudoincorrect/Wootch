@@ -11,6 +11,7 @@ import { PairingDdb } from "../storage/pairingDdb";
 import { UserDdb } from "../storage/userDdb";
 import { AppValidationError } from "../utils/appErrors";
 import { authGroups } from "../utils/authGroups";
+import { publishUser } from "../iot/pairingIot";
 
 const router = Router();
 const pairingDdb = new PairingDdb();
@@ -60,6 +61,7 @@ router.post(
     }
 
     // Get the user model from credential
+    const devId = devModel?.thingName();
     const userId = req.userId;
     const userKey = UserModel.getPkFromId(userId);
     console.log(`userKey ${userKey}`);
@@ -82,6 +84,15 @@ router.post(
       console.log(error);
       return res.status(StatusCodes.NOT_FOUND).json({
         message: `Could not pair user ${userEmail} to device ${devKey}`,
+      });
+    }
+
+    try {
+      await publishUser(devId!, userEmail);
+    } catch (error) {
+      console.log(error);
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: `could not publish user mail to the device`,
       });
     }
 

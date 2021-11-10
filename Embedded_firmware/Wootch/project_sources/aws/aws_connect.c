@@ -30,12 +30,17 @@ static uint32_t port = AWS_IOT_MQTT_PORT;
 static QueueHandle_t *activity_queue;
 static QueueHandle_t *pairing_queue;
 
+AWS_IoT_Client client;
+IoT_Client_Init_Params mqtt_init_params;
+
 static char topic_notif[128];
 static int topic_notif_len;
 static char topic_activ[128];
 static int topic_activ_len;
 static char topic_pairing[128];
 static int topic_pairing_len;
+static char topic_user[128];
+static int topic_user_len;
 
 static char mqtt_msg_buffer[MQTT_MSG_BUFFER_SIZE];
 
@@ -52,6 +57,9 @@ void create_topics(void)
 
     sprintf(topic_notif, "WootchDev/device/%s/notification/alert", AWS_THING_NAME);
     topic_notif_len = strlen(topic_notif);
+
+    sprintf(topic_user, "WootchDev/device/%s/pairing/user", AWS_THING_NAME);
+    topic_user_len = strlen(topic_user);
 }
 
 /**
@@ -63,15 +71,31 @@ void create_topics(void)
  * @param params publish parameters
  * @param pData unused
  */
-void iot_subscribe_notif_alert_callback_handler(AWS_IoT_Client *pClient,
-                                                char *topicName, uint16_t topicNameLen,
-                                                IoT_Publish_Message_Params *params, void *pData)
+void topic_notif_handler(AWS_IoT_Client *pClient,
+                         char *topicName, uint16_t topicNameLen,
+                         IoT_Publish_Message_Params *params, void *pData)
 {
-    ESP_LOGI(TAG, "Subscribe alert callback");
+    ESP_LOGI(TAG, "Notification topic handler");
     ESP_LOGI(TAG, "%.*s\t%.*s", topicNameLen, topicName, (int)params->payloadLen,
              (char *)params->payload);
+}
 
-    // display_alert();
+/**
+ * @brief Handler for MQTT Topic "user"
+ * 
+ * @param pClient connection client
+ * @param topicName Topic name
+ * @param topicNameLen Topic name length
+ * @param params publish parameters
+ * @param pData unused
+ */
+void topic_user_handler(AWS_IoT_Client *pClient,
+                        char *topicName, uint16_t topicNameLen,
+                        IoT_Publish_Message_Params *params, void *pData)
+{
+    ESP_LOGI(TAG, "User topic handler");
+    ESP_LOGI(TAG, "%.*s\t%.*s", topicNameLen, topicName, (int)params->payloadLen,
+             (char *)params->payload);
 }
 
 /**
@@ -98,7 +122,7 @@ void disconnect_callback_handler(AWS_IoT_Client *pClient, void *data)
     {
         ESP_LOGW(TAG, "Auto Reconnect not enabled. Starting manual reconnect...");
         err = aws_iot_mqtt_attempt_reconnect(pClient);
-        if (NETWORK_RECONNECTED == err)
+        if (err == NETWORK_RECONNECTED)
         {
             ESP_LOGW(TAG, "Manual Reconnect Successful");
         }
@@ -108,9 +132,6 @@ void disconnect_callback_handler(AWS_IoT_Client *pClient, void *data)
         }
     }
 }
-
-AWS_IoT_Client client;
-IoT_Client_Init_Params mqtt_init_params;
 
 /**
  * @brief init MQTT connection to AWS 
@@ -134,7 +155,7 @@ void mqtt_init(void)
     mqtt_init_params.disconnectHandlerData = NULL;
 
     err = aws_iot_mqtt_init(&client, &mqtt_init_params);
-    if (SUCCESS != err)
+    if (err != SUCCESS)
     {
         ESP_LOGE(TAG, "aws_iot_mqtt_init returned error : %d ", err);
         abort();
@@ -161,16 +182,16 @@ void mqtt_connect(void)
     do
     {
         err = aws_iot_mqtt_connect(&client, &connect_params);
-        if (SUCCESS != err)
+        if (err != SUCCESS)
         {
             ESP_LOGE(TAG, "Error(%d) connecting to %s:%d", err, mqtt_init_params.pHostURL,
                      mqtt_init_params.port);
             vTaskDelay(1000 / portTICK_RATE_MS);
         }
-    } while (SUCCESS != err);
+    } while (err != SUCCESS);
 
     err = aws_iot_mqtt_autoreconnect_set_status(&client, true);
-    if (SUCCESS != err)
+    if (err != SUCCESS)
     {
         ESP_LOGE(TAG, "Unable to set Auto Reconnect to true - %d", err);
         abort();
@@ -178,26 +199,31 @@ void mqtt_connect(void)
 }
 
 /**
- * @brief Subscribe to the "Notification" MQTT topic
+ * @brief Subscribe to a MQTT topic
  */
-void mqtt_subscribe_notification(void)
+void mqtt_subscribe_topic(char *topic, int topic_len, void *topic_handler)
 {
     IoT_Error_t err = FAILURE;
 
-    ESP_LOGI(TAG, "topic_notif     : %s", topic_notif);
-    ESP_LOGI(TAG, "topic_notif_len : %d", topic_notif_len);
+    ESP_LOGI(TAG, "topic     : %s", topic);
+    ESP_LOGI(TAG, "topic_len : %d", topic_len);
 
-    err = aws_iot_mqtt_subscribe(&client, topic_notif, topic_notif_len, QOS0,
-                                 iot_subscribe_notif_alert_callback_handler,
-                                 NULL);
-    if (SUCCESS != err)
+    err = aws_iot_mqtt_subscribe(&client, topic, topic_len, QOS0,
+                                 topic_handler, NULL);
+    if (err != SUCCESS)
     {
-        ESP_LOGE(TAG, "error subscribing alert : %d", err);
+        ESP_LOGE(TAG, "error subscribing topic %s alert : %d", topic, err);
         vTaskDelay(5000 / portTICK_RATE_MS);
         abort();
     }
 
     ESP_LOGI(TAG, "Subscribed to alert notifs...");
+}
+
+void mqtt_subscribe(void)
+{
+    mqtt_subscribe_topic(topic_notif, topic_notif_len, topic_notif_handler);
+    mqtt_subscribe_topic(topic_user, topic_user_len, topic_user_handler);
 }
 
 /**
@@ -222,7 +248,7 @@ void mqtt_publish(void)
         {
             vTaskDelay(10000 / portTICK_RATE_MS);
         }
-    } while (NETWORK_ATTEMPTING_RECONNECT == err);
+    } while (err == NETWORK_ATTEMPTING_RECONNECT);
 
     ESP_LOGI(TAG, "publishing a message on %s", topic_activ);
 
@@ -291,7 +317,7 @@ void pairing_publishing_process(void)
     if (err)
     {
         IoT_Publish_Message_Params params;
-        params.qos = QOS0;
+        params.qos = QOS1;
         params.payload = (void *)mqtt_msg_buffer;
         params.isRetained = 0;
 
@@ -319,7 +345,7 @@ void aws_iot_mqtt_loop(void)
 {
     IoT_Error_t err = SUCCESS;
 
-    while ((NETWORK_ATTEMPTING_RECONNECT == err || NETWORK_RECONNECTED == err || SUCCESS == err))
+    while ((err == NETWORK_ATTEMPTING_RECONNECT || err == NETWORK_RECONNECTED || err == SUCCESS))
     {
         err = aws_iot_mqtt_yield(&client, 100);
         if (err == NETWORK_ATTEMPTING_RECONNECT)
@@ -364,9 +390,8 @@ void aws_iot_mqtt_manage_task(void *param)
 
     ESP_LOGI(TAG, "subscribed to %s !", topic_notif);
 
-    mqtt_publish();
-
-    ESP_LOGI(TAG, "published to %s !", topic_activ);
+    // mqtt_publish();
+    // ESP_LOGI(TAG, "published to %s !", topic_activ);
 
     aws_iot_mqtt_loop();
 }

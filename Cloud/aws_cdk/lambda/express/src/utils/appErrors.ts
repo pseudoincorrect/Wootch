@@ -68,6 +68,18 @@ export class AppDbError extends AppError {
   }
 }
 
+export class AppIotError extends AppError {
+  constructor(message: string, orginError?: Error, devMesage?: string) {
+    super({
+      errorType: "IOT CORE ERROR",
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      messageToDisplay: message,
+      originError: orginError,
+      devMessage: devMesage,
+    });
+  }
+}
+
 export class AppNotFoundError extends AppError {
   constructor(message: string, orginError?: Error, devMesage?: string) {
     super({

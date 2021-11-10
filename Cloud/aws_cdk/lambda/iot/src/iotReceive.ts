@@ -22,7 +22,9 @@ interface PairingEvent {
 interface ActivityEvent {
   watchLvl: string;
   maxAcc: number;
-  threshold: number;
+  accThreshold: number;
+  maxRot: number;
+  rotThreshold: number;
   topic: string;
   clientid: string;
 }

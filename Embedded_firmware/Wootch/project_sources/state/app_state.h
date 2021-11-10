@@ -5,6 +5,7 @@
 #include "freertos/event_groups.h"
 #include "freertos/queue.h"
 #include "imu_types.h"
+#include "aws_mqtt_msg.h"
 
 typedef enum security_lvl_enum
 {
