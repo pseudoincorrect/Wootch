@@ -23,7 +23,7 @@ void app_main(void)
 
     // Wi-Fi
     wifi_init();
-    app_state_connect_wifi("Maxi", "notmyrealpassword");
+    // app_state_connect_wifi("Maxi", "notmyrealpassword");
 
     // AWS IOT
     xTaskCreatePinnedToCore(&aws_iot_mqtt_manage_task, "aws_iot_mqtt_manage_task",

@@ -60,15 +60,15 @@ void app_processing_task(void *param)
 
                     if (!activity_detected && diff_acc > ACTIVITY_ACC_THRESHOLD)
                     {
-                        ESP_LOGI(TAG, "Acceleration detected %d", diff_acc);
-                        ESP_LOGI(TAG, "Acceleration = %d", sum_acc);
+                        // ESP_LOGI(TAG, "Acceleration detected %d", diff_acc);
+                        // ESP_LOGI(TAG, "Acceleration = %d", sum_acc);
                         activity_detected = true;
                     }
 
                     if (!activity_detected && diff_rot > ACTIVITY_ROT_THRESHOLD)
                     {
-                        ESP_LOGI(TAG, "Rotation detected %d", diff_rot);
-                        ESP_LOGI(TAG, "Rotation     = %d", sum_rot);
+                        // ESP_LOGI(TAG, "Rotation detected %d", diff_rot);
+                        // ESP_LOGI(TAG, "Rotation     = %d", sum_rot);
                         activity_detected = true;
                     }
                 }
@@ -78,13 +78,19 @@ void app_processing_task(void *param)
 
         if (activity_detected)
         {
-            activity_msg_t activity;
-            activity.watchLvl = app_state_get_security_lvl();
-            activity.maxAcc = diff_acc;
-            activity.accThresh = ACTIVITY_ACC_THRESHOLD;
-            activity.maxRot = diff_rot;
-            activity.rotThresh = ACTIVITY_ROT_THRESHOLD;
-            xQueueSend(*activity_queue, &activity, pdMS_TO_TICKS(50));
+            ESP_LOGI(TAG, "Activity detected");
+            security_lvl_t lvl = app_state_get_security_lvl();
+            if (lvl > SECU_LVL_1)
+            {
+                ESP_LOGI(TAG, "Sending activity online, security level = %d", lvl);
+                activity_msg_t activity;
+                activity.watchLvl = app_state_get_security_lvl();
+                activity.maxAcc = diff_acc;
+                activity.accThresh = ACTIVITY_ACC_THRESHOLD;
+                activity.maxRot = diff_rot;
+                activity.rotThresh = ACTIVITY_ROT_THRESHOLD;
+                xQueueSend(*activity_queue, &activity, pdMS_TO_TICKS(50));
+            }
         };
 
         vTaskDelay(1000 / portTICK_PERIOD_MS);

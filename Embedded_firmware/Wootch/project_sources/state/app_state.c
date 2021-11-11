@@ -168,12 +168,22 @@ esp_err_t app_state_start_pairing(char *secret)
 
     return ESP_OK;
 }
-
+/**
+  * @brief Update the user email 
+  * 
+  * @param email user email string
+  */
 void app_state_update_user_email(char *email)
 {
     strncpy(user_email, email, USER_EMAIL_MAX_SIZE - 1);
 }
 
+/**
+ * @brief copy user email to destination buffer
+ *  
+ * @param dest destination buffer
+ * @param dest_size max size to be written to
+ */
 void app_state_get_user_email(char *dest, int dest_size)
 {
     int max_size;

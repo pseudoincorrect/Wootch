@@ -17,6 +17,7 @@ IN PROCESS
 DONE
 Date       Description
 -------------------------------------------------------------
+11/11/2021 Send a MQTT message to the device on pairing success
 04/11/2021 Limit the amount of notification mail send to a user
 03/11/2021 lambda Iot send an email on activity msg
 02/11/2021 User-cli link a device

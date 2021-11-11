@@ -7,21 +7,21 @@ Receive a notif from AWS
 Display a notification in a popup
 Put everything to sleep 
 Use push button to wake up the system
-Create a task to detect movement
-Create a python AWS-IOT simulator (for development without hardware)
-Create a mqtt request to get the current time
-create a queue for IMU message to send
 
 -------------------------------------------------------------
 IN PROGRESS                 
 -------------------------------------------------------------
-Send Accelero data to AWS
-message box does not close correctly
 
 -------------------------------------------------------------
 DONE                        
 Date        Description
 -------------------------------------------------------------
+09/11/2021  Get the user email through MQTT and display it
+08/11/2021  Create the Pairing screen
+07/11/2021  Send Accelero data to AWS
+02/11/2021  Create a python AWS-IOT simulator (for development without hardware)
+23/10/2021  create a queue for IMU message to send
+09/10/2021  Create a task to detect movement
 06/12/2020  Create a queue for IMU message to send
 12/11/2020  Correct the keyboard bug when switching textarea
 12/11/2020  Share sources with LVGL simulator (for development without hardware)

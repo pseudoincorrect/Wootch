@@ -76,7 +76,7 @@ void topic_notif_handler(AWS_IoT_Client *pClient,
                          IoT_Publish_Message_Params *params, void *pData)
 {
     ESP_LOGI(TAG, "Notification topic handler");
-    ESP_LOGI(TAG, "%.*s\t%.*s", topicNameLen, topicName, (int)params->payloadLen,
+    ESP_LOGI(TAG, "%.*s\t\"%.*s\"", topicNameLen, topicName, (int)params->payloadLen,
              (char *)params->payload);
 }
 
@@ -96,6 +96,11 @@ void topic_user_handler(AWS_IoT_Client *pClient,
     ESP_LOGI(TAG, "User topic handler");
     ESP_LOGI(TAG, "%.*s\t%.*s", topicNameLen, topicName, (int)params->payloadLen,
              (char *)params->payload);
+
+    // format : {"email":"johndoe@meh.com"}
+    char email[64] = {0};
+    strncpy(email, (char *)params->payload + 9 * sizeof(char), (int)params->payloadLen - 3);
+    app_state_update_user_email(email);
 }
 
 /**
@@ -280,28 +285,28 @@ void activity_publishing_process(void)
 
     err = xQueueReceive(*activity_queue, &activity_msg, 0);
 
-    // if (err)
-    // {
-    //     IoT_Publish_Message_Params params;
-    //     params.qos = QOS0;
-    //     params.payload = (void *)mqtt_msg_buffer;
-    //     params.isRetained = 0;
+    if (err)
+    {
+        IoT_Publish_Message_Params params;
+        params.qos = QOS0;
+        params.payload = (void *)mqtt_msg_buffer;
+        params.isRetained = 0;
 
-    //     reset_mqtt_buffer();
-    //     activity_msg_to_json_string(&activity_msg, mqtt_msg_buffer, MQTT_MSG_BUFFER_SIZE);
+        reset_mqtt_buffer();
+        activity_msg_to_json_string(&activity_msg, mqtt_msg_buffer, MQTT_MSG_BUFFER_SIZE);
 
-    //     params.payloadLen = strlen(mqtt_msg_buffer);
+        params.payloadLen = strlen(mqtt_msg_buffer);
 
-    //     err = aws_iot_mqtt_publish(&client, topic_activ, topic_activ_len, &params);
-    //     if (err != SUCCESS)
-    //     {
-    //         ESP_LOGE(TAG, "activity publish error %d", err);
-    //     }
-    //     else
-    //     {
-    //         ESP_LOGI(TAG, "activity published: %s", mqtt_msg_buffer);
-    //     }
-    // }
+        err = aws_iot_mqtt_publish(&client, topic_activ, topic_activ_len, &params);
+        if (err != SUCCESS)
+        {
+            ESP_LOGE(TAG, "activity publish error %d", err);
+        }
+        else
+        {
+            ESP_LOGI(TAG, "activity published: %s", mqtt_msg_buffer);
+        }
+    }
 }
 
 /**

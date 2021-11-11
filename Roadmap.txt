@@ -3,7 +3,6 @@ WOOTCH ROADMAP (WHOLE PROJECT)
 -------------------------------------------------------------
 TO DO
 -------------------------------------------------------------
-FIRMW  create a function device pairing screen
 PROJ   Prepare for a realease 
 CLOUD  Store and navigate through all linked devices activity
 
@@ -17,6 +16,8 @@ DONE
 TAGs : PCB, FIRMW, CLOUD
 Date        TAG    Description
 -------------------------------------------------------------
+11/11/2021  FIRMW  Wrap up Wifi, AWS pairing, Watch
+07/11/2021  FIRMW  Create a function device pairing screen
 03/11/2021  CLOUD  Send email to user 
 25/10/2021  CLOUD  Link a user to a wootch device
 15/10/2021  CLOUD  Create a rest API for the users

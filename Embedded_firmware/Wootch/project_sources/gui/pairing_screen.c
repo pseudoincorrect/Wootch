@@ -96,7 +96,7 @@ void create_pairing_screen(void)
     lv_cont_set_layout(cont_user, LV_LAYOUT_CENTER);
     lv_obj_set_drag_parent(cont_user, true);
     lv_obj_set_height(cont_user, 40);
-    lv_obj_set_width(cont_user, 200);
+    lv_obj_set_width(cont_user, 300);
     lv_theme_apply(cont_user, (lv_theme_style_t)GUI_THEME_BOX_BORDER);
     // Text area User
     ta_user = lv_textarea_create(cont_user, NULL);

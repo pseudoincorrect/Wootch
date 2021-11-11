@@ -4,11 +4,9 @@
 #include "watch_screen.h"
 #include "pairing_screen.h"
 #include "esp_log.h"
+#include "app_state.h"
 
 #define TITLE_BG_OVERFLOW (LV_VER_RES + GUI_BG_SMALL)
-#define DOG_SLEEP 0
-#define DOG_NORMAL 1
-#define DOG_WATCH 2
 
 LV_EVENT_CB_DECLARE(slider_event_cb);
 LV_EVENT_CB_DECLARE(return_icon_event_cb);
@@ -22,7 +20,6 @@ static const char *TAG = "WATCH";
 static lv_obj_t *page_watch;
 static lv_obj_t *cont_dog;
 static lv_obj_t *img_dog;
-static uint8_t on_watch;
 
 /**
  * @brief Create a watch screen object
@@ -74,7 +71,6 @@ void create_watch_screen(void)
     gui_anim_in(cont_watch, GUI_ANIM_SLOW);
 
     // Image
-    on_watch = DOG_SLEEP;
     img_dog = lv_img_create(cont_watch, NULL);
     lv_img_set_src(img_dog, &img_sleepy_dog);
     lv_img_set_antialias(img_dog, false);
@@ -106,17 +102,17 @@ LV_EVENT_CB_DECLARE(slider_event_cb)
             if (val < 33)
             {
                 lv_img_set_src(img_dog, &img_sleepy_dog);
-                on_watch = DOG_SLEEP;
+                app_state_set_security_lvl(SECU_LVL_1);
             }
             else if (val < 67)
             {
                 lv_img_set_src(img_dog, &img_normal_dog);
-                on_watch = DOG_NORMAL;
+                app_state_set_security_lvl(SECU_LVL_2);
             }
             else
             {
                 lv_img_set_src(img_dog, &img_watch_dog);
-                on_watch = DOG_WATCH;
+                app_state_set_security_lvl(SECU_LVL_1);
             }
         }
         lv_obj_set_width(img_dog, 145);
