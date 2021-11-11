@@ -8,6 +8,8 @@
 
 #define TITLE_BG_OVERFLOW (LV_VER_RES + GUI_BG_SMALL)
 
+static void user_update(lv_task_t *task);
+
 LV_EVENT_CB_DECLARE(btn_pair_cb);
 LV_EVENT_CB_DECLARE(btn_continue_cb);
 LV_EVENT_CB_DECLARE(return_icon_event_cb);
@@ -15,16 +17,17 @@ LV_EVENT_CB_DECLARE(return_icon_event_cb);
 LV_IMG_DECLARE(icon_left_arrow);
 
 static const char *TAG = "ACCOUNT";
-static char account_login[32] = {0};
-static char account_passw[32] = {0};
+static char user_email[USER_EMAIL_MAX_SIZE] = {0};
 static lv_obj_t *kb;
 static lv_obj_t *ta_pairing;
 static lv_obj_t *ta_user;
 static lv_obj_t *page_account;
 static lv_obj_t *cont_pairing;
 static lv_obj_t *cont_user;
-static lv_task_t *user_update_user_update * 00 @brief Create a pairing screen object * /
-    void create_pairing_screen(void)
+static lv_task_t *user_update_task;
+
+/** @brief Create a pairing screen object */
+void create_pairing_screen(void)
 {
     // Background
     gui_anim_out_all(lv_scr_act(), GUI_ANIM_FAST);
@@ -162,6 +165,7 @@ LV_EVENT_CB_DECLARE(btn_continue_cb)
     if (e == LV_EVENT_CLICKED)
     {
         create_watch_screen();
+        lv_task_del(user_update_task);
     }
 }
 
@@ -173,6 +177,7 @@ LV_EVENT_CB_DECLARE(return_icon_event_cb)
     if (e == LV_EVENT_CLICKED)
     {
         create_wifi_screen();
+        lv_task_del(user_update_task);
     }
 }
 
@@ -183,4 +188,6 @@ LV_EVENT_CB_DECLARE(return_icon_event_cb)
  */
 static void user_update(lv_task_t *task)
 {
+    app_state_get_user_email(user_email, USER_EMAIL_MAX_SIZE);
+    lv_textarea_set_text(ta_user, user_email);
 }

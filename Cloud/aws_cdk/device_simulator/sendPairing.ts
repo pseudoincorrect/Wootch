@@ -14,6 +14,7 @@ interface PairingMessage {
 }
 
 export async function sendPairing(connection: mqtt.MqttClientConnection) {
+  let uuidSecrets: string;
   return new Promise(async (resolve, reject) => {
     try {
       const decoder = new TextDecoder("utf8");
@@ -35,8 +36,7 @@ export async function sendPairing(connection: mqtt.MqttClientConnection) {
       // subscribe to the same topic we will send data
       await connection.subscribe(notifTopic, mqtt.QoS.AtLeastOnce, on_publish);
 
-      let uuidSecrets = uuidv4().replace(/-/g, "").toUpperCase().slice(0, 6);
-      console.log(`uuidSecrets: ${uuidSecrets}`);
+      uuidSecrets = uuidv4().replace(/-/g, "").toUpperCase().slice(0, 6);
 
       const Pairing: PairingMessage = { secret: uuidSecrets };
       const json = JSON.stringify(Pairing);
@@ -47,6 +47,12 @@ export async function sendPairing(connection: mqtt.MqttClientConnection) {
     } catch (error) {
       reject(error);
     }
+
+    console.log("*********************************");
+    console.log("*********************************");
+    console.log(`*  Pairing Secret: ${uuidSecrets}`);
+    console.log("*********************************");
+    console.log("*********************************");
   });
 }
 

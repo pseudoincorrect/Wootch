@@ -280,28 +280,28 @@ void activity_publishing_process(void)
 
     err = xQueueReceive(*activity_queue, &activity_msg, 0);
 
-    if (err)
-    {
-        IoT_Publish_Message_Params params;
-        params.qos = QOS0;
-        params.payload = (void *)mqtt_msg_buffer;
-        params.isRetained = 0;
+    // if (err)
+    // {
+    //     IoT_Publish_Message_Params params;
+    //     params.qos = QOS0;
+    //     params.payload = (void *)mqtt_msg_buffer;
+    //     params.isRetained = 0;
 
-        reset_mqtt_buffer();
-        activity_msg_to_json_string(&activity_msg, mqtt_msg_buffer, MQTT_MSG_BUFFER_SIZE);
+    //     reset_mqtt_buffer();
+    //     activity_msg_to_json_string(&activity_msg, mqtt_msg_buffer, MQTT_MSG_BUFFER_SIZE);
 
-        params.payloadLen = strlen(mqtt_msg_buffer);
+    //     params.payloadLen = strlen(mqtt_msg_buffer);
 
-        err = aws_iot_mqtt_publish(&client, topic_activ, topic_activ_len, &params);
-        if (err != SUCCESS)
-        {
-            ESP_LOGE(TAG, "activity publish error %d", err);
-        }
-        else
-        {
-            ESP_LOGI(TAG, "activity published: %s", mqtt_msg_buffer);
-        }
-    }
+    //     err = aws_iot_mqtt_publish(&client, topic_activ, topic_activ_len, &params);
+    //     if (err != SUCCESS)
+    //     {
+    //         ESP_LOGE(TAG, "activity publish error %d", err);
+    //     }
+    //     else
+    //     {
+    //         ESP_LOGI(TAG, "activity published: %s", mqtt_msg_buffer);
+    //     }
+    // }
 }
 
 /**
@@ -386,7 +386,7 @@ void aws_iot_mqtt_manage_task(void *param)
 
     ESP_LOGI(TAG, "Connected to AWS !");
 
-    mqtt_subscribe_notification();
+    mqtt_subscribe();
 
     ESP_LOGI(TAG, "subscribed to %s !", topic_notif);
 

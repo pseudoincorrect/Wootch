@@ -2,7 +2,7 @@ import * as Joi from "joi";
 
 const PAT_PAIR_KEY = RegExp(/^PAI#[a-zA-Z0-9]*$/);
 const PAT_DEV_KEY = RegExp(/^DEV#[a-fA-F0-9]*$/);
-const PAT_IS_ANUM_UPCASE = RegExp(/^[A-F0-9]*$/);
+const PAT_IS_ANUM_UPCASE = RegExp(/^[A-Z0-9]*$/);
 
 const PREFIX_PAIR_KEY = "PAI#";
 

@@ -14,6 +14,7 @@ static QueueHandle_t imu_queue;
 static QueueHandle_t aws_mqtt_activity_queue;
 static QueueHandle_t aws_mqtt_pairing_queue;
 static imu_raw_data_t last_imu_raw_data;
+static char user_email[USER_EMAIL_MAX_SIZE];
 
 /**
  * @brief Initiate all Application State variables
@@ -26,6 +27,7 @@ void app_state_init(void)
     wifi_connected = false;
     security_lvl = SECU_LVL_1;
     acceleration_thresh = 1000;
+    strncpy(user_email, "no user paired", USER_EMAIL_MAX_SIZE - 1);
 }
 
 /**
@@ -162,7 +164,22 @@ esp_err_t app_state_start_pairing(char *secret)
 
     ESP_LOGI(TAG, "pairing secret: %s", pairing.secret);
 
-    // xQueueSend(aws_mqtt_pairing_queue, &pairing, pdMS_TO_TICKS(50));
+    xQueueSend(aws_mqtt_pairing_queue, &pairing, pdMS_TO_TICKS(50));
 
     return ESP_OK;
+}
+
+void app_state_update_user_email(char *email)
+{
+    strncpy(user_email, email, USER_EMAIL_MAX_SIZE - 1);
+}
+
+void app_state_get_user_email(char *dest, int dest_size)
+{
+    int max_size;
+    if (dest_size > USER_EMAIL_MAX_SIZE)
+    {
+        max_size = USER_EMAIL_MAX_SIZE;
+    }
+    strncpy(dest, user_email, max_size - 1);
 }

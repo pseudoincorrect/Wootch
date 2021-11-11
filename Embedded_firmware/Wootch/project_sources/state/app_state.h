@@ -7,6 +7,8 @@
 #include "imu_types.h"
 #include "aws_mqtt_msg.h"
 
+#define USER_EMAIL_MAX_SIZE 64
+
 typedef enum security_lvl_enum
 {
     SECU_LVL_1,
@@ -31,5 +33,7 @@ QueueHandle_t *app_state_get_aws_mqtt_pairing_queue(void);
 security_lvl_t app_state_get_security_lvl(void);
 void app_state_set_security_lvl(security_lvl_t lvl);
 esp_err_t app_state_start_pairing(char *secret);
+void app_state_update_user_email(char *email);
+void app_state_get_user_email(char *dest, int dest_size);
 
 #endif
