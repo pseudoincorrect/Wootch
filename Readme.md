@@ -22,6 +22,8 @@ Plus it's fun !
 
 # PCB
 
+(Progress: Completed)
+
 Wootch's PCB has been made on Altium Designer. it features:
 
 - Battery management, protection and regulators (buck)
@@ -47,7 +49,7 @@ Wootch's PCB has been made on Altium Designer. it features:
 
 # Embedded System Firmware
 
-(Work in progress : 70%)
+(Progress: Completed)
 
 The code is written in C (not C++) along the ESP-IDF SDK. (No arduino compatibility here). <br>
 its main component are the following:
@@ -69,7 +71,7 @@ its main component are the following:
 
 # Serverless Application (Backend)
 
-(Work in progress: 85%)
+(Progress: Completed)
 
 ## AWS CDK Application
 
