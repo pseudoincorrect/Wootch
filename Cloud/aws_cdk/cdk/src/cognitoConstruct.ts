@@ -6,7 +6,7 @@ import * as secrets from "../secrets/secrets";
 import * as cst from "./constants";
 import { CdkContext, Utils } from "./utils";
 
-const clientDomain = secrets.WOOTCH_COGNITO_POOL_ID;
+const clientDomain = secrets.WOOTCH_COGNITO_APP_CLIENT_DOMAIN_NAME;
 
 const groupsAttributeName = Utils.getEnv("GROUPS_ATTRIBUTE_NAME", "groups");
 const redirectUrl = "https://github.com/pseudoincorrect/Wootch";

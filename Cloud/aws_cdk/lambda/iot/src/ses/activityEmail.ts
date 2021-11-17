@@ -1,9 +1,9 @@
 import * as ses from "@aws-sdk/client-ses";
 
 import * as utils from "../utils/utils";
-import * as secrets from "../secrets/secrets";
 
 const awsRegion = utils.getEnv("MAIN_AWS_REGION");
+const senderAdress = utils.getEnv("SENDER_ADDRESS");
 
 const sesClient = new ses.SESClient({ region: awsRegion });
 
@@ -30,7 +30,7 @@ export async function sendEmail(emailAddress: string) {
         Data: `Wootch Alert Activity ${dateNow}`,
       },
     },
-    Source: secrets.senderAdress,
+    Source: senderAdress,
     ReplyToAddresses: [],
   };
   try {

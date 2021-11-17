@@ -1,7 +1,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import * as ddb from "@aws-sdk/lib-dynamodb";
 
-import * as secrets from "../../secrets/awsParams";
+import * as secrets from "../../secrets/secrets";
 import { DevModel, DevModelDynamoDb } from "../models/devModel";
 import { UserModel, UserModelDynamoDb } from "../models/userModel";
 import * as awsHelpers from "./awsHelpers";

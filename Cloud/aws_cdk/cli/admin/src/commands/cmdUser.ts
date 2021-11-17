@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
-import * as secrets from "../../secrets/awsParams";
+import * as secrets from "../../secrets/secrets";
 import * as cogn from "../aws/awsCognito";
 import * as ddb from "../aws/awsDdb";
 import { getAnId } from "./cmdHelpers";

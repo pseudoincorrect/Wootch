@@ -8,7 +8,6 @@
     "allBuild": "ts-node build",
     "allInstall": "ts-node install",
     "expressUpdate": "ts-node ./express/update",
-    "expressLogTail": "ts-node ./express/logTail",
     "iotUpdate": "ts-node ./iot/update",
     "iotLogTail": "ts-node ./iot/logTail"
   },

@@ -4,7 +4,6 @@ import { UserDdb } from "./ddb/userDdb";
 import { DevModel } from "./models/devModel";
 import * as sEmail from "./ses/activityEmail";
 import * as utils from "./utils/utils";
-import * as secrets from "./secrets/secrets";
 
 const PairingPattern = RegExp(
   /^WootchDev\/device\/WOOTCH_DEV_[a-zA-Z0-9]+\/pairing\/request/
@@ -32,7 +31,7 @@ interface ActivityEvent {
 const pairingDdb = new PairingDdb();
 const userDdb = new UserDdb();
 const devDdb = new DevDdb();
-
+const receiverAdress = utils.getEnv("RECEIVER_ADDRESS");
 /**
  * Entry point of the lambda function
  * @param event MQTT message and metadata
@@ -86,8 +85,8 @@ async function processActivityEvent(event: ActivityEvent) {
   }
   // Send him a message
   const userEmail = userModel!.USER_EMAIL;
-  console.log(`Sending email to ${secrets.recieverAdress}`);
-  await sEmail.sendEmail(secrets.recieverAdress);
+  console.log(`Sending email to ${receiverAdress}`);
+  await sEmail.sendEmail(receiverAdress);
   // Update last email sent date
   userModel!.LAST_EMAIL_DATE = nowMs;
   await userDdb.updateLastEmail(userModel!);

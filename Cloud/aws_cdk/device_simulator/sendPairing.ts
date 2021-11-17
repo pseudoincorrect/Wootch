@@ -2,12 +2,12 @@ import { mqtt } from "aws-iot-device-sdk-v2";
 import { TextDecoder } from "util";
 import { v4 as uuidv4 } from "uuid";
 
-import * as secrets from "./certificatesAndSecrets/secrets";
+import * as secrets from "./secrets/secrets";
 import { executeSession } from "./communication";
 
 // based on example : https://github.com/aws/aws-iot-device-sdk-js-v2/blob/main/samples/node/pub_sub/index.ts
 
-const notifTopic: string = `WootchDev/device/${secrets.spoof_wootch_client_id}/pairing/request`;
+const notifTopic: string = `WootchDev/device/${secrets.AWS_THING_NAME_SPOOF}/pairing/request`;
 
 interface PairingMessage {
   secret: string;

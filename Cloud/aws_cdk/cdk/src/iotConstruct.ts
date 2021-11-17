@@ -23,7 +23,8 @@ export class IotConstruct extends cdk.Construct {
     const stackAndEnv = props.cdkContext.stackName + props.cdkContext.env;
     const region = secrets.WOOTCH_AWS_REGION;
     const topic = stackAndEnv + "/#";
-
+    const receiverAddress = secrets.RECEIVER_ADDRESS;
+    const senderAddress = secrets.SENDER_ADDRESS;
     //-------------------------------------------------------------------------
     // Lambda Function
     //-------------------------------------------------------------------------
@@ -41,6 +42,8 @@ export class IotConstruct extends cdk.Construct {
           SENSOR_DATA_TABLE: props.stackDbs.sensorDataTable.tableName!,
           MAIN_DATA_TABLE: props.stackDbs.mainTable.tableName,
           MAIN_AWS_REGION: region,
+          SENDER_ADDRESS: senderAddress,
+          RECEIVER_ADDRESS: receiverAddress,
         },
       },
       iotTopicRuleProps: {

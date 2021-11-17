@@ -1,13 +1,13 @@
 import { mqtt } from "aws-iot-device-sdk-v2";
 import { TextDecoder } from "util";
 
-import * as secrets from "./certificatesAndSecrets/secrets";
+import * as secrets from "./secrets/secrets";
 import { executeSession } from "./communication";
 
 // based on example : https://github.com/aws/aws-iot-device-sdk-js-v2/blob/main/samples/node/pub_sub/index.ts
 
 // const notifTopic: string = `WootchDev/device/${secrets.client_id}/data`;
-const notifTopic: string = `WootchDev/device/${secrets.spoof_wootch_client_id}/data/activity`;
+const notifTopic: string = `WootchDev/device/${secrets.AWS_THING_NAME_SPOOF}/data/activity`;
 
 enum WATCH_LEVEL {
   none = "NONE",

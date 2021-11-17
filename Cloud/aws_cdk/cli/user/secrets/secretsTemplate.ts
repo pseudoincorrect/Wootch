@@ -1,5 +1,10 @@
 export const AWS_REGION = "";
 export const AWS_ACCOUNT_ID = "";
-export const USER_USER_POOL_ID = "";
-export const USER_EMAIL = "";
-export const USER_TEMP_PASSWORD = "";
+export const USER_POOL_ID = "";
+export const USER_POOL_CLIENT_ID = "";
+export const USER_GROUP_NAME = "";
+export const DOMAIN_NAME = "";
+export const SIGNING_URL = `https://${DOMAIN_NAME}.auth.${AWS_REGION}.amazoncognito.com/login?client_id=${USER_POOL_CLIENT_ID}&response_type=token&scope=email+openid&redirect_uri=https://github.com/pseudoincorrect/Wootch`;
+export const MOCK_USERNAME = "";
+export const MOCK_PASSWORD = "";
+export const HOST_API = "";

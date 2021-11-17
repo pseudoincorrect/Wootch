@@ -9,7 +9,7 @@ shell.exec("npm run typescriptBuild --prefix ../lambda/iot");
 // Zip all the data
 shell.exec("npm run zipDist --prefix ../lambda/iot");
 
-// Update the associated lambda funciton with the ziped data
+// Update the associated lambda function with the ziped data
 const updtFuncCmd = `aws lambda update-function-code \
 --region ${cst.stackRegion} \
 --function-name ${cst.iotFunctionName} \

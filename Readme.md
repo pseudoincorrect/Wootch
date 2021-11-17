@@ -20,6 +20,10 @@ Namely, Embedded UI (LVGL), Wifi enabled MCU (ESP32) and Serverless Application 
 <br>
 Plus it's fun !
 
+# A bit more than a simple iot device
+
+WOOTCH is actually a **Full iot application** where you can manage your users and their devices through an **Admin CLI** (command line interface connect to AWS) and each user can log and manage their own devices through the **User CLI** (connected to a REST API). The core of the application is serverless (AWS-CDK) and run on... AWS. Each device (custom made PCB with Altium) can connect and **be paired to a user** through a just in time generated shared secrets. It will then send notification to its user depending on the situation. For the developpers, the application contains multiple environment (dev, prod) and is developped through continuous integration.
+
 # PCB
 
 (Progress: Completed)

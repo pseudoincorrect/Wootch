@@ -14,4 +14,7 @@ shell.exec("npm install --prefix ../cdk");
 shell.echo("Installing Admin Command Line Interface");
 shell.exec("npm install --prefix ../cli/admin");
 
+shell.echo("Installing User Command Line Interface");
+shell.exec("npm install --prefix ../cli/user");
+
 shell.echo("Installation successful");

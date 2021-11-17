@@ -1,6 +1,6 @@
 import * as cogn from "@aws-sdk/client-cognito-identity-provider";
 
-import * as secrets from "../../secrets/awsParams";
+import * as secrets from "../../secrets/secrets";
 
 const userPoolId = secrets.USER_USER_POOL_ID;
 const groupName = secrets.USER_GROUP_NAME;

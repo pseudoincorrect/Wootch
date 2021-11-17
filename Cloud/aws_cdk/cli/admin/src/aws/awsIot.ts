@@ -1,6 +1,6 @@
 import * as iot from "@aws-sdk/client-iot";
 
-import { AWS_ACCOUNT_ID, AWS_REGION } from "../../secrets/awsParams";
+import { AWS_ACCOUNT_ID, AWS_REGION } from "../../secrets/secrets";
 import wootchPolicy from "../policies/iotPolicy.json";
 import * as awsHelpers from "./awsHelpers";
 
