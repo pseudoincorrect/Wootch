@@ -12,6 +12,18 @@ It wootches your door while your kids or/and cats sleep !
 
 Wootch is an IoT device to monitor a door or any object activity and detect whether it is being moved. It then sends notifications to your registered device (phone or other) in case any activity is happening. Its intuitive Embedded UI helps you to set your level of guard ! (It can vibrate as soon as its door/object get touched, send you a message or let you live your life). It is connected to a cloud application to make sense of the sensors' data.
 
+# A bit more than a simple IoT device
+
+WOOTCH is actually a **Full IoT application** where:
+
+- You manage your users and their devices through an **Admin CLI**
+- Each user can manage their devices through an **User CLI**
+- The Core application is serverless on AWS (AWS-CDK), inexpensive and scalable
+- Devices are paired at any time with just-in-time generated shared secrets
+- Devices are able to send notifications (emails) to their user
+- Devices are custom made (PCB design with Altium)
+- The application is developed through continuous integration
+
 # What's the motives
 
 Well ! Mainly, I like side projects and it was the occasion to experiment with technologies new to me.
@@ -19,10 +31,6 @@ Well ! Mainly, I like side projects and it was the occasion to experiment with t
 Namely, Embedded UI (LVGL), Wifi enabled MCU (ESP32) and Serverless Application (AWS-CDK Framework).
 <br>
 Plus it's fun !
-
-# A bit more than a simple iot device
-
-WOOTCH is actually a **Full iot application** where you can manage your users and their devices through an **Admin CLI** (command line interface connect to AWS) and each user can log and manage their own devices through the **User CLI** (connected to a REST API). The core of the application is serverless (AWS-CDK) and run on... AWS. Each device (custom made PCB with Altium) can connect and **be paired to a user** through a just in time generated shared secrets. It will then send notification to its user depending on the situation. For the developpers, the application contains multiple environment (dev, prod) and is developped through continuous integration.
 
 # PCB
 
@@ -61,7 +69,7 @@ its main component are the following:
 - ESP-IDF SDK, peripheral, wifi, RTOS.
 - LvGL graphical library, to easily create responsive UI and provide support for the touch sensitive screen.
 - esp_mpu60x0_C, MPU6050 IC from Invensense driver in C.
-- ESP-AWS-IOT to interface with the AWS IoT-core service and provide a light-weight, fast and secured with AWS servers. It leverages the MQTT protocol with asymetric key exchange, symetric encryption.
+- ESP-AWS-IOT to interface with the AWS IoT-core service and provide a light-weight, fast and secured with AWS servers. It leverages the MQTT protocol with asymmetric key exchange, symmetric encryption.
 
 <br>
 <p align="center">
@@ -104,3 +112,10 @@ its main component are the following:
 (Simplified Architecture)
 </p>
 <br>
+
+# Future development
+
+- Case for Wootch devices
+- User mobile application (flutter ?)
+- Data analytics
+- Automatic device deployment

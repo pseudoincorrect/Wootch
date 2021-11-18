@@ -92,7 +92,7 @@ Fill the file with the information/secrets relative to your AWS Account:
 - "SENDER_ADDRESS": with the email used to send notification to your user.
 - "RECEIVER_ADDRESS": this one is for testing, use any address where your would like to receive notifications.
 
-NOTE: For the admin and user CLIs (not for cdk), secrets.ts files will be filled later on with the values of our CDK application. However, we first need to build all lambda functions with empty secrets to enable the deployment with CDK. Once we will have these secrets (after the CDK deployment), we will update secrets.ts files for each CLI. This step can be automatised later on.
+NOTE: For the admin and user CLIs (not for cdk), secrets.ts files will be filled later on with the values of our CDK application. However, we first need to build all lambda functions with empty secrets to enable the deployment with CDK. Once we will have these secrets (after the CDK deployment), we will update secrets.ts files for each CLI. This step can be automatized later on.
 
 <br>
 
@@ -129,7 +129,7 @@ in the USER CLI secret fill the following by using the console:
 - USER_GROUP_NAME : "usersGroup"
 - DOMAIN_NAME : App integration, cognito Domain name of your pool
 - SIGNING_URL : provided by the template
-- HOST_API : API gateway URL of your depoyed API, found in AWS console -> api gateway -> Wootch.. -> Setting -> Default Endpoint
+- HOST_API : API gateway URL of your deployed API, found in AWS console -> api gateway -> Wootch.. -> Setting -> Default Endpoint
 - MOCK_USERNAME : used for testing, if you created a user, this is his email
 - MOCK_PASSWORD : used for testing, if you created a user, this is his password (after password change)
 
@@ -149,7 +149,7 @@ Prerequisites:
 
 - An AWS Thing must have been created with the Admin CLI
 - The Certificates and Key of this thing must be available (gotten from the admin CLI)
-- The Thing name must be available (gotter from the admin CLI or AWS console)
+- The Thing name must be available (gotten from the admin CLI or AWS console)
 
 **At the moment, the certificate, key and ID are directly flashed into the device.**
 
@@ -259,11 +259,11 @@ $  npm run run -- createUser --email userEmail@userDomain.com --password SuperSt
 Then you need to change the password of this user (AWS cognito security rule)
 
 To do so, you need the cognito app client UI link,
-got to AWS console -> cognito -> Wootch user pool -> App integration -> App client settings -> Lauch Hosted UI
+got to AWS console -> cognito -> Wootch user pool -> App integration -> App client settings -> Launch Hosted UI
 
 (this link is also found in the output of your CDK deployment)
 
-Once this UI lauched, you can change the password of the user you created.
+Once this UI launched, you can change the password of the user you created.
 (this process is to be automated by mail)
 
 To create a new device, enter:
@@ -307,7 +307,7 @@ Fill the following secrets from {WOOTCH_PATH}/Cloud/aws_cdk/device_simulator/sec
 
 Navigate to {WOOTCH_PATH}/Cloud/aws_cdk/device_simulator
 
-to send generated data on the backen end, you can run the following command:
+to send generated data on the backend, you can run the following command:
 
 ```bash
 $  npm run sendActivity
@@ -378,7 +378,7 @@ However using cloudwatch directly is much more convenient.
 
 ## Update CDK backend/services
 
-To update the cloud severless backend (CDK)
+To update the cloud serverless backend (CDK)
 
 ```bash
 $  npm run devSynth
