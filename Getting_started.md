@@ -56,13 +56,21 @@ Configuration
 
 ### **Installing Node Applications**
 
-This will download all npm package in every application folders.
+Let install the build tools
+
+```powershell
+$ cd {WOOTCH_PATH}/cloud/aws_cdk/build_tools
+$ npm install
+```
+
+Let's use the build tool install script to download all npm package in every application folders.
 
 - CDK application
+- EXPRESS lambda function
+- IOT lambda function
 - ADMIN CLI application
 - USER CLI application
 - DEVICE_SIMULATOR application
-- BUILD_TOOL application
 
 ```powershell
 $ cd {WOOTCH_PATH}/cloud/aws_cdk/build_tools
