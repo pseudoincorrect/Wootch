@@ -56,6 +56,14 @@ Configuration
 
 ### **Installing Node Applications**
 
+This will download all npm package in every application folders.
+
+- CDK application
+- ADMIN CLI application
+- USER CLI application
+- DEVICE_SIMULATOR application
+- BUILD_TOOL application
+
 ```powershell
 $ cd {WOOTCH_PATH}/cloud/aws_cdk/build_tools
 $ npm run allInstall
@@ -97,6 +105,8 @@ NOTE: For the admin and user CLIs (not for cdk), secrets.ts files will be filled
 <br>
 
 ### **Building all lambda functions folders**
+
+For CDK to deploy our lambda function, we need first to install, build and pack them with the following
 
 ```powershell
 $ cd {WOOTCH_PATH}/cloud/aws_cdk/build_tools
